@@ -38,4 +38,6 @@ private:
   InputTaken input_;
 };
 
+typedef std::shared_ptr<OperatorData> Operator;
+
 #endif // TEREBINTH_OPERATOR_H_
