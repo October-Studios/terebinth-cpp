@@ -32,8 +32,8 @@ public:
 
     ns_ = ns_in;
     dynamic_ = dynamic_in;
-    in_left_type_ = left;
-    in_right_type_ = right;
+    in_left_type = left;
+    in_right_type = right;
   }
 
   virtual bool IsVoid() { return false; }
@@ -79,7 +79,7 @@ public:
       ResolveAction();
 
       if (!name_hint_.empty()) {
-        action_->name_hint = name_hint_;
+        action_->name_hint_ = name_hint_;
       }
     }
 
@@ -226,7 +226,7 @@ public:
     node->left_type_node = std::move(left_type_in);
     node->right_type_node = std::move(right_type_in);
     node->return_type_node = std::move(return_type_in);
-    node->bodyNode = std::move(body_in);
+    node->body_node_ = std::move(body_in);
 
     return AstNode(node);
   }
@@ -326,7 +326,7 @@ public:
   }
 
   void ResolveConstant();
-  void ResolveAction() { action = voidAction; };
+  void ResolveAction() { action_ = voidAction; };
 
   Token GetToken() { return center->GetToken(); }
 
@@ -423,21 +423,20 @@ public:
     return node;
   }
 
-  std::string GetString() { return return_type->getString(); }
+  std::string GetString() { return return_type_->GetString(); }
 
   AstNode MakeCopy(bool copyCache) {
     auto out = new AstTypeType;
     CopyToNode(out, copyCache);
-    out->returnType = returnType;
+    out->return_type_ = return_type_;
     return AstNode(out);
   }
 
-  void ResolveReturnType() { returnType = return_type_not_meta->GetMeta(); }
+  void ResolveReturnType() { return_type_ = return_type_not_meta->GetMeta(); }
 
   void NameHintSet() {
-    if (!nameHint.empty() && return_type_not_meta->nameHint.empty())
-      Type return_type_not_meta;
-    ->nameHint = nameHint;
+    if (!name_hint_.empty() && return_type_not_meta->name_hint_.empty())
+      return_type_not_meta->name_hint_ = name_hint_;
   }
 
   Token GetToken() { return nullptr; }
@@ -453,7 +452,7 @@ public:
     return node;
   }
 
-  std::string getString() { return "{}"; }
+  std::string GetString() { return "{}"; }
 
   AstNode MakeCopy(bool copyCache) {
     auto out = new AstVoidType;
@@ -461,7 +460,7 @@ public:
     return AstNode(out);
   }
 
-  void ResolveReturnType() { returnType = Void->getMeta(); }
+  void ResolveReturnType() { return_type_ = Void->GetMeta(); }
 
   Token GetToken() { return nullptr; }
 
@@ -500,17 +499,17 @@ public:
     std::unique_ptr<AstType> type;
   };
 
-  static std::unique_ptr<AstTupleType> Make(vector<NamedType> &in) {
+  static std::unique_ptr<AstTupleType> Make(std::vector<NamedType> &in) {
     std::unique_ptr<AstTupleType> node(new AstTupleType);
     node->subTypes = std::move(in);
     return node;
   }
 
-  std::string getString();
+  std::string GetString();
 
   AstNode MakeCopy(bool copyCache) {
     auto out = new AstTupleType;
-    copyToNode(out, copyCache);
+    CopyToNode(out, copyCache);
     for (int i = 0; i < (int)subTypes.size(); i++) {
       out->subTypes.push_back(
           {subTypes[i].name,
@@ -522,61 +521,61 @@ public:
 
   void resolveReturnType();
 
-  Token getToken() { return subTypes.empty() ? nullptr : subTypes[0].name; }
+  Token GetToken() { return subTypes.empty() ? nullptr : subTypes[0].name; }
 
 private:
-  vector<NamedType> subTypes;
+  std::vector<NamedType> subTypes;
 };
 
 class AstActionWrapper : public AstNodeBase {
 public:
   static std::unique_ptr<AstActionWrapper> Make(Action actionIn) {
     auto out = std::unique_ptr<AstActionWrapper>(new AstActionWrapper);
-    out->inLeftType = actionIn->getInLeftType();
-    out->inRightType = actionIn->getInRightType();
-    out->returnType = actionIn->getReturnType();
-    out->action = actionIn;
-    out->dynamic = true; // shouldn't matter
-    out->ns = nullptr;   // shouldn't matter
-    out->inputHasBeenSet = true;
+    out->in_left_type = actionIn->GetInLeftType();
+    out->in_right_type = actionIn->GetInRightType();
+    out->return_type_ = actionIn->GetReturnType();
+    out->action_ = actionIn;
+    out->dynamic_ = true;
+    out->ns_ = nullptr;
+    out->input_has_been_set_ = true;
     return out;
   }
 
-  std::string getString() { return "action wrapper node"; }
+  std::string GetString() { return "action wrapper node"; }
 
   AstNode MakeCopy(bool copyCache) {
     auto out = new AstActionWrapper;
-    copyToNode(out, true);
+    CopyToNode(out, true);
     return AstNode(out);
   }
 
-  void resolveAction() {
+  void ResolveAction() {
     throw TerebinthError(
         "AstActionWrapper::resolveAction called, which it shouldn't have been",
         INTERNAL_ERROR);
   }
 
-  Token getToken() { return nullptr; }
+  Token GetToken() { return nullptr; }
 };
 
 class AstWhatevToActionFactory : public AstNodeBase {
 public:
-  static AstNode Make(function<Action(Type left, Type right)> lambda) {
+  static AstNode Make(std::function<Action(Type left, Type right)> lambda) {
     auto node = new AstWhatevToActionFactory();
     node->lambda = lambda;
     return AstNode(node);
   }
 
-  std::string getString() { return "AstWhatevToActionFactory"; }
+  std::string GetString() { return "AstWhatevToActionFactory"; }
 
   AstNode MakeCopy(bool copyCache) {
     auto out = new AstWhatevToActionFactory;
-    copyToNode(out, copyCache);
+    CopyToNode(out, copyCache);
     out->lambda = lambda;
     return AstNode(out);
   }
 
-  void resolveAction() {
+  void ResolveAction() {
     throw TerebinthError("AstWhatevToActionFactory::resolveAction called, wich "
                          "should never happen",
                          INTERNAL_ERROR);
@@ -590,9 +589,9 @@ public:
       return nullptr;
   }
 
-  Token getToken() { return nullptr; }
+  Token GetToken() { return nullptr; }
 
-  bool canBeWhatev() { return true; }
+  bool CanBeWhatev() { return true; }
 
 private:
   std::function<Action(Type leftInType, Type rightInType)> lambda;
