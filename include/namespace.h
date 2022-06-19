@@ -2,7 +2,7 @@
 #define TEREBINTH_NAMESPACE_H_
 
 #include "action.h"
-#include "astnode.h"
+#include "ast_node.h"
 #include "operator.h"
 #include "token.h"
 #include "type.h"

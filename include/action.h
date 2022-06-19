@@ -4,7 +4,7 @@
 #include "cpp_program.h"
 #include "stack_frame.h"
 #include "type.h"
-#include "utils/string_drawing.h"
+#include "util/string_drawing.h"
 #include <functional>
 #include <memory>
 #include <string>

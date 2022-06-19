@@ -11,7 +11,7 @@ SourceFile::SourceFile(std::string filename_in, bool print_output) {
   }
 }
 
-std::String SourceFile::GetDirPath() {
+std::string SourceFile::GetDirPath() {
   int i = filename_.size();
 
   while (i >= 0 && filename_[i] != '/') {
@@ -26,5 +26,5 @@ std::string SourceFile::GetBoxedString() {
 }
 
 std::string SourceFile::GetLine(int line_num) {
-  return GetTextOfLine(contents_, line_num)
+  return GetTextOfLine(contents_, line_num);
 }

@@ -67,7 +67,7 @@ void CharacterClassifier::SetUp() {
 
   hm_['"'] = STRING_QUOTE;
 
-  std::unordered_map<std::string, Operator> &ops_map = ops->GetOpsMap();
+  std::unordered_map<std::string, Operator> &ops_map = ops_->GetOpsMap();
 
   for (auto i = ops_map.begin(); i != ops_map.end(); ++i) {
     std::string str = (*i).first;
@@ -90,7 +90,7 @@ CharacterClassifier::Get(std::shared_ptr<SourceFile> file, int index) {
 
   switch ((*file)[index]) {
   case '/':
-    if (index < int(file->size()) - 1 && (*file)[index + 1] == '/')
+    if (index < int(file->Size()) - 1 && (*file)[index + 1] == '/')
       return MULTI_LINE_COMMENT_START;
     break;
 
@@ -101,7 +101,7 @@ CharacterClassifier::Get(std::shared_ptr<SourceFile> file, int index) {
 
   case '.': // allow a . to be a digit character only if it is followed by a
             // digit
-    if (index < int(file->size()) - 1) {
+    if (index < int(file->Size()) - 1) {
       auto i = hm_.find((*file)[index + 1]);
 
       if (i != hm_.end() && i->second == DIGIT)
@@ -150,7 +150,7 @@ CharacterClassifier::GetTokenType(CharacterClassifier::Type type,
     return TokenData::BLOCK_COMMENT;
 
   case MULTI_LINE_COMMENT_END:
-    error.log("block comment end without start", SOURCE_ERROR);
+    error_.Log("block comment end without start", SOURCE_ERROR);
     return TokenData::UNKNOWN;
 
   case WHITESPACE:
@@ -188,16 +188,16 @@ void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens) {
 
   TokenData::Type type = TokenData::WHITESPACE;
 
-  for (int i = 0; i < file->size(); i++) {
-    CharacterClassifier::Type char_type = character_classifier.get(file, i);
+  for (int i = 0; i < file->Size(); i++) {
+    CharacterClassifier::Type char_type = character_classifier.Get(file, i);
     TokenData::Type new_type =
-        CharacterClassifier::getTokenType(char_type, type);
+        CharacterClassifier::GetTokenType(char_type, type);
 
     if (new_type != type) {
       if (!token_txt.empty()) {
         if (type == TokenData::OPERATOR) {
           std::vector<Operator> op_matches;
-          ops->Get(token_txt, op_matches);
+          ops_->Get(token_txt, op_matches);
 
           for (auto op : op_matches) {
             tokens.push_back(MakeToken(op->GetText(), file, line,
@@ -234,7 +234,7 @@ void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens) {
         else if ((*file)[i] == '\\')
           token_txt += '\\';
         else
-          throw TerebinthError(string() + "invalid escape character '\\" +
+          throw TerebinthError(std::string() + "invalid escape character '\\" +
                                    (*file)[i] + "'",
                                SOURCE_ERROR,
                                MakeToken(token_txt + (*file)[i], file, line,

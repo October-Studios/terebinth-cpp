@@ -105,7 +105,7 @@ protected:
   void CopyToNode(AstNodeBase *other, bool copy_cache);
 
   virtual void ResolveReturnType() {
-    return_type_->GetAction()->GetReturnType();
+    return_type_ = GetAction()->GetReturnType();
   }
 
   virtual void ResolveAction() = 0;
