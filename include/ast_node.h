@@ -239,7 +239,7 @@ public:
     out->left_type_node = left_type_node->MakeCopy(copy_cache);
     out->right_type_node = right_type_node->MakeCopy(copy_cache);
     out->return_type_node = return_type_node->MakeCopy(copy_cache);
-    out->body_node = body_node->MakeCopy(copy_cache);
+    out->body_node_ = body_node_->MakeCopy(copy_cache);
     out->types_input_set = types_input_set;
     return AstNode(out);
   }
@@ -248,7 +248,7 @@ public:
 
   AstNode MakeCopyWithSpecificTypes(Type leftInType, Type rightInType);
 
-  Token GetToken() { return body_node->GetToken(); }
+  Token GetToken() { return body_node_->GetToken(); }
 
   void SetTypesInput() {
     if (!types_input_set) {
@@ -267,7 +267,7 @@ public:
            return_type_node->GetReturnType()->IsWhatev();
   }
 
-  AstNode left_type_node, right_type_node, return_type_node, body_node;
+  AstNode left_type_node, right_type_node, return_type_node, body_node_;
   bool types_input_set = false;
 };
 

@@ -5,7 +5,7 @@ SourceFile::SourceFile(std::string filename_in, bool print_output) {
   filename_ = filename_in;
   try {
     LoadFile(filename_in, contents_);
-    contents += "\n";
+    contents_ += "\n";
   } catch (std::string err) {
     throw TerebinthError(err, SOURCE_ERROR);
   }

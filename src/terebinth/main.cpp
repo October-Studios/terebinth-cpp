@@ -1,6 +1,12 @@
 #include "error_handler.h"
 #include "terebinth_program.h"
 
+#include "util/file_utils.h"
+#include "util/string_array.h"
+#include "util/string_drawing.h"
+#include "util/string_num_conversion.h"
+#include "util/string_utils.h"
+
 #include <iostream>
 
 std::vector<std::string> cmd_line_args;
@@ -85,7 +91,7 @@ int main(int argc, char **argv) {
   program.ResolveProgram(flags.in_files[0], flags.debug);
 
   if (flags.run_interpreted) {
-    if (error.GetIfErrorLogged()) {
+    if (error_.GetIfErrorLogged()) {
       if (flags.debug) {
         std::cout
             << std::endl
@@ -108,7 +114,7 @@ int main(int argc, char **argv) {
       flags.run_compiled) {
     std::string cpp_code = program.GetCpp();
 
-    if (error.GetIfErrorLogged()) {
+    if (error_.GetIfErrorLogged()) {
       if (flags.debug) {
         std::cout << std::endl
                   << ">>>>>>   transpiling failed    <<<<<<" << std::endl;
@@ -123,12 +129,12 @@ int main(int argc, char **argv) {
       }
 
       if (flags.debug) {
-        std::cout << std::end
-                  << std::PutStringInBox(cpp_code, "C++ code", true, false, -1)
+        std::cout << "\n"
+                  << str::GetBoxedString(cpp_code, "C++ code", true, false, -1)
                   << std::endl;
       }
 
-      WriteFile(cpp_file_name, cpp_code, flags.debug);
+      WriteFile(cpp_file_name, cpp_code);
 
       if (!flags.bin_out_file.empty() || flags.run_compiled) {
         std::string bin_file_name = flags.bin_out_file;
@@ -165,7 +171,7 @@ Flags GetFlags(int argc, char **argv) {
     std::string arg(argv[i]);
     if (!after) {
       if (arg.size() > 1 && arg[0] == '-') {
-        std::string flag = arg.substr(1, string::npos);
+        std::string flag = arg.substr(1, std::string::npos);
 
         if (flag == "d" || flag == "debug") {
           flags.debug = true;

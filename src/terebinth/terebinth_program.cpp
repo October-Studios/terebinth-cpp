@@ -29,7 +29,7 @@ void TerebinthProgram::ResolveProgram(std::string in_filename,
       if (print_output) {
         std::cout << std::endl
                   << std::endl
-                  << file->GetBoxedString() << std::endl;
+                  << file_->GetBoxedString() << std::endl;
       }
     } catch (TerebinthError err) {
       err.Log();
@@ -87,7 +87,7 @@ void TerebinthProgram::ResolveProgram(std::string in_filename,
 std::string TerebinthProgram::GetCpp() {
   try {
     CppProgram out_program;
-    action_root_->AddToProg(void_action, void_action, &out_program);
+    action_root_->AddToProg(void_action_, void_action_, &out_program);
     return out_program.GetCppCode();
   } catch (TerebinthError err) {
     err.Log();
@@ -99,7 +99,7 @@ void TerebinthProgram::Execute() {
   try {
     stack_ptr = global_frame_ptr =
         malloc(global_namespace->GetStackFrame()->GetSize());
-    free(action_root->Execute(nullptr, nullptr));
+    free(action_root_->Execute(nullptr, nullptr));
     free(global_frame_ptr);
     stack_ptr = global_frame_ptr = nullptr;
   } catch (TerebinthError err) {
