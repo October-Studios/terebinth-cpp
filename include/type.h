@@ -4,7 +4,6 @@
 #include <cstring>
 #include <memory>
 #include <string>
-#include <vcruntime.h>
 #include <vector>
 
 class TypeBase;

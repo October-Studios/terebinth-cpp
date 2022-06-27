@@ -14,7 +14,7 @@
 
 class ActionData;
 
-extern std::shared_ptr<ActionData> voidAction;
+extern std::shared_ptr<ActionData> void_action_;
 
 class ActionData {
 public:
@@ -40,7 +40,7 @@ public:
     prog->Comment("action '" + GetDescription() +
                   "' to cpp code not yet implemented");
   }
-  void AddToProg(CppProgram *prog) { AddToProg(voidAction, voidAction, prog); }
+  void AddToProg(CppProgram *prog) { AddToProg(void_action_, void_action_, prog); }
 
   std::string name_hint_ = "";
 

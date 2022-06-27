@@ -100,6 +100,42 @@ inline bool HasSuffix(const std::string &in, const std::string &suffix) {
   return SubMatches(in, in.size() - suffix.size(), suffix);
 }
 
+inline std::string GetTextOfLine(const std::string& in, int line_num) {
+  int start = -1;
+  int end = -1;
+
+  if (line_num < 1) {
+    return "";
+  } else if (line_num == 1) {
+    start = 0;
+  }
+  
+  int line = 1;
+
+  for (unsigned i = 0; i < in.size(); ++i) {
+    if (in[i] == '\n') {
+      if (start < 0) {
+        line++;
+
+        if (line == line_num) {
+          start = i + 1;
+        }
+      } else {
+        end = i;
+        break;
+      }
+    }
+  }
+
+  if (start < end) {
+    return in.substr(start, end - start);
+  } else if (start >= 0) {
+    return in.substr(start, std::string::npos);
+  } else {
+    return "";
+  }
+}
+
 } // namespace str
 
 #include "string_array.h"

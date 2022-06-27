@@ -1,4 +1,4 @@
-#include "string_utils.h"
+#include "util/string_utils.h"
 #include <math.h>
 
 namespace str {
@@ -39,12 +39,12 @@ std::string Pad(const std::string &in, int size, StringPadAlignment alignment,
     if (size - cap_width >= 1) {
       if (alignment == ALIGNMENT_RIGHT) {
         return left_cap + "…" +
-               sub(in, in_size - (size - cap_width - 1), in_size) + right_cap;
+               Sub(in, in_size - (size - cap_width - 1), in_size) + right_cap;
       } else {
-        return left_cap + sub(in, 0, size - cap_width - 1) + "…" + right_cap;
+        return left_cap + Sub(in, 0, size - cap_width - 1) + "…" + right_cap;
       }
     } else {
-      return sub(left_cap + right_cap, 0, size);
+      return Sub(left_cap + right_cap, 0, size);
     }
   } else if (pad_size == 0) {
     return left_cap + in + right_cap;

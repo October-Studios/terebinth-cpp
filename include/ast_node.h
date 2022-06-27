@@ -143,7 +143,7 @@ public:
                            GetToken());
     }
 
-    action_ = voidAction;
+    action_ = void_action_;
   }
 
   Token GetToken() { return nullptr; }
@@ -326,7 +326,7 @@ public:
   }
 
   void ResolveConstant();
-  void ResolveAction() { action_ = voidAction; };
+  void ResolveAction() { action_ = void_action_; };
 
   Token GetToken() { return center->GetToken(); }
 

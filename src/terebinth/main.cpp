@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
           std::cout << "running '" + cmd + "'" << std::endl;
         }
 
-        RunCmd(cmd, true);
+        // RunCmd(cmd, true);
 
         if (flags.run_compiled) {
           if (flags.debug) {

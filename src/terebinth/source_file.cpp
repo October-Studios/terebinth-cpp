@@ -1,3 +1,4 @@
+#include "error_handler.h"
 #include "source_file.h"
 #include "util/file_utils.h"
 
@@ -26,5 +27,5 @@ std::string SourceFile::GetBoxedString() {
 }
 
 std::string SourceFile::GetLine(int line_num) {
-  return GetTextOfLine(contents_, line_num);
+  return str::GetTextOfLine(contents_, line_num);
 }
