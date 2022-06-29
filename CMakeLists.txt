@@ -24,12 +24,31 @@ set(terebinth_sources
     ${PROJECT_SOURCE_DIR}/util/string_utils.cpp
 )
 
-add_library(terebinth_library SHARED ${terebinth_sources})
+set(terebinth_headers
+    ${PROJECT_SOURCE_DIR}/include/VERSION.h
+    ${PROJECT_SOURCE_DIR}/include/action.h
+    ${PROJECT_SOURCE_DIR}/include/all_operators.h
+    ${PROJECT_SOURCE_DIR}/include/ast_node.h
+    ${PROJECT_SOURCE_DIR}/include/cpp_program.h
+    ${PROJECT_SOURCE_DIR}/include/error_handler.h
+    ${PROJECT_SOURCE_DIR}/include/namespace.h
+    ${PROJECT_SOURCE_DIR}/include/operator.h
+    ${PROJECT_SOURCE_DIR}/include/source_file.h
+    ${PROJECT_SOURCE_DIR}/include/stack_frame.h
+    ${PROJECT_SOURCE_DIR}/include/terebinth_program.h
+    ${PROJECT_SOURCE_DIR}/include/token.h
+    ${PROJECT_SOURCE_DIR}/include/type.h
+    ${PROJECT_SOURCE_DIR}/include/util/file_utils.h
+    ${PROJECT_SOURCE_DIR}/include/util/string_array.h
+    ${PROJECT_SOURCE_DIR}/include/util/string_drawing.h
+    ${PROJECT_SOURCE_DIR}/include/util/string_num_conversion.h
+    ${PROJECT_SOURCE_DIR}/include/util/string_utils.h
+)
 
-target_include_directories(terebinth_library PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
+add_library(terebinth_library SHARED
+    ${terebinth_headers} ${terebinth_sources}
+)
 add_executable(terebinth ${PROJECT_SOURCE_DIR}/src/terebinth/main.cpp)
-
 target_link_libraries(terebinth PRIVATE terebinth_library)
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR})
