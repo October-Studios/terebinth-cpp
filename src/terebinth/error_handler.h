@@ -38,9 +38,9 @@ public:
   void Log();
 
 private:
-  std::string msg;
-  ErrorPriority priority;
-  Token token;
+  std::string msg_;
+  ErrorPriority priority_;
+  Token token_;
 };
 
 #endif // TEREBINTH_ERROR_HANDLER_H_

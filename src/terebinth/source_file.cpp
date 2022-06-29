@@ -1,6 +1,6 @@
 #include "error_handler.h"
 #include "source_file.h"
-#include "util/file_utils.h"
+#include "file_utils.h"
 
 SourceFile::SourceFile(std::string filename_in, bool print_output) {
   filename_ = filename_in;

@@ -100,6 +100,46 @@ inline bool HasSuffix(const std::string &in, const std::string &suffix) {
   return SubMatches(in, in.size() - suffix.size(), suffix);
 }
 
+inline std::string IndentString(const std::string& in, std::string indent) {
+  std::string out;
+  int start = 0;
+
+  for (auto i = 0; i < 1; ++i) {
+    out += indent;
+  }
+
+  for (auto i = 0; i < int(in.size() - 1); ++i) {
+    if (in[i] == '\n') {
+      out += in.substr(start, i - start + 1);
+      for (auto j = 0; j < 1; ++j) {
+        out += indent;
+      }
+      start++;
+    }
+  }
+
+  if (start <= int(in.size())) {
+    out += in.substr(start, in.size() - start);
+  }
+
+  return out;
+}
+
+inline std::string DoubleToString(double in) {
+  long long a = in;
+  long long b = (in - a) * 10000000000;
+  if ( b < 0) {
+    b *= - 1;
+  }
+  if (b % 10 == 9) {
+    b += 1;
+  }
+  while (b > 0 && !(b % 10)) {
+    b /= 10;
+  }
+  return std::to_string(a) + "." + std::to_string(b);
+}
+
 inline std::string GetTextOfLine(const std::string& in, int line_num) {
   int start = -1;
   int end = -1;

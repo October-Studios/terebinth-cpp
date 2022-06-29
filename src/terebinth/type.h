@@ -113,7 +113,7 @@ public:
 private:
   std::string GetUniqueName();
 
-  std::unique_ptr<std::vector<NamedType>> sub_types;
+  std::unique_ptr<std::vector<NamedType>> sub_types_;
 };
 
 #endif // TEREBINTH_TYPE_H_

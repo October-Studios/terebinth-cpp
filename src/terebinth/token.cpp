@@ -1,5 +1,5 @@
 #include "token.h"
-#include "util/string_utils.h"
+#include "string_utils.h"
 
 Token MakeToken(std::string text_in, std::shared_ptr<SourceFile> file_in,
                 int line_in, int char_pos_in, TokenData::Type token_type_in,
