@@ -55,14 +55,12 @@ typedef std::shared_ptr<ActionData> Action;
 
 class AstNodeBase;
 
-// Action lambdaAction(Type returnTypeIn, std::function<void*(void*,void*)>
-// lambdaIn, Type inLeftTypeIn, Type inRightTypeIn, std::string textIn);
 Action LambdaAction(
-    Type inLeftTypeIn, Type inRightTypeIn, Type returnTypeIn,
-    std::function<void *(void *, void *)> lambdaIn,
-    std::function<void(Action inLeft, Action inRight, CppProgram *prog)>
-        addCppToProg,
-    std::string textIn);
+    Type in_left_type_in, Type in_right_type_in, Type return_type_in,
+    std::function<void*(void*, void*)> lambda_in,
+    std::function<void(Action in_left, Action in_right, CppProgram *prog)>
+        cpp_writer_in,
+    std::string text_in);
 Action CreateNewVoidAction();
 
 Action BranchAction(Action leftInputIn, Action actionIn, Action rightInputIn);
@@ -84,7 +82,6 @@ Action LoopAction(Action conditionIn, Action loopActionIn);
 Action LoopAction(Action conditionIn, Action endActionIn, Action loopActionIn);
 
 Action MakeTupleAction(const std::vector<Action> &sourceActionsIn);
-// Action getElemFromTupleAction(Action source, std::string name);
 Action GetElemFromTupleAction(Type source, std::string name);
 Action CppTupleCastAction(Action actionIn, Type returnType);
 

@@ -67,18 +67,37 @@ public:
    */
   std::shared_ptr<StackFrame> GetStackFrame() { return stack_frame_; }
 
+  /**
+   *
+   *
+   */
+  void SetInput(Type left, Type right);
+  void AddNode(AstNode node, std::string id);
+
+  Type GetType(std::string name, bool throw_source_error, Token token_for_error);
+
+  Action GetDestroyer(Type type);
+
+  Action GetCopier(Type type);
+
+  Action GetActionForTokenWithInput(Token token, Type left, Type right, bool dynamic, bool throw_source_error, Token token_for_error);
+
+  std::vector<Action>* GetDestroyerActions() { return &destructor_actions_; }
+  Action WrapInDestroyer(Action in);
+
+
 private:
   /**
    * @brief Get the Nodes object
    *
    */
-  void GetNodes();
+  void GetNodes(std::vector<AstNodeBase*>& out, std::string text, bool check_actions, bool check_dynamic, bool check_whatev);
 
   /**
    * @brief
    *
    */
-  void NodesToMatchingActions();
+  void NodesToMatchingActions(std::vector<Action>& out, std::vector<AstNodeBase*>& nodes, Type left_in_type, Type right_in_type);
 
   /**
    * @brief

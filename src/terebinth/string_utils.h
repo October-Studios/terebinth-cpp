@@ -3,6 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <math.h>
 
 namespace str {
 inline void NextGlyph(int &out, const std::string &in);
@@ -32,8 +35,53 @@ enum StringPadAlignment {
 
 std::string Pad(const std::string &in, int size,
                 StringPadAlignment alignment = ALIGNMENT_LEFT,
-                std::string pad = " ", std::string leftCap = "",
-                std::string rightCap = "");
+                std::string pad = " ", std::string left_cap = "",
+                std::string right_cap = "");
+
+inline std::string PadString(const std::string& in, int size, int alignment = 1, std::string pad = " ", std::string left_cap = "", std::string right_cap = "") {
+  int cap_size = left_cap.size() + right_cap.size();
+	int pad_size = size - int(in.size() + cap_size);
+	
+	if (pad_size < 0) {
+		if (size - cap_size >= 1) {
+			return left_cap + in.substr(0, size - cap_size - 1) + "…" + right_cap;
+		}
+		else if (size - cap_size >= 0) {
+			return left_cap + std::string("…").substr(0, size - cap_size) + right_cap;
+		}
+		else {
+			return (left_cap + right_cap).substr(0, size);
+		}
+	}
+	else if (pad_size == 0) {
+		return left_cap + in + right_cap;
+	}
+	else {
+		if (alignment == 0) {
+      std::string left_pad, right_pad;
+			
+			for (int i = 0; i < floor(pad_size / 2.0); i++)
+				left_pad += pad;
+			
+			for (int i = 0; i < ceil(pad_size / 2.0); i++)
+				right_pad += pad;
+			
+			return left_pad + left_cap + in + right_cap + right_pad;
+		}
+		// left or right alignment
+		else {
+      std::string pad_str;
+			
+			for (int i = 0; i < pad_size; i++)
+				pad_str += pad;
+			
+			if (alignment > 0) // right align
+				return left_cap + in + right_cap + pad_str;
+			else // left align
+				return pad_str + left_cap + in + right_cap;
+		}
+	}
+}
 
 inline void NextGlyph(int &out, const std::string &in) {
   do {
@@ -174,6 +222,143 @@ inline std::string GetTextOfLine(const std::string& in, int line_num) {
   } else {
     return "";
   }
+}
+
+inline int GetTermWidth() {
+#ifdef __linux__
+  static bool first_time = true;
+  if (first_time) {
+    usleep(20000);
+    first_time = false;
+  }
+
+  struct winsize w;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+  return w.ws_col;
+#else
+  return 80;
+#endif
+}
+
+inline int SearchInString(const std::string& in, const std::string& pattern, int start_pos) {
+  for (auto i = start_pos; i < in.size(); ++i) {
+    if (SubMatches(in, i, pattern)) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+inline void SliceStringBy(const std::string& in, const std::string& pattern, std::vector<std::string>& out) {
+  int start = 0;
+
+  if (pattern.size() < 1) {
+    return;
+  }
+
+  while (start < int(in.size())) {
+    int end = SearchInString(in, pattern, start);
+
+    if (end < 0) {
+      end = in.size();
+    }
+
+    out.push_back(in.substr(start, end - start));
+
+    start = end + pattern.size();
+  }
+}
+
+inline void TabsToSpaces(std::vector<std::string>& in) {
+  for (auto i = 0; i < in.size(); ++i) {
+    in[i] = TabsToSpaces(in[i]);
+  }
+}
+
+inline std::string LineListToBoxedString(const std::vector<std::string>& in,
+    std::string box_name, int line_num, bool always_width_max, int max_width) {
+  std::string out;
+
+  auto first = in.begin();
+  auto last = in.end();
+
+  if (first != last) {
+    last--;
+
+    while(first != last && *first == "") {
+      first++;
+      if (line_num >= 0) {
+        line_num++;
+      }
+    }
+
+    while (first != last && *last == "") {
+      last--;
+    }
+
+    last++;
+  }
+
+  int extra_width = (line_num < 0) ? 4 : 10;
+
+  int size;
+
+  if (always_width_max) {
+    size = max_width - extra_width;
+  } else {
+    size = box_name.size() - extra_width + 6;
+
+    for (auto i : in) {
+      size = std::max(size, int(i.size()));
+    }
+
+    size = std::min(max_width - extra_width, size);
+  }
+
+  if (box_name == "") {
+    out += "  " + PadString("", size + extra_width, 1, "_") + "  "; 
+  } else {
+    out += "  _" + PadString(box_name, size + extra_width - 2, 0, "_", "[ ", " ]") + "_  ";
+  }
+
+  out += "\n |" + PadString("", size + extra_width, 1, " ") + "| ";
+
+  auto i = first;
+
+  while (i != last) {
+    if (line_num < 0) {
+      out += "\n |  ";
+    } else {
+      out += "\n |" + PadString(std::to_string(line_num), 4, -1) + "   ";
+      line_num++;
+    }
+
+    out += PadString(*i, size, 1) + "  | ";
+
+    i++;
+  }
+
+  out += "\n |" + PadString("", size + extra_width, 1, "_") + "| \n";
+
+  return out;
+}
+
+inline std::string PutStringInBox(const std::string& in, std::string box_name="", bool show_line_nums = false, bool always_width_max = false, int max_width = -1) {
+  std::vector<std::string> lines;
+
+  if (max_width < 0) {
+    max_width = GetTermWidth() - 4;
+  }
+
+  SliceStringBy(in, "\n", lines);
+
+  TabsToSpaces(lines);
+
+  std::string out = LineListToBoxedString(lines, box_name, show_line_nums ? 1 : -1, always_width_max, max_width);
+
+  return out;
 }
 
 } // namespace str
