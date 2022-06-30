@@ -16,29 +16,29 @@ public:
 
 #define ALL_OPS
 DECLARE_OP(loop_, "@", 5, OperatorData::BOTH, false);	\
-DECLARE_OP(ifOp,		"?", 6, OperatorData::BOTH,		false	);	\
-DECLARE_OP(pipe,		"|", 6, OperatorData::BOTH,		false	);	\
-DECLARE_OP(colon,		":", 24, OperatorData::BOTH,		false	);	\
-DECLARE_OP(doubleColon, "::", 24, OperatorData::BOTH,		false	);	\
-DECLARE_OP(comma,		",", 35, OperatorData::BOTH,		false	);	\
-DECLARE_OP(orOp,		"||", 36, OperatorData::BOTH,		false	);	\
-DECLARE_OP(andOp,		"&&", 38, OperatorData::BOTH,		false	);	\
+DECLARE_OP(if_op_,		"?", 6, OperatorData::BOTH,		false	);	\
+DECLARE_OP(pipe_,		"|", 6, OperatorData::BOTH,		false	);	\
+DECLARE_OP(colon_,		":", 24, OperatorData::BOTH,		false	);	\
+DECLARE_OP(double_colon_, "::", 24, OperatorData::BOTH,		false	);	\
+DECLARE_OP(comma_,		",", 35, OperatorData::BOTH,		false	);	\
+DECLARE_OP(or_op_,		"||", 36, OperatorData::BOTH,		false	);	\
+DECLARE_OP(and_op_,		"&&", 38, OperatorData::BOTH,		false	);	\
 DECLARE_OP(equal_,		"=", 40, OperatorData::BOTH,		true	);	\
-DECLARE_OP(notEqual,	"!=", 40, OperatorData::BOTH,		false	);	\
+DECLARE_OP(not_equal_,	"!=", 40, OperatorData::BOTH,		false	);	\
 DECLARE_OP(greater_,	">", 50, OperatorData::BOTH,		true	);	\
 DECLARE_OP(less_,		"<", 50, OperatorData::BOTH,		true	);	\
-DECLARE_OP(greaterEq,	">=", 50, OperatorData::BOTH,		true	);	\
-DECLARE_OP(lessEq,		"<=", 50, OperatorData::BOTH,		true	);	\
+DECLARE_OP(greater_eq_,	">=", 50, OperatorData::BOTH,		true	);	\
+DECLARE_OP(less_eq_,		"<=", 50, OperatorData::BOTH,		true	);	\
 DECLARE_OP(plus_,		"+", 61, OperatorData::BOTH,		true	);	\
 DECLARE_OP(minus_,		"-", 61, OperatorData::BOTH,		true	);	\
 DECLARE_OP(multiply_,	"*", 71, OperatorData::BOTH,		true	);	\
 DECLARE_OP(divide_,		"/", 71, OperatorData::BOTH,		true	);	\
 DECLARE_OP(mod_,		"%", 70, OperatorData::BOTH,		true	);	\
-DECLARE_OP(notOp_,		"!", 74, OperatorData::RIGHT,	true	);	\
-DECLARE_OP(plusPlus_,	"++", 75, OperatorData::LEFT,		false	);	\
-DECLARE_OP(minusMinus_,	"--", 75, OperatorData::LEFT,		false	);	\
+DECLARE_OP(not_op_,		"!", 74, OperatorData::RIGHT,	true	);	\
+DECLARE_OP(plus_plus_,	"++", 75, OperatorData::LEFT,		false	);	\
+DECLARE_OP(minus_minus_,	"--", 75, OperatorData::LEFT,		false	);	\
 DECLARE_OP(dot_,		".", 81, OperatorData::BOTH,		false	);	\
-DECLARE_OP(rightArrow_,	"->", 83, OperatorData::BOTH,		false	);	\
+DECLARE_OP(right_arrow_,	"->", 83, OperatorData::BOTH,		false	);	\
 DECLARE_OP(import_,		"==>", 90, OperatorData::RIGHT,	false	);	\
 DECLARE_OP(open_paren_,	"(", 100, OperatorData::RIGHT,	false	);	\
 DECLARE_OP(close_paren_,	")", 99, OperatorData::LEFT,		false	);	\

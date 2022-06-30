@@ -1,11 +1,16 @@
 #ifndef TEREBINTH_STRING_UTILS_H_
 #define TEREBINTH_STRING_UTILS_H_
 
+#include <functional>
 #include <string>
 #include <vector>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <math.h>
+#include <iostream>
+#include <exception>
+
+#include "error_handler.h"
 
 namespace str {
 inline void NextGlyph(int &out, const std::string &in);
@@ -188,6 +193,73 @@ inline std::string DoubleToString(double in) {
   return std::to_string(a) + "." + std::to_string(b);
 }
 
+inline double StringToDouble(std::string in) {
+  double out = 0;
+  int divider = 1;
+
+  for (auto i = 0; i < (int)in.size(); ++i) {
+    if (divider == 1) {
+      if (in[i] >= '0' && in[i] <= '9') {
+        out = out * 10 + in[i] - '0';
+      } else if (in[i] == '.') {
+        divider = 10;
+      }
+    } else {
+      if (in[i] >= '0' && in[i] <= '9') {
+        out += (double)(in[i] - '0') / divider;
+        divider *= 10;
+      }
+    }
+  }
+
+  if (in.size() > 0 && in[0] == '-') {
+    out *= -1;
+  }
+
+  return out;
+}
+
+inline int StringToInt(std::string in) {
+  int out = 0;
+
+  for (auto i = 0; i < (int)in.size(); ++i) {
+    if (in[i] >= '0' && in[i] <= '9') {
+      out = out * 10 + in[i] - '0';
+    } else if (in[i] == '.') {
+      break;
+    }
+  }
+
+  if (in.size() > 0 && in[0] == -1) {
+    out *= -1;
+  }
+
+  return out;
+}
+
+inline std::string RunCmd(std::string cmd, bool print_output = false) {
+  std::string result = "";
+  FILE* pipe = popen(cmd.c_str(), "r");
+  if (!pipe) throw std::runtime_error("popen() failed in GetOutputFromCmd");
+  try {
+    while (!feof(pipe)) {
+      char c;
+      if ((c = getc(pipe)) != EOF) {
+        result += c;
+        if (print_output) {
+          std::cout << c;
+          std::cout.flush();
+        }
+      }
+    }
+  } catch (...) {
+    pclose(pipe);
+    throw;
+  }
+  pclose(pipe);
+  return result;
+}
+
 inline std::string GetTextOfLine(const std::string& in, int line_num) {
   int start = -1;
   int end = -1;
@@ -341,6 +413,53 @@ inline std::string LineListToBoxedString(const std::vector<std::string>& in,
   }
 
   out += "\n |" + PadString("", size + extra_width, 1, "_") + "| \n";
+
+  return out;
+}
+
+inline char GetRandChar() {
+  static unsigned int seed = 1;
+
+  seed = (seed * 1103515245U + 12345U) & 0x7fffffffU;
+  int num = seed % (26 + 26 + 10);
+
+  if (num < 26) {
+    return num + 'a';
+  } else if (num < 26 + 26) {
+    return num - 26 + 'A';
+  } else if (num < 26 + 26 + 10) {
+    return num - 26 - 26 + '0';
+  }
+
+  return '_';
+}
+
+inline std::string GetUniqueString(std::string hint,
+    std::function<bool(std::string)> checker, bool always_append_random) {
+  std::string out = hint;
+
+  int attempts = 0;
+  bool invalid = out.empty() || !checker(out) || always_append_random;
+
+  while (invalid) {
+    if (always_append_random || attempts >= 10) {
+      out = hint +"_";
+
+      if (attempts > 20) {
+        throw TerebinthError("could not find unique random name", INTERNAL_ERROR);
+      }
+
+      for (int i = 0; i < 3; ++i) {
+        out += GetRandChar();
+      }
+    } else {
+      std::string suffix = std::to_string(attempts);
+
+      out = hint + "_" + suffix;
+    }
+    attempts++;
+    invalid = !checker(out);
+  }
 
   return out;
 }

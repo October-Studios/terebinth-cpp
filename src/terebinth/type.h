@@ -11,6 +11,7 @@ class TypeBase;
 typedef std::shared_ptr<TypeBase> Type;
 
 const extern Type Unknown;
+const extern Type Whatev;
 const extern Type Void;
 const extern Type Bool;
 const extern Type Byte;

@@ -12,15 +12,15 @@ class CppNameContainer {
 public:
   static std::shared_ptr<CppNameContainer> MakeRoot();
   std::shared_ptr<CppNameContainer> MakeChild();
-  void AddT(const std::string &t, const std::string &cpp_name_hint =
+  void AddTb(const std::string &t, const std::string &cpp_name_hint =
                                       "<- the value of that t string please");
   void ReserveCpp(const std::string &cpp, bool ignore_collision = false);
-  bool HasT(const std::string &t);
+  bool HasTb(const std::string &t);
   std::string GetCpp(const std::string &t);
   CppNameContainer *GetParent() { return parent_; }
 
 private:
-  bool HasTMe(const std::string &t);
+  bool HasTbMe(const std::string &t);
   CppNameContainer();
   bool HasCpp(const std::string &cpp);
   bool HasCppMe(const std::string &cpp);
@@ -28,7 +28,7 @@ private:
   bool HasCppDown(const std::string &cpp);
 
   std::unordered_set<std::string> cpp_set_;
-  std::map<std::string, std::string> t_to_cpp_map_;
+  std::map<std::string, std::string> tb_to_cpp_map_;
   CppNameContainer *parent_ = nullptr;
   std::vector<std::shared_ptr<CppNameContainer>> children_;
 };
@@ -47,7 +47,7 @@ public:
   void PopExpr();
   void PushBlock();
   void PopBlock();
-  std::string TToCpp(const std::string &in);
+  std::string TbToCpp(const std::string &in);
   int GetExprLevel() { return expr_level; }
   bool GetIfFreshLine() { return fresh_line; }
   int GetBlockLevel() { return block_level; }
@@ -88,7 +88,7 @@ public:
   void PopExpr() { active_func->PopExpr(); }
   void PushBlock() { active_func->PushBlock(); }
   void PopBlock() { active_func->PopBlock(); }
-  std::string TToCpp(const std::string &in) { return active_func->TToCpp(in); }
+  std::string TbToCpp(const std::string &in) { return active_func->TbToCpp(in); }
   int GetExprLevel() { return active_func->GetExprLevel(); }
   int GetBlockLevel() { return active_func->GetBlockLevel(); }
   int GetIfReturnsVal() { return active_func->GetIfReturnsVal(); }
@@ -129,6 +129,6 @@ private:
   std::shared_ptr<CppNameContainer> global_names;
 };
 
-void AddToProgTStr(CppProgram *prog);
+void AddToProgTbStr(CppProgram *prog);
 
 #endif // TEREBINTH_CPP_PROGRAM_H_

@@ -170,8 +170,6 @@ public:
     return AstNode(out);
   }
 
-  // void resolveReturnType();
-
   void ResolveAction();
 
   Token GetToken() { return nodes.empty() ? nullptr : nodes[0]->GetToken(); }
@@ -246,7 +244,7 @@ public:
 
   void ResolveAction();
 
-  AstNode MakeCopyWithSpecificTypes(Type leftInType, Type rightInType);
+  AstNode MakeCopyWithSpecificTypes(Type left_in_type, Type right_in_type);
 
   Token GetToken() { return body_node_->GetToken(); }
 
@@ -337,31 +335,31 @@ private:
 
 class AstOpWithInput : public AstNodeBase {
 public:
-  static std::unique_ptr<AstOpWithInput> Make(std::vector<AstNode> &leftInIn,
-                                              Token tokenIn,
-                                              std::vector<AstNode> &rightInIn) {
+  static std::unique_ptr<AstOpWithInput> Make(std::vector<AstNode> &left_in_in,
+                                              Token token_in,
+                                              std::vector<AstNode> &right_in_in) {
     std::unique_ptr<AstOpWithInput> node(new AstOpWithInput);
 
-    node->leftIn = std::move(leftInIn);
-    node->token = tokenIn;
-    node->rightIn = std::move(rightInIn);
+    node->left_in = std::move(left_in_in);
+    node->token = token_in;
+    node->right_in = std::move(right_in_in);
 
     return node;
   }
 
-  bool isFunctionWithOutput();
+  bool IsFunctionWithOutput();
 
   std::string GetString();
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstOpWithInput;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     out->token = token;
-    for (int i = 0; i < (int)leftIn.size(); i++) {
-      out->leftIn.push_back(leftIn[i]->MakeCopy(copyCache));
+    for (int i = 0; i < (int)left_in.size(); i++) {
+      out->left_in.push_back(left_in[i]->MakeCopy(copy_cache));
     }
-    for (int i = 0; i < (int)rightIn.size(); i++) {
-      out->rightIn.push_back(rightIn[i]->MakeCopy(copyCache));
+    for (int i = 0; i < (int)right_in.size(); i++) {
+      out->right_in.push_back(right_in[i]->MakeCopy(copy_cache));
     }
     return AstNode(out);
   }
@@ -371,7 +369,7 @@ public:
   Token GetToken() { return token; }
 
   Token token = nullptr;
-  std::vector<AstNode> leftIn, rightIn;
+  std::vector<AstNode> left_in, right_in;
 };
 
 class AstTuple : public AstNodeBase {
@@ -385,16 +383,14 @@ public:
 
   std::string GetString();
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstTuple;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     for (int i = 0; i < (int)nodes.size(); i++) {
-      out->nodes.push_back(nodes[i]->MakeCopy(copyCache));
+      out->nodes.push_back(nodes[i]->MakeCopy(copy_cache));
     }
     return AstNode(out);
   }
-
-  // void resolveReturnType();
 
   void ResolveAction();
 
@@ -425,9 +421,9 @@ public:
 
   std::string GetString() { return return_type_->GetString(); }
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstTypeType;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     out->return_type_ = return_type_;
     return AstNode(out);
   }
@@ -454,9 +450,9 @@ public:
 
   std::string GetString() { return "{}"; }
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstVoidType;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     return AstNode(out);
   }
 
@@ -477,9 +473,9 @@ public:
 
   std::string GetString();
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstTokenType;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     out->token = token;
     return AstNode(out);
   }
@@ -507,19 +503,19 @@ public:
 
   std::string GetString();
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstTupleType;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     for (int i = 0; i < (int)subTypes.size(); i++) {
       out->subTypes.push_back(
           {subTypes[i].name,
            std::unique_ptr<AstType>(
-               (AstType *)subTypes[i].type->MakeCopy(copyCache).release())});
+               (AstType *)subTypes[i].type->MakeCopy(copy_cache).release())});
     }
     return AstNode(out);
   }
 
-  void resolveReturnType();
+  void ResolveReturnType();
 
   Token GetToken() { return subTypes.empty() ? nullptr : subTypes[0].name; }
 
@@ -543,7 +539,7 @@ public:
 
   std::string GetString() { return "action wrapper node"; }
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstActionWrapper;
     CopyToNode(out, true);
     return AstNode(out);
@@ -568,9 +564,9 @@ public:
 
   std::string GetString() { return "AstWhatevToActionFactory"; }
 
-  AstNode MakeCopy(bool copyCache) {
+  AstNode MakeCopy(bool copy_cache) {
     auto out = new AstWhatevToActionFactory;
-    CopyToNode(out, copyCache);
+    CopyToNode(out, copy_cache);
     out->lambda = lambda;
     return AstNode(out);
   }
@@ -581,8 +577,8 @@ public:
                          INTERNAL_ERROR);
   }
 
-  AstNode MakeCopyWithSpecificTypes(Type leftInType, Type rightInType) {
-    auto action = lambda(leftInType, rightInType);
+  AstNode MakeCopyWithSpecificTypes(Type left_in_type, Type right_in_type) {
+    auto action = lambda(left_in_type, right_in_type);
     if (action)
       return AstActionWrapper::Make(action);
     else
@@ -594,7 +590,7 @@ public:
   bool CanBeWhatev() { return true; }
 
 private:
-  std::function<Action(Type leftInType, Type rightInType)> lambda;
+  std::function<Action(Type left_in_type, Type right_in_type)> lambda;
 };
 
 #endif // TEREBINTH_AST_NODE_H_
