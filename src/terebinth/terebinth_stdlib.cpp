@@ -1,4 +1,5 @@
 #include <ios>
+#include "action.h"
 #include "ast_node.h"
 #include "error_handler.h"
 #include "terebinth_program.h"
@@ -139,6 +140,170 @@ std::function<void(Action in_left, Action in_right, CppProgram* prog)> StringToL
   };
 }
 
+void AddAction(std::string text, Type left_type, Type right_type, Type return_type, std::function<void*(void*, void*)> lambda, std::string cpp) {
+  AddAction(text, left_type, right_type, return_type, lambda, StringToLambda(cpp));
+}
+
+void AddAction(Operator op, Type left_type, Type right_type, Type return_type, std::function<void*(void*, void*)> lambda, std::string cpp) {
+  AddAction(op, left_type, right_type, return_type, lambda, StringToLambda(cpp));
+}
+
+Type IntArray = nullptr;
+Type Array = nullptr;
+
+template<typename T>
+inline T GetValFromTuple(void* data, Type type, std::string name) {
+  while (type->GetType() == TypeBase::PTR) {
+    type = type->GetSubType();
+    data = *(void**)data;
+  }
+
+  OffsetAndType a = type->GetSubType(name);
+
+  if (!a.type) {
+    throw TerebinthError("tried to get invalid property '" + name + "' from type " + type->GetString(), INTERNAL_ERROR);
+  }
+
+  return *((T*)((char*)data + a.offset));
+}
+
+/**
+ * Add other functions here
+ */
+
+void BasicSetup() {
+  table = global_namespace_ = NamespaceData::MakeRootNamespace();
+
+  void_action_ = CreateNewVoidAction();
+}
+
+void PopulateBasicTypes() {
+  String = MakeTuple(std::vector<NamedType>{NamedType{"_size", Int}, NamedType{"_data", Byte->GetPtr()}}, false);
+
+  AddType(Void, "Void");
+  AddType(Bool, "Bool");
+  AddType(Byte, "Byte");
+  AddType(Int, "Int");
+  AddType(Double, "Double");
+  AddType(String, "String");
+}
+
+void PopulateConstants()
+{
+  table->AddNode(AstActionWrapper::Make(void_action_), "void");
+  
+  bool true_val = true;
+  AddConst(&true_val, Bool, "tru");
+  
+  bool false_val = false;
+  AddConst(&false_val, Bool, "fls");
+  
+  // version constant
+  {
+    Type version_tuple_type=
+      MakeTuple(std::vector<NamedType>{
+        NamedType{"x", Int},
+        NamedType{"y", Int},
+        NamedType{"z", Int},
+      }, false);
+    
+    void* version_tuple_data = malloc(version_tuple_type->GetSize());
+    
+    SetValInTuple(version_tuple_data, version_tuple_type, "x", VERSION_X);
+    SetValInTuple(version_tuple_data, version_tuple_type, "y", VERSION_Y);
+    SetValInTuple(version_tuple_data, version_tuple_type, "z", VERSION_Z);
+    
+    AddConst(version_tuple_data, version_tuple_type, "VERSION");
+  }
+  
+  // OS
+  bool is_linux = false;
+  bool is_windows = false;
+  bool is_unix = false;
+  bool is_mac = false;
+  
+  #ifdef __linux__
+    is_linux = true;
+    is_unix = true;
+  
+  #else
+    
+    #ifdef _WIN32 //works forboth 32 and 64 bit systems
+      is_windows = true;
+    
+    #else
+      #ifdef __APPLE__
+        is_mac = true;
+        is_unix = true;
+      #endif // __APPLE__
+    #endif // _WIN32
+    
+  #endif // __linux__
+  
+  AddConst(&is_linux, Bool, "OS_IS_LINUX");
+  AddConst(&is_windows, Bool, "OS_IS_WINDOWS");
+  AddConst(&is_mac, Bool, "OS_IS_MAC");
+  AddConst(&is_unix, Bool, "OS_IS_UNIX");
+  
+  func("IS_TRANSPILED", Void, Void, Bool,
+    retrn false;
+  ,
+    "true"
+  );
+  
+  AddAction("arg", Void, Int, String,
+    LAMBDA_HEADER
+    {
+      int right = *(int*)right_in;
+      if (right < (int)cmd_line_args.size())
+      {
+        return CppStr2TbthStr(cmd_line_args[right]);
+      }
+      else
+      {
+        return CppStr2TbthStr("");
+      }
+    },
+    ADD_CPP_HEADER
+    {
+      AddToProgTbStr(prog);
+      
+      prog->PushExpr();
+        prog->PushExpr();
+          prog->PushExpr();
+            right->AddToProg(prog);
+          prog->PopExpr();
+          prog->Code(" < argc");
+        prog->PopExpr();
+        prog->Code("?");
+        prog->PushExpr();
+          prog->Name("$pnStr");
+          prog->PushExpr();
+            prog->Code("argv[");
+            prog->PushExpr();
+              right->AddToProg(prog);
+            prog->PopExpr();
+            prog->Code("]");
+          prog->PopExpr();
+        prog->PopExpr();
+        prog->Code(":");
+        prog->PushExpr();
+          prog->Name("$pnStr");
+          prog->PushExpr();
+            prog->Code("\"\"");
+          prog->PopExpr();
+        prog->PopExpr();
+      prog->PopExpr();
+    }
+  );
+  
+  func("argLen", Void, Void, Int,
+    retrn cmd_line_args.size();
+  ,
+    "argc"
+  );
+}
+
 void PopulateCppInterfaceFuncs() {
   AddAction("cpp_code", Void, String, Void, LAMBDA_HEADER
     {
@@ -166,15 +331,15 @@ void PopulateCppInterfaceFuncs() {
 void PopulateTerebinthStdLib() {
   BasicSetup();
   PopulateBasicTypes();
-	PopulateConstants();
-	PopulateOperators();
-	PopulateConverters();
-	PopulateStdFuncs();
-	PopulateTypeInfoFuncs();
-	PopulateMemManagementFuncs();
-	PopulateStringFuncs();
-	PopulateIntArrayAndFuncs();
-	PopulateArrayFuncs();
-	PopulateNonStdFuncs();
-	PopulateCppInterfaceFuncs();
+  PopulateConstants();
+  PopulateOperators();
+  PopulateConverters();
+  PopulateStdFuncs();
+  PopulateTypeInfoFuncs();
+  PopulateMemManagementFuncs();
+  PopulateStringFuncs();
+  PopulateIntArrayAndFuncs();
+  PopulateArrayFuncs();
+  PopulateNonStdFuncs();
+  PopulateCppInterfaceFuncs();
 }
