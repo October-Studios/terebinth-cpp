@@ -23,24 +23,24 @@ public:
     left_input_ = left_input_in;
     right_input_ = right_input_in;
 
-    if (!leftInput->getInLeftType()->matches(Void) || !leftInput->getInRightType()->matches(Void)) {
-			throw PineconeError(leftInput->getDescription() +
+    if (!left_input_->GetInLeftType()->Matches(Void) || !left_input_->GetInRightType()->Matches(Void)) {
+			throw TerebinthError(left_input_->GetDescription() +
           " put into branch even though its inputs are not void", INTERNAL_ERROR);
 		}
 		
-		if (!rightInput->getInLeftType()->matches(Void) || !rightInput->getInRightType()->matches(Void)) {
-			throw PineconeError(rightInput->getDescription() +
+		if (!right_input_->GetInLeftType()->Matches(Void) || !right_input_->GetInRightType()->Matches(Void)) {
+			throw TerebinthError(right_input_->GetDescription() +
           " put into branch even though its inputs are not void", INTERNAL_ERROR);
 		}
 		
-		if (!leftInput->getReturnType()->matches(action->getInLeftType())) {
-			throw PineconeError(leftInput->getDescription() +
-          " return type is not the same as the left input of " + action->getDescription(), INTERNAL_ERROR);
+		if (!left_input_->GetReturnType()->Matches(action_->GetInLeftType())) {
+			throw TerebinthError(left_input_->GetDescription() +
+          " return type is not the same as the left input of " + action_->GetDescription(), INTERNAL_ERROR);
 		}
 		
-		if (!rightInput->getReturnType()->matches(action->getInRightType())) {
-			throw PineconeError(rightInput->getDescription() +
-          " return type is not the same as the right input of " + action->getDescription(), INTERNAL_ERROR);
+		if (!right_input_->GetReturnType()->Matches(action_->GetInRightType())) {
+			throw TerebinthError(right_input_->GetDescription() +
+          " return type is not the same as the right input of " + action_->GetDescription(), INTERNAL_ERROR);
 		}
   }
 
