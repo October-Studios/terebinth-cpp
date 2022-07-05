@@ -97,11 +97,11 @@ std::string TerebinthProgram::GetCpp() {
 
 void TerebinthProgram::Execute() {
   try {
-    stack_ptr = global_frame_ptr =
+    stack_ptr_ = global_frame_ptr_ =
         malloc(global_namespace->GetStackFrame()->GetSize());
     free(action_root_->Execute(nullptr, nullptr));
-    free(global_frame_ptr);
-    stack_ptr = global_frame_ptr = nullptr;
+    free(global_frame_ptr_);
+    stack_ptr_ = global_frame_ptr_ = nullptr;
   } catch (TerebinthError err) {
     err.Log();
     std::cout << std::endl

@@ -155,7 +155,7 @@ public:
 		left_input_ = left_input_in;
 		
 		if (!left_input_->GetInLeftType()->Matches(Void) || !left_input_->GetInRightType()->Matches(Void)) {
-			throw TerebinthError(leftInput->GetDescription() +
+			throw TerebinthError(left_input_->GetDescription() +
           " put into branch even though its inputs are not void", INTERNAL_ERROR);
 		}
 		
@@ -176,7 +176,7 @@ public:
 
 	void* Execute(void* in_left, void* in_right) {
 		void* left_data = left_input_->Execute(nullptr, nullptr);
-		void* out_data = action->Execute(left_data, nullptr);
+		void* out_data = action_->Execute(left_data, nullptr);
 		free(left_data);
 		return out_data;
 	}
@@ -184,7 +184,7 @@ public:
 	void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
 		Action left_in_tmp = left_input_;
 		
-		if (left_in_tmp->GetReturnType() != action->GetInLeftType())
+		if (left_in_tmp->GetReturnType() != action_->GetInLeftType())
 			left_in_tmp = CppTupleCastAction(left_in_tmp, action_->GetInLeftType());
 		
 		action_->AddToProg(left_in_tmp, void_action_, prog);
@@ -206,7 +206,7 @@ Action BranchAction(Action left_input_in, Action action_in, Action right_input_i
 		if (right_input_in->GetReturnType()->IsVoid()) {
 			return Action(new LeftBranchAction(left_input_in, action_in));
 		} else {
-			return Action(new BranchAction(left_input_in, action_in, right_input_in));
+			return Action(BranchAction(left_input_in, action_in, right_input_in));
 		}
 	}
 }

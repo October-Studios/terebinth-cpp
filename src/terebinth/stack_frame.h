@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "type.h"
-extern void *global_frame_ptr;
-extern void *stack_ptr;
+extern void *global_frame_ptr_;
+extern void *stack_ptr_;
 
 class StackFrame {
 public:
