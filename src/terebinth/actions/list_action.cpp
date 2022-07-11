@@ -4,7 +4,7 @@
 class ListAction : public ActionData {
 public:
   ListAction(const std::vector<Action>& actions_in, const std::vector<Action>& destroyers_in) :
-    ActionData(actions_in.size() > 0 ? actions_in.back()->GetReturnType() : Void), Void, Void) {
+    ActionData((actions_in.size() > 0 ? actions_in.back()->GetReturnType() : Void), Void, Void) {
     actions_ = actions_in;
     destroyers_ = destroyers_in;
 

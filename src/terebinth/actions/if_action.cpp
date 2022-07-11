@@ -60,9 +60,9 @@ public:
     return_val_ = GetReturnType() != Void;
     condition_ = condition_in;
     if_action_ = if_action_in;
-    else_action_ else_action_in;
+    else_action_ = else_action_in;
 
-    if (condition->GetReturnType() != Bool) {
+    if (condition_->GetReturnType() != Bool) {
       error_.Log("IfElseAction created with condition action that does not return Bool", INTERNAL_ERROR);
     }
 

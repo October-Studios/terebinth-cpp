@@ -74,7 +74,7 @@ public:
     }
 
     if (in_right) {
-      memcpy((char*)stack_ptr_ + stack_frame_->GetRightOffset(), in_right, GetInRightType->GetSize());
+      memcpy((char*)stack_ptr_ + stack_frame_->GetRightOffset(), in_right, GetInRightType()->GetSize());
     }
 
     void* out = action_->Execute(nullptr, nullptr);
@@ -133,9 +133,9 @@ private:
 };
 
 Action FunctionAction(Action action_in, std::shared_ptr<StackFrame> stack_frame_in) {
-  return Action(new FunctionAction(action_in, stack_frame_in));
+  return Action(FunctionAction(action_in, stack_frame_in));
 }
 
 Action FunctionAction(AstNode node_in, Type return_type_in, std::shared_ptr<StackFrame> stack_frame_in) {
-  return Action(new FunctionAction(std::move(node_in), return_type_in, stack_frame_in);
+  return Action(FunctionAction(std::move(node_in), return_type_in, stack_frame_in));
 }

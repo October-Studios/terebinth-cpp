@@ -25,7 +25,7 @@ public:
   }
 
   std::string GetDescription() {
-    std::string vody = loop_action_->GetDescription();
+    std::string body = loop_action_->GetDescription();
     if (end_action_ != void_action_) {
       std::vector<std::string> data = {body, end_action_->GetDescription()};
       body = str::MakeList(data);
@@ -41,7 +41,7 @@ public:
     while (true) {
       condition_out = condition_->Execute(nullptr, nullptr);
       if (!(*((bool*)condition_out))) {
-        break
+        break;
       }
       free(condition_out);
       free(loop_action_->Execute(nullptr, nullptr));

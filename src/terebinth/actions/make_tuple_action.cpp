@@ -16,7 +16,7 @@ public:
     ActionData([&]() -> Type {
         TupleTypeMaker tuple;
         for (auto i = source_actions_in.begin(); i != source_actions_in.end(); ++i) {
-          tuple.add((*i)->GetReturnType());
+          tuple.Add((*i)->GetReturnType());
         }
 
         return tuple.Get(true);
@@ -58,7 +58,7 @@ public:
     return out;
   }
 
-  void AddToProg() {
+  void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
     if (source_actions_.size() == 1) {
 			source_actions_[0]->AddToProg(prog);
 			return;
@@ -79,15 +79,15 @@ public:
 private:
   std::vector<Action> source_actions_;
 
-  friend GetElemFromTupleAction;
-  friend CppTupleCastAction;
+  friend class GetElemFromTupleAction;
+  friend class CppTupleCastAction;
 };
 
 class CppTupleCastAction : public ActionData {
 public:
   CppTupleCastAction(Action action_in, Type return_type) :
     ActionData(return_type, Void, Void) {
-    if ((action_in->GetReturnType()->GetType() != TypeBase::TUPLE && GetReturnType->GetType() !=
+    if ((action_in->GetReturnType()->GetType() != TypeBase::TUPLE && GetReturnType()->GetType() !=
           TypeBase::TUPLE) || !action_in->GetReturnType()->Matches(GetReturnType())) {
       throw TerebinthError("CppCastAction was only designed to case matching tuples, which is not how it is being used",
           INTERNAL_ERROR);
@@ -105,9 +105,9 @@ public:
   }
 
   void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
-    if (GetReturnType()->GetAllSubTypes()->Size() == 1) {
+    if (GetReturnType()->GetAllSubTypes()->size() == 1) {
       action_->AddToProg(prog);
-    }	else if (typeid(*action) == typeid(MakeTupleAction)) {
+    }	else if (typeid(*action_) == typeid(MakeTupleAction)) {
 			MakeTupleAction* real_action = (MakeTupleAction*)&*action_;
 			
 			prog->Code(prog->GetTypeCode(GetReturnType()));
@@ -171,7 +171,7 @@ public:
 			
 			prog->Name(func_name);
 			prog->PushExpr();
-				action->AddToProg(prog);
+				action_->AddToProg(prog);
 			prog->PopExpr();
 		}
   }
@@ -179,32 +179,32 @@ public:
 private:
   Action action_;
 
-  friend GetElemFromTupleAction;
+  friend class GetElemFromTupleAction;
 };
 
 class GetElemFromTupleAction : public ActionData {
 public:
   GetElemFromTupleAction(Type type_in_in, std::string name_in) :
     ActionData(type_in_in->GetSubType(name_in).type, type_in_in, Void) {
-    type_in = type_in_in;
+    type_in_ = type_in_in;
     type_out_ = type_in_in->GetSubType(name_in).type;
     name_ = name_in;
     size_ = type_out_->GetSize();
-    offset_ = type_in->GetSubType(name).offset;
+    offset_ = type_in_->GetSubType(name_).offset;
   }
 
   std::string GetDescription() {
-    return str::PutStringInTreeNodeBox(name);
+    return str::PutStringInTreeNodeBox(name_);
   }
 
   void* Execute(void* in_left, void* in_right) {
-    void* out = malloc(size);
+    void* out = malloc(size_);
     memcpy(out, (char*)in_left + offset_, size_);
     return out;
   }
 
   void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
-    if (type_in->GetAllSubTypes()->Size() == 1) {
+    if (type_in_->GetAllSubTypes()->size() == 1) {
       in_left->AddToProg(prog);
       return;
     }
@@ -225,7 +225,7 @@ public:
       auto types = *in_left->GetReturnType()->GetAllSubTypes();
 
       for (int i = 0; i < int(types.size()); ++i) {
-        if (types[i].name_ == name_) {
+        if (types[i].name == name_) {
           make_tuple_action->source_actions_[i]->AddToProg(prog);
           break;
         }
