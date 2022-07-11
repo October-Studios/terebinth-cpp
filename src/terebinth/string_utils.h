@@ -1,14 +1,14 @@
 #ifndef TEREBINTH_STRING_UTILS_H_
 #define TEREBINTH_STRING_UTILS_H_
 
-#include <functional>
-#include <string>
-#include <vector>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <math.h>
-#include <iostream>
 #include <exception>
+#include <functional>
+#include <iostream>
+#include <math.h>
+#include <string>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <vector>
 
 #include "error_handler.h"
 
@@ -43,49 +43,47 @@ std::string Pad(const std::string &in, int size,
                 std::string pad = " ", std::string left_cap = "",
                 std::string right_cap = "");
 
-inline std::string PadString(const std::string& in, int size, int alignment = 1, std::string pad = " ", std::string left_cap = "", std::string right_cap = "") {
+inline std::string PadString(const std::string &in, int size, int alignment = 1,
+                             std::string pad = " ", std::string left_cap = "",
+                             std::string right_cap = "") {
   int cap_size = left_cap.size() + right_cap.size();
-	int pad_size = size - int(in.size() + cap_size);
-	
-	if (pad_size < 0) {
-		if (size - cap_size >= 1) {
-			return left_cap + in.substr(0, size - cap_size - 1) + "…" + right_cap;
-		}
-		else if (size - cap_size >= 0) {
-			return left_cap + std::string("…").substr(0, size - cap_size) + right_cap;
-		}
-		else {
-			return (left_cap + right_cap).substr(0, size);
-		}
-	}
-	else if (pad_size == 0) {
-		return left_cap + in + right_cap;
-	}
-	else {
-		if (alignment == 0) {
+  int pad_size = size - int(in.size() + cap_size);
+
+  if (pad_size < 0) {
+    if (size - cap_size >= 1) {
+      return left_cap + in.substr(0, size - cap_size - 1) + "…" + right_cap;
+    } else if (size - cap_size >= 0) {
+      return left_cap + std::string("…").substr(0, size - cap_size) + right_cap;
+    } else {
+      return (left_cap + right_cap).substr(0, size);
+    }
+  } else if (pad_size == 0) {
+    return left_cap + in + right_cap;
+  } else {
+    if (alignment == 0) {
       std::string left_pad, right_pad;
-			
-			for (int i = 0; i < floor(pad_size / 2.0); i++)
-				left_pad += pad;
-			
-			for (int i = 0; i < ceil(pad_size / 2.0); i++)
-				right_pad += pad;
-			
-			return left_pad + left_cap + in + right_cap + right_pad;
-		}
-		// left or right alignment
-		else {
+
+      for (int i = 0; i < floor(pad_size / 2.0); i++)
+        left_pad += pad;
+
+      for (int i = 0; i < ceil(pad_size / 2.0); i++)
+        right_pad += pad;
+
+      return left_pad + left_cap + in + right_cap + right_pad;
+    }
+    // left or right alignment
+    else {
       std::string pad_str;
-			
-			for (int i = 0; i < pad_size; i++)
-				pad_str += pad;
-			
-			if (alignment > 0) // right align
-				return left_cap + in + right_cap + pad_str;
-			else // left align
-				return pad_str + left_cap + in + right_cap;
-		}
-	}
+
+      for (int i = 0; i < pad_size; i++)
+        pad_str += pad;
+
+      if (alignment > 0) // right align
+        return left_cap + in + right_cap + pad_str;
+      else // left align
+        return pad_str + left_cap + in + right_cap;
+    }
+  }
 }
 
 inline void NextGlyph(int &out, const std::string &in) {
@@ -153,7 +151,7 @@ inline bool HasSuffix(const std::string &in, const std::string &suffix) {
   return SubMatches(in, in.size() - suffix.size(), suffix);
 }
 
-inline std::string IndentString(const std::string& in, std::string indent) {
+inline std::string IndentString(const std::string &in, std::string indent) {
   std::string out;
   int start = 0;
 
@@ -181,8 +179,8 @@ inline std::string IndentString(const std::string& in, std::string indent) {
 inline std::string DoubleToString(double in) {
   long long a = in;
   long long b = (in - a) * 10000000000;
-  if ( b < 0) {
-    b *= - 1;
+  if (b < 0) {
+    b *= -1;
   }
   if (b % 10 == 9) {
     b += 1;
@@ -239,8 +237,9 @@ inline int StringToInt(std::string in) {
 
 inline std::string RunCmd(std::string cmd, bool print_output = false) {
   std::string result = "";
-  FILE* pipe = popen(cmd.c_str(), "r");
-  if (!pipe) throw std::runtime_error("popen() failed in GetOutputFromCmd");
+  FILE *pipe = popen(cmd.c_str(), "r");
+  if (!pipe)
+    throw std::runtime_error("popen() failed in GetOutputFromCmd");
   try {
     while (!feof(pipe)) {
       char c;
@@ -260,7 +259,7 @@ inline std::string RunCmd(std::string cmd, bool print_output = false) {
   return result;
 }
 
-inline std::string GetTextOfLine(const std::string& in, int line_num) {
+inline std::string GetTextOfLine(const std::string &in, int line_num) {
   int start = -1;
   int end = -1;
 
@@ -269,7 +268,7 @@ inline std::string GetTextOfLine(const std::string& in, int line_num) {
   } else if (line_num == 1) {
     start = 0;
   }
-  
+
   int line = 1;
 
   for (unsigned i = 0; i < in.size(); ++i) {
@@ -313,7 +312,8 @@ inline int GetTermWidth() {
 #endif
 }
 
-inline int SearchInString(const std::string& in, const std::string& pattern, int start_pos) {
+inline int SearchInString(const std::string &in, const std::string &pattern,
+                          int start_pos) {
   for (auto i = start_pos; i < in.size(); ++i) {
     if (SubMatches(in, i, pattern)) {
       return i;
@@ -323,7 +323,8 @@ inline int SearchInString(const std::string& in, const std::string& pattern, int
   return -1;
 }
 
-inline void SliceStringBy(const std::string& in, const std::string& pattern, std::vector<std::string>& out) {
+inline void SliceStringBy(const std::string &in, const std::string &pattern,
+                          std::vector<std::string> &out) {
   int start = 0;
 
   if (pattern.size() < 1) {
@@ -343,14 +344,15 @@ inline void SliceStringBy(const std::string& in, const std::string& pattern, std
   }
 }
 
-inline void TabsToSpaces(std::vector<std::string>& in) {
+inline void TabsToSpaces(std::vector<std::string> &in) {
   for (auto i = 0; i < in.size(); ++i) {
     in[i] = TabsToSpaces(in[i]);
   }
 }
 
-inline std::string LineListToBoxedString(const std::vector<std::string>& in,
-    std::string box_name, int line_num, bool always_width_max, int max_width) {
+inline std::string LineListToBoxedString(const std::vector<std::string> &in,
+                                         std::string box_name, int line_num,
+                                         bool always_width_max, int max_width) {
   std::string out;
 
   auto first = in.begin();
@@ -359,7 +361,7 @@ inline std::string LineListToBoxedString(const std::vector<std::string>& in,
   if (first != last) {
     last--;
 
-    while(first != last && *first == "") {
+    while (first != last && *first == "") {
       first++;
       if (line_num >= 0) {
         line_num++;
@@ -390,9 +392,11 @@ inline std::string LineListToBoxedString(const std::vector<std::string>& in,
   }
 
   if (box_name == "") {
-    out += "  " + PadString("", size + extra_width, 1, "_") + "  "; 
+    out += "  " + PadString("", size + extra_width, 1, "_") + "  ";
   } else {
-    out += "  _" + PadString(box_name, size + extra_width - 2, 0, "_", "[ ", " ]") + "_  ";
+    out += "  _" +
+           PadString(box_name, size + extra_width - 2, 0, "_", "[ ", " ]") +
+           "_  ";
   }
 
   out += "\n |" + PadString("", size + extra_width, 1, " ") + "| ";
@@ -435,7 +439,8 @@ inline char GetRandChar() {
 }
 
 inline std::string GetUniqueString(std::string hint,
-    std::function<bool(std::string)> checker, bool always_append_random) {
+                                   std::function<bool(std::string)> checker,
+                                   bool always_append_random) {
   std::string out = hint;
 
   int attempts = 0;
@@ -443,10 +448,11 @@ inline std::string GetUniqueString(std::string hint,
 
   while (invalid) {
     if (always_append_random || attempts >= 10) {
-      out = hint +"_";
+      out = hint + "_";
 
       if (attempts > 20) {
-        throw TerebinthError("could not find unique random name", INTERNAL_ERROR);
+        throw TerebinthError("could not find unique random name",
+                             INTERNAL_ERROR);
       }
 
       for (int i = 0; i < 3; ++i) {
@@ -464,7 +470,11 @@ inline std::string GetUniqueString(std::string hint,
   return out;
 }
 
-inline std::string PutStringInBox(const std::string& in, std::string box_name="", bool show_line_nums = false, bool always_width_max = false, int max_width = -1) {
+inline std::string PutStringInBox(const std::string &in,
+                                  std::string box_name = "",
+                                  bool show_line_nums = false,
+                                  bool always_width_max = false,
+                                  int max_width = -1) {
   std::vector<std::string> lines;
 
   if (max_width < 0) {
@@ -475,7 +485,8 @@ inline std::string PutStringInBox(const std::string& in, std::string box_name=""
 
   TabsToSpaces(lines);
 
-  std::string out = LineListToBoxedString(lines, box_name, show_line_nums ? 1 : -1, always_width_max, max_width);
+  std::string out = LineListToBoxedString(
+      lines, box_name, show_line_nums ? 1 : -1, always_width_max, max_width);
 
   return out;
 }

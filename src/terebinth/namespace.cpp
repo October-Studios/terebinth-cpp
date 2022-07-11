@@ -1,12 +1,12 @@
 #include "namespace.h"
-#include <tuple>
 #include "action.h"
 #include "ast_node.h"
-#include "stack_frame.h"
-#include "string_utils.h"
 #include "error_handler.h"
+#include "stack_frame.h"
 #include "string_num_conversion.h"
+#include "string_utils.h"
 #include "type.h"
+#include <tuple>
 
 void NamespaceData::IdMap::Add(std::string key, AstNode node) {
   auto i = nodes_.find(key);
@@ -18,7 +18,8 @@ void NamespaceData::IdMap::Add(std::string key, AstNode node) {
   nodes_[key].push_back(std::move(node));
 }
 
-void NamespaceData::IdMap::Get(std::string key, std::vector<AstNodeBase*>& out) {
+void NamespaceData::IdMap::Get(std::string key,
+                               std::vector<AstNodeBase *> &out) {
   auto matches = nodes_.find(key);
 
   if (matches != nodes_.end()) {
@@ -29,7 +30,9 @@ void NamespaceData::IdMap::Get(std::string key, std::vector<AstNodeBase*>& out) 
 }
 
 Namespace NamespaceData::MakeRootNamespace() {
-  return Namespace(new NamespaceData(Namespace(nullptr), std::shared_ptr<StackFrame>(new StackFrame()), "root"));
+  return Namespace(
+      new NamespaceData(Namespace(nullptr),
+                        std::shared_ptr<StackFrame>(new StackFrame()), "root"));
 }
 
 Namespace NamespaceData::MakeChild() {
@@ -37,16 +40,22 @@ Namespace NamespaceData::MakeChild() {
 }
 
 Namespace NamespaceData::MakeChildAndFrame(std::string name_in) {
-  return Namespace(new NamespaceData(shared_from_this(), std::shared_ptr<StackFrame>(new StackFrame()), name_in));
+  return Namespace(new NamespaceData(
+      shared_from_this(), std::shared_ptr<StackFrame>(new StackFrame()),
+      name_in));
 }
 
-NamespaceData::NamespaceData(Namespace parent_in, std::shared_ptr<StackFrame> stack_frame_in, std::string name_in) {
+NamespaceData::NamespaceData(Namespace parent_in,
+                             std::shared_ptr<StackFrame> stack_frame_in,
+                             std::string name_in) {
   parent_ = parent_in;
   stack_frame_ = stack_frame_in;
   my_name_ = name_in;
 }
 
-std::string NamespaceData::GetString() { return "NamespaceData::GetString not yet implemented"; }
+std::string NamespaceData::GetString() {
+  return "NamespaceData::GetString not yet implemented";
+}
 
 std::string NamespaceData::GetStringWithParents() {
   auto ptr = shared_from_this();
@@ -63,7 +72,10 @@ std::string NamespaceData::GetStringWithParents() {
 
 void NamespaceData::SetInput(Type left, Type right) {
   if (parent_ && parent_->GetStackFrame() == stack_frame_) {
-    error_.Log("called " + FUNC + " on namespace that is not the root of a stack frame, thus it cannot get input", INTERNAL_ERROR);
+    error_.Log("called " + FUNC +
+                   " on namespace that is not the root of a stack frame, thus "
+                   "it cannot get input",
+               INTERNAL_ERROR);
     return;
   }
 
@@ -98,7 +110,7 @@ Action NamespaceData::AddVar(Type type, std::string name) {
 
   Namespace top = shared_from_this();
 
-  while(top->parent_) {
+  while (top->parent_) {
     top = top->parent_;
   }
 
@@ -113,7 +125,8 @@ Action NamespaceData::AddVar(Type type, std::string name) {
   copy_action = GetCopier(type);
 
   if (copy_action) {
-    dynamic_actions_.Add(name, AstActionWrapper::Make(BranchAction(void_action_, copy_action, get_action)));
+    dynamic_actions_.Add(name, AstActionWrapper::Make(BranchAction(
+                                   void_action_, copy_action, get_action)));
   } else {
     dynamic_actions_.Add(name, AstActionWrapper::Make(get_action));
   }
@@ -123,7 +136,8 @@ Action NamespaceData::AddVar(Type type, std::string name) {
   Action destructor = GetDestroyer(type);
 
   if (destructor) {
-    destructor_actions_.push_back(BranchAction(void_action_, destructor, get_action));
+    destructor_actions_.push_back(
+        BranchAction(void_action_, destructor, get_action));
   }
 
   return set_action;
@@ -146,8 +160,9 @@ void NamespaceData::AddNode(AstNode node, std::string id) {
   }
 }
 
-Type NamespaceData::GetType(std::string name, bool throw_source_error, Token token_for_error) {
-  std::vector<AstNodeBase*> results;
+Type NamespaceData::GetType(std::string name, bool throw_source_error,
+                            Token token_for_error) {
+  std::vector<AstNodeBase *> results;
 
   types_.Get(name, results);
 
@@ -160,16 +175,22 @@ Type NamespaceData::GetType(std::string name, bool throw_source_error, Token tok
       return nullptr;
     }
   } else if (results.size() != 1) {
-    throw TerebinthError("namespace has multiple definitions of the same type '" + name + "'", INTERNAL_ERROR);
+    throw TerebinthError(
+        "namespace has multiple definitions of the same type '" + name + "'",
+        INTERNAL_ERROR);
   } else if (results[0]->GetReturnType()->GetType() != TypeBase::METATYPE) {
-    throw TerebinthError("node returning non meta type stored in namespace type map for type '" + name + "'", INTERNAL_ERROR);
+    throw TerebinthError(
+        "node returning non meta type stored in namespace type map for type '" +
+            name + "'",
+        INTERNAL_ERROR);
   } else {
     return results[0]->GetReturnType()->GetSubType();
   }
 }
 
 Action NamespaceData::GetDestroyer(Type type) {
-  return GetActionForTokenWithInput(MakeToken("__destroy__"), Void, type, false, false, nullptr);
+  return GetActionForTokenWithInput(MakeToken("__destroy__"), Void, type, false,
+                                    false, nullptr);
 }
 
 Action NamespaceData::WrapInDestroyer(Action in) {
@@ -179,26 +200,33 @@ Action NamespaceData::WrapInDestroyer(Action in) {
 }
 
 Action NamespaceData::GetCopier(Type type) {
-  return GetActionForTokenWithInput(MakeToken("__copy__"), Void, type, false, false, nullptr);
+  return GetActionForTokenWithInput(MakeToken("__copy__"), Void, type, false,
+                                    false, nullptr);
 }
 
-Action NamespaceData::GetActionForTokenWithInput(Token token, Type left, Type right, bool dynamic, bool throw_source_error, Token token_for_error) {
+Action NamespaceData::GetActionForTokenWithInput(Token token, Type left,
+                                                 Type right, bool dynamic,
+                                                 bool throw_source_error,
+                                                 Token token_for_error) {
   std::vector<Action> matches;
-  std::vector<AstNodeBase*> nodes;
+  std::vector<AstNodeBase *> nodes;
 
   bool found_nodes = false;
   AstNode tuple_node;
 
-  std::string search_text = (token->GetOp() ? token->GetOp()->GetText() : token->GetText());
+  std::string search_text =
+      (token->GetOp() ? token->GetOp()->GetText() : token->GetText());
 
   GetNodes(nodes, search_text, true, dynamic, false);
 
-  if (left->GetType() == TypeBase::TUPLE && token->GetType() == TokenData::IDENTIFIER) {
+  if (left->GetType() == TypeBase::TUPLE &&
+      token->GetType() == TokenData::IDENTIFIER) {
     auto match = left->GetSubType(search_text);
 
     if (match.type) {
       if (right->IsVoid()) {
-        tuple_node = AstActionWrapper::Make(GetElemFromTupleAction(left, search_text));
+        tuple_node =
+            AstActionWrapper::Make(GetElemFromTupleAction(left, search_text));
         nodes.push_back(&*tuple_node);
       }
     }
@@ -214,7 +242,9 @@ Action NamespaceData::GetActionForTokenWithInput(Token token, Type left, Type ri
     if (matches.size() == 1) {
       return matches[0];
     } else if (throw_source_error) {
-      throw TerebinthError("multiple matching instances of '" + token->GetText() + "' found", SOURCE_ERROR, token_for_error);
+      throw TerebinthError("multiple matching instances of '" +
+                               token->GetText() + "' found",
+                           SOURCE_ERROR, token_for_error);
     } else {
       return nullptr;
     }
@@ -227,7 +257,7 @@ Action NamespaceData::GetActionForTokenWithInput(Token token, Type left, Type ri
     found_nodes = true;
   }
 
-  for (auto i: nodes) {
+  for (auto i : nodes) {
     AstNode instance = i->MakeCopyWithSpecificTypes(left, right);
 
     if (instance) {
@@ -240,28 +270,37 @@ Action NamespaceData::GetActionForTokenWithInput(Token token, Type left, Type ri
     if (matches.size() == 1) {
       return matches[0];
     } else if (throw_source_error) {
-      throw TerebinthError("multiple whatev instances of '" + token->GetText() + "' found", SOURCE_ERROR, token_for_error);
+      throw TerebinthError("multiple whatev instances of '" + token->GetText() +
+                               "' found",
+                           SOURCE_ERROR, token_for_error);
     } else {
       return nullptr;
     }
   }
 
-  if (!found_nodes && dynamic && token->GetType() == TokenData::IDENTIFIER && left->IsVoid() && right->IsCreatable()) {
+  if (!found_nodes && dynamic && token->GetType() == TokenData::IDENTIFIER &&
+      left->IsVoid() && right->IsCreatable()) {
     return AddVar(right, token->GetText());
   }
 
   if (throw_source_error) {
     if (found_nodes) {
-      throw TerebinthError("correct overload of '" + token->GetText() + "' not found for types " + left->GetString() + " and " +right->GetString(), SOURCE_ERROR, token_for_error);
+      throw TerebinthError("correct overload of '" + token->GetText() +
+                               "' not found for types " + left->GetString() +
+                               " and " + right->GetString(),
+                           SOURCE_ERROR, token_for_error);
     } else {
-      throw TerebinthError("'" + token->GetText() + "' not found", SOURCE_ERROR, token_for_error);
+      throw TerebinthError("'" + token->GetText() + "' not found", SOURCE_ERROR,
+                           token_for_error);
     }
   } else {
     return nullptr;
   }
 }
 
-void NamespaceData::GetNodes(std::vector<AstNodeBase*>& out, std::string text, bool check_actions, bool check_dynamic, bool check_whatev) {
+void NamespaceData::GetNodes(std::vector<AstNodeBase *> &out, std::string text,
+                             bool check_actions, bool check_dynamic,
+                             bool check_whatev) {
   if (check_actions) {
     actions_.Get(text, out);
   }
@@ -279,11 +318,15 @@ void NamespaceData::GetNodes(std::vector<AstNodeBase*>& out, std::string text, b
   }
 }
 
-void NamespaceData::NodesToMatchingActions(std::vector<Action>& out, std::vector<AstNodeBase*>& nodes, Type left_in_type, Type right_in_type) {
+void NamespaceData::NodesToMatchingActions(std::vector<Action> &out,
+                                           std::vector<AstNodeBase *> &nodes,
+                                           Type left_in_type,
+                                           Type right_in_type) {
   for (auto i : nodes) {
     Action action = i->GetAction();
 
-    if (action->GetInLeftType()->Matches(left_in_type) && action->GetInRightType()->Matches(right_in_type)) {
+    if (action->GetInLeftType()->Matches(left_in_type) &&
+        action->GetInRightType()->Matches(right_in_type)) {
       out.push_back(action);
     }
   }

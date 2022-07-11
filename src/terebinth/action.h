@@ -3,8 +3,8 @@
 
 #include "cpp_program.h"
 #include "stack_frame.h"
-#include "type.h"
 #include "string_drawing.h"
+#include "type.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -40,7 +40,9 @@ public:
     prog->Comment("action '" + GetDescription() +
                   "' to cpp code not yet implemented");
   }
-  void AddToProg(CppProgram *prog) { AddToProg(void_action_, void_action_, prog); }
+  void AddToProg(CppProgram *prog) {
+    AddToProg(void_action_, void_action_, prog);
+  }
 
   std::string name_hint_ = "";
 
@@ -57,7 +59,7 @@ class AstNodeBase;
 
 Action LambdaAction(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,
-    std::function<void*(void*, void*)> lambda_in,
+    std::function<void *(void *, void *)> lambda_in,
     std::function<void(Action in_left, Action in_right, CppProgram *prog)>
         cpp_writer_in,
     std::string text_in);

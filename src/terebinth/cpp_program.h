@@ -13,7 +13,7 @@ public:
   static std::shared_ptr<CppNameContainer> MakeRoot();
   std::shared_ptr<CppNameContainer> MakeChild();
   void AddTb(const std::string &t, const std::string &cpp_name_hint =
-                                      "<- the value of that t string please");
+                                       "<- the value of that t string please");
   void ReserveCpp(const std::string &cpp, bool ignore_collision = false);
   bool HasTb(const std::string &t);
   std::string GetCpp(const std::string &t);
@@ -88,7 +88,9 @@ public:
   void PopExpr() { active_func->PopExpr(); }
   void PushBlock() { active_func->PushBlock(); }
   void PopBlock() { active_func->PopBlock(); }
-  std::string TbToCpp(const std::string &in) { return active_func->TbToCpp(in); }
+  std::string TbToCpp(const std::string &in) {
+    return active_func->TbToCpp(in);
+  }
   int GetExprLevel() { return active_func->GetExprLevel(); }
   int GetBlockLevel() { return active_func->GetBlockLevel(); }
   int GetIfReturnsVal() { return active_func->GetIfReturnsVal(); }

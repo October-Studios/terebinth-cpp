@@ -1,13 +1,12 @@
 #include "all_operators.h"
 #include "error_handler.h"
 
-AllOperators* ops_ = nullptr;
+AllOperators *ops_ = nullptr;
 
-Operator OpCreate(std::string text_in, int left_precedence_in, int right_precedence_in, bool overloadable_in);
+Operator OpCreate(std::string text_in, int left_precedence_in,
+                  int right_precedence_in, bool overloadable_in);
 
-void AllOperators::Init() {
-  ops_ = new AllOperators();
-}
+void AllOperators::Init() { ops_ = new AllOperators(); }
 
 AllOperators::AllOperators() {
 #undef DECLARE_OP
@@ -17,11 +16,9 @@ AllOperators::AllOperators() {
   ALL_OPS;
 }
 
-void AllOperators::PutOpInMap(Operator op) {
-  ops_map_[op->GetText()] = op;
-}
+void AllOperators::PutOpInMap(Operator op) { ops_map_[op->GetText()] = op; }
 
-void AllOperators::Get(std::string text, std::vector<Operator>& out) {
+void AllOperators::Get(std::string text, std::vector<Operator> &out) {
   int start = 0;
   int end = text.size();
 

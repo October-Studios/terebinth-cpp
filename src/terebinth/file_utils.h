@@ -3,7 +3,7 @@
 
 #include "string_utils.h"
 
-void LoadFile(std::string filepath, std::string& contents);
-void WriteFile(std::string filepath, const std::string& contents);
+void LoadFile(std::string filepath, std::string &contents);
+void WriteFile(std::string filepath, const std::string &contents);
 
 #endif // TEREBINTH_FILE_UTILS_H_

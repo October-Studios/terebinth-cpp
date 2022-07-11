@@ -1,5 +1,5 @@
-#include "error_handler.h"
 #include "source_file.h"
+#include "error_handler.h"
 #include "file_utils.h"
 
 SourceFile::SourceFile(std::string filename_in, bool print_output) {

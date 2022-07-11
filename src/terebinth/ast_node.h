@@ -335,9 +335,9 @@ private:
 
 class AstOpWithInput : public AstNodeBase {
 public:
-  static std::unique_ptr<AstOpWithInput> Make(std::vector<AstNode> &left_in_in,
-                                              Token token_in,
-                                              std::vector<AstNode> &right_in_in) {
+  static std::unique_ptr<AstOpWithInput>
+  Make(std::vector<AstNode> &left_in_in, Token token_in,
+       std::vector<AstNode> &right_in_in) {
     std::unique_ptr<AstOpWithInput> node(new AstOpWithInput);
 
     node->left_in = std::move(left_in_in);

@@ -1,7 +1,7 @@
 #include "action.h"
-#include "token.h"
 #include "error_handler.h"
 #include "namespace.h"
+#include "token.h"
 
 extern Namespace global_namespace_;
 
@@ -11,8 +11,9 @@ Action ResolveIntLiteral(Token token, Type type) {
 
   for (auto i = in.begin(); i != in.end(); ++i) {
     if (*i < '0' || *i > '9') {
-      error_.Log(std::string() + "bad character '" + *i + "' found in number '" + in + "'",
-          SOURCE_ERROR, token);
+      error_.Log(std::string() + "bad character '" + *i +
+                     "' found in number '" + in + "'",
+                 SOURCE_ERROR, token);
       return nullptr;
     }
 
@@ -39,7 +40,9 @@ Action ResolveDoubleLiteral(Token token) {
       if (point_pos == 0) {
         point_pos = 10;
       } else {
-        error_.Log(std::string() + "multiple decimal points found in number '" + in + "'", SOURCE_ERROR, token);
+        error_.Log(std::string() + "multiple decimal points found in number '" +
+                       in + "'",
+                   SOURCE_ERROR, token);
         return void_action_;
       }
     } else if (*i >= '0' && *i <= '9') {
@@ -50,7 +53,9 @@ Action ResolveDoubleLiteral(Token token) {
         val = val * 10 + (*i - '0');
       }
     } else {
-      error_.Log(std::string() + "bad character '" + *i + "' found in number '" + in + "'", SOURCE_ERROR, token);
+      error_.Log(std::string() + "bad character '" + *i +
+                     "' found in number '" + in + "'",
+                 SOURCE_ERROR, token);
       return void_action_;
     }
   }
@@ -59,8 +64,8 @@ Action ResolveDoubleLiteral(Token token) {
   return ConstGetAction(&out, Double, token->GetType(), global_namespace_);
 }
 
-std::string TbthStr2CppStr(void* obj);
-void* CppStr2TbthStr(std::string cpp);
+std::string TbthStr2CppStr(void *obj);
+void *CppStr2TbthStr(std::string cpp);
 
 Action ResolveStringLiteral(Token token) {
   std::string text = token->GetText();
@@ -73,7 +78,7 @@ Action ResolveStringLiteral(Token token) {
     text = text.substr(0, text.size() - 1);
   }
 
-  void* obj = CppStr2TbthStr(text);
+  void *obj = CppStr2TbthStr(text);
 
   return ConstGetAction(obj, String, "\"" + text + "\"", global_namespace_);
 }
@@ -84,7 +89,8 @@ Action ResolveLiteral(Token token) {
   }
 
   if (token->GetType() != TokenData::LITERAL) {
-    throw TerebinthError(FUNC + " called on token that is not a literal", INTERNAL_ERROR, token);
+    throw TerebinthError(FUNC + " called on token that is not a literal",
+                         INTERNAL_ERROR, token);
   }
 
   std::string in = token->GetText();
@@ -96,7 +102,8 @@ Action ResolveLiteral(Token token) {
   Type type = Unknown;
 
   if (in.empty()) {
-    error_.Log("tried to make literal with empty string", INTERNAL_ERROR, token);
+    error_.Log("tried to make literal with empty string", INTERNAL_ERROR,
+               token);
   }
 
   if ((in[0] >= '0' && in[0] <= '9') || in[0] == '.') {
@@ -126,6 +133,8 @@ Action ResolveLiteral(Token token) {
   } else if (type == Double) {
     return ResolveDoubleLiteral(token);
   } else {
-    throw TerebinthError("tried to make literal with invalid type of " + type->GetString(), INTERNAL_ERROR, token);
+    throw TerebinthError("tried to make literal with invalid type of " +
+                             type->GetString(),
+                         INTERNAL_ERROR, token);
   }
 }
