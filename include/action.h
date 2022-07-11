@@ -3,7 +3,7 @@
 
 #include "cpp_program.h"
 #include "stack_frame.h"
-#include "string_drawing.h"
+#include "util/string_drawing.h"
 #include "type.h"
 #include <functional>
 #include <memory>
@@ -53,7 +53,7 @@ protected:
   std::string description_;
 };
 
-typedef std::shared_ptr<ActionData> Action;
+using Action = std::shared_ptr<ActionData>;
 
 class AstNodeBase;
 
@@ -87,15 +87,15 @@ Action MakeTupleAction(const std::vector<Action> &sourceActionsIn);
 Action GetElemFromTupleAction(Type source, std::string name);
 Action CppTupleCastAction(Action actionIn, Type returnType);
 
-Action VarGetAction(size_t in, Type typeIn, std::string idIn);
-Action VarSetAction(size_t in, Type typeIn, std::string idIn);
-Action GlobalGetAction(size_t in, Type typeIn, std::string idIn);
-Action GlobalSetAction(size_t in, Type typeIn, std::string idIn);
+Action VarGetAction(size_t in, Type type_in, std::string text_in);
+Action VarSetAction(size_t in, Type type_in, std::string text_in);
+Action GlobalGetAction(size_t in, Type type_in, std::string text_in);
+Action GlobalSetAction(size_t in, Type type_in, std::string text_in);
 
 class NamespaceData;
-Action ConstGetAction(const void *in, Type typeIn, std::string idIn,
+Action ConstGetAction(const void *in, Type type_in, std::string text_in,
                       std::shared_ptr<NamespaceData> ns);
 
-Action TypeGetAction(Type typeIn);
+Action TypeGetAction(Type type_in);
 
 #endif // TEREBINTH_ACTION_H_

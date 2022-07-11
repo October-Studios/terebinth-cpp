@@ -4,7 +4,7 @@
 
 #include "cpp_program.h"
 #include "error_handler.h"
-#include "string_utils.h"
+#include "util/string_utils.h"
 
 class VoidType : public TypeBase {
 public:

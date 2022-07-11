@@ -1,7 +1,7 @@
-#include "../action.h"
-#include "../cpp_program.h"
-#include "../error_handler.h"
-#include "../string_drawing.h"
+#include "action.h"
+#include "cpp_program.h"
+#include "error_handler.h"
+#include "util/string_drawing.h"
 
 class BranchAction : public ActionData {
 public:

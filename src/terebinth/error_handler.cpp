@@ -1,6 +1,6 @@
 #include "error_handler.h"
 #include "source_file.h"
-#include "string_utils.h"
+#include "util/string_utils.h"
 
 #include <iostream>
 

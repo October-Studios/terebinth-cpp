@@ -2,8 +2,8 @@
 #include "all_operators.h"
 #include "error_handler.h"
 #include "namespace.h"
-#include "string_drawing.h"
-#include "string_utils.h"
+#include "util/string_drawing.h"
+#include "util/string_utils.h"
 
 extern StackFrame std_lib_stack_frame_;
 extern Namespace global_namespace_;

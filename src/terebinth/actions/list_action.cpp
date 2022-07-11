@@ -1,5 +1,5 @@
-#include "../action.h"
-#include "../error_handler.h"
+#include "action.h"
+#include "error_handler.h"
 
 class ListAction : public ActionData {
 public:

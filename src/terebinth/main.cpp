@@ -1,11 +1,11 @@
 #include "error_handler.h"
 #include "terebinth_program.h"
 
-#include "file_utils.h"
-#include "string_array.h"
-#include "string_drawing.h"
-#include "string_num_conversion.h"
-#include "string_utils.h"
+#include "util/file_utils.h"
+#include "util/string_array.h"
+#include "util/string_drawing.h"
+#include "util/string_num_conversion.h"
+#include "util/string_utils.h"
 
 #include <iostream>
 

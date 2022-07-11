@@ -1,7 +1,7 @@
 #include "cpp_program.h"
 #include "VERSION.h"
 #include "error_handler.h"
-#include "string_utils.h"
+#include "util/string_utils.h"
 
 #include <map>
 #include <unordered_set>

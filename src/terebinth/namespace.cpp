@@ -3,8 +3,8 @@
 #include "ast_node.h"
 #include "error_handler.h"
 #include "stack_frame.h"
-#include "string_num_conversion.h"
-#include "string_utils.h"
+#include "util/string_num_conversion.h"
+#include "util/string_utils.h"
 #include "type.h"
 #include <tuple>
 

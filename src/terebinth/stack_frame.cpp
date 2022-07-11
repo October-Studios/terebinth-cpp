@@ -1,6 +1,6 @@
 #include "stack_frame.h"
 #include "error_handler.h"
-#include "string_utils.h"
+#include "util/string_utils.h"
 
 void *global_frame_ptr = nullptr;
 void *stack_ptr = nullptr;

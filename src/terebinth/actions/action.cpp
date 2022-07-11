@@ -1,6 +1,6 @@
-#include "../action.h"
-#include "../error_handler.h"
-#include "../string_utils.h"
+#include "action.h"
+#include "error_handler.h"
+#include "util/string_utils.h"
 
 ActionData::ActionData(Type return_type_in, Type in_left_type_in,
                        Type in_right_type_in) {

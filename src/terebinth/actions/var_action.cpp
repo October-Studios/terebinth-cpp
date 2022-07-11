@@ -1,10 +1,10 @@
-#include "../action.h"
-#include "../cpp_program.h"
-#include "../error_handler.h"
-#include "../namespace.h"
-#include "../stack_frame.h"
-#include "../string_drawing.h"
-#include "../string_num_conversion.h"
+#include "action.h"
+#include "cpp_program.h"
+#include "error_handler.h"
+#include "namespace.h"
+#include "stack_frame.h"
+#include "util/string_drawing.h"
+#include "util/string_num_conversion.h"
 
 class VarGetAction : public ActionData {
 public:
@@ -157,24 +157,24 @@ private:
 };
 
 Action VarGetAction(size_t in, Type type_in, std::string text_in) {
-  return Action(VarGetAction(in, &stack_ptr_, type_in, text_in);
+  return Action(new VarGetAction(in, &stack_ptr_, type_in, text_in));
 }
 
-Action VarSetAction(size_t in, Type type_in, std::string var_name_in) {
-  return Action(VarSetAction(in, &stack_ptr_, type_in, var_name_in);
+Action VarSetAction(size_t in, Type type_in, std::string text_in) {
+  return Action(new VarSetAction(in, &stack_ptr_, type_in, text_in));
 }
 
 Action GlobalGetAction(size_t in, Type type_in, std::string text_in) {
-  return Action(VarGetAction(in, &global_frame_ptr_, type_in, text_in));
+  return Action(new VarGetAction(in, &global_frame_ptr_, type_in, text_in));
 }
 
 Action GlobalSetAction(size_t in, Type type_in, std::string text_in) {
-  return Action(VarSetAction(in, &global_frame_ptr_, type_in, text_in));
+  return Action(new VarSetAction(in, &global_frame_ptr_, type_in, text_in));
 }
 
 Action ConstGetAction(const void *in, Type type_in, std::string text_in,
                       Namespace ns) {
-  Action action = Action(ConstGetAction(in, type_in, text_in));
+  Action action = Action(new ConstGetAction(in, type_in, text_in));
   if (ns) {
     Action copier = ns->GetCopier(type_in);
     if (copier) {

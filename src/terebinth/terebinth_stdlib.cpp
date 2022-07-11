@@ -5,7 +5,7 @@
 #include "error_handler.h"
 #include "namespace.h"
 #include "stack_frame.h"
-#include "string_utils.h"
+#include "util/string_utils.h"
 #include "terebinth_program.h"
 #include "type.h"
 #include <ios>
