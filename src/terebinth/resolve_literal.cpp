@@ -61,7 +61,7 @@ Action ResolveDoubleLiteral(Token token) {
   }
 
   double out = val;
-  return ConstGetAction(&out, Double, token->GetType(), global_namespace_);
+  return ConstGetAction(&out, Double, token->GetText(), global_namespace_);
 }
 
 std::string TbthStr2CppStr(void *obj);
