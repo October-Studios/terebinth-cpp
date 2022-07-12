@@ -7,10 +7,6 @@
 class GetElemFromTupleAction;
 class CppTupleCastAction;
 
-class ListAction;
-void AddListToProgWithCppCasting(ListAction *list, Type return_type,
-                                 CppProgram *prog);
-
 class MakeTupleAction : public ActionData {
 public:
   MakeTupleAction(const std::vector<Action> &source_actions_in)

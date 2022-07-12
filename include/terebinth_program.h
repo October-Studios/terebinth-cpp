@@ -1,3 +1,5 @@
+#pragma once
+
 #include "VERSION.h"
 
 #include <iostream>

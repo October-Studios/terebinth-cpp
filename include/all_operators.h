@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_ALL_OPERATORS_H_
-#define TEREBINTH_ALL_OPERATORS_H_
+#pragma once
 
 #include "operator.h"
 #include <unordered_map>
@@ -62,5 +61,3 @@ private:
 };
 
 extern AllOperators *ops_;
-
-#endif // TEREBINTH_ALL_OPERATORS_H_

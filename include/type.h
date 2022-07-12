@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_TYPE_H_
-#define TEREBINTH_TYPE_H_
+#pragma once
 
 #include <cstring>
 #include <memory>
@@ -116,5 +115,3 @@ private:
 
   std::unique_ptr<std::vector<NamedType>> sub_types_;
 };
-
-#endif // TEREBINTH_TYPE_H_

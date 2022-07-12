@@ -99,9 +99,8 @@ private:
   std::vector<Action> destroyers_;
 };
 
-void AddListToProgWithCppCasting(ListAction *list, Type return_type,
-                                 CppProgram *prog) {
-  list->AddToProg(prog, return_type);
+inline void AddListToProgWithCppCasting(ListAction* list, Type return_type, CppProgram* prog) {
+	list->addToProg(prog, return_type);
 }
 
 Action ListAction(const std::vector<Action> &actions_in,
@@ -111,6 +110,6 @@ Action ListAction(const std::vector<Action> &actions_in,
   } else if (actions_in.size() == 1 && destroyers_in.size() == 0) {
     return actions_in[0];
   } else {
-    return Action(ListAction(actions_in, destroyers_in));
+    return Action(new ListAction(actions_in, destroyers_in));
   }
 }

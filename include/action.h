@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_ACTION_H_
-#define TEREBINTH_ACTION_H_
+#pragma once
 
 #include "cpp_program.h"
 #include "stack_frame.h"
@@ -97,5 +96,3 @@ Action ConstGetAction(const void *in, Type type_in, std::string text_in,
                       std::shared_ptr<NamespaceData> ns);
 
 Action TypeGetAction(Type type_in);
-
-#endif // TEREBINTH_ACTION_H_

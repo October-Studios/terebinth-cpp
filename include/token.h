@@ -1,7 +1,7 @@
-#ifndef TEREBINTH_TOKEN_H_
-#define TEREBINTH_TOKEN_H_
+#pragma once
 
 #include "operator.h"
+#include "source_file.h"
 
 #include <memory>
 #include <string>
@@ -79,5 +79,3 @@ std::string StringFromTokens(const std::vector<Token> &tokens, int left,
 
 std::string TableStringFromTokens(const std::vector<Token> &tokens,
                                   std::string table_name);
-
-#endif // TEREBINTH_TOKEN_H_

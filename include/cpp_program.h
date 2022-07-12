@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_CPP_PROGRAM_H_
-#define TEREBINTH_CPP_PROGRAM_H_
+#pragma once
 
 #include "type.h"
 
@@ -132,5 +131,3 @@ private:
 };
 
 void AddToProgTbStr(CppProgram *prog);
-
-#endif // TEREBINTH_CPP_PROGRAM_H_

@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_ERROR_HANDLER_H_
-#define TEREBINTH_ERROR_HANDLER_H_
+#pragma once
 
 #include "token.h"
 #include <string>
@@ -42,5 +41,3 @@ private:
   ErrorPriority priority_;
   Token token_;
 };
-
-#endif // TEREBINTH_ERROR_HANDLER_H_

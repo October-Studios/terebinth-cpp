@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_OPERATOR_H_
-#define TEREBINTH_OPERATOR_H_
+#pragma once
 
 class TokenData;
 
@@ -39,5 +38,3 @@ private:
 };
 
 typedef std::shared_ptr<OperatorData> Operator;
-
-#endif // TEREBINTH_OPERATOR_H_

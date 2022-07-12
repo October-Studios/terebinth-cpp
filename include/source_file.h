@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_SOURCE_FILE_H_
-#define TEREBINTH_SOURCE_FILE_H_
+#pragma once
 
 #include <string>
 
@@ -35,5 +34,3 @@ private:
   std::string filename_;
   std::string contents_;
 };
-
-#endif // TEREBINTH_SOURCE_FILES_H_

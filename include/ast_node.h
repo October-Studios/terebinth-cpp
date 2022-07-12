@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_AST_NODE_H_
-#define TEREBINTH_AST_NODE_H_
+#pragma once
 
 #include "action.h"
 #include "error_handler.h"
@@ -592,5 +591,3 @@ public:
 private:
   std::function<Action(Type left_in_type, Type right_in_type)> lambda;
 };
-
-#endif // TEREBINTH_AST_NODE_H_

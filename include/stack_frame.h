@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_STACK_FRAME_H_
-#define TEREBINTH_STACK_FRAME_H_
+#pragma once
 
 #include <vector>
 
@@ -27,5 +26,3 @@ private:
   size_t left_input_offset_;
   size_t right_input_offset_;
 };
-
-#endif // TEREBINTH_STACK_FRAME_H_

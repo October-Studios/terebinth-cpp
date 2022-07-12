@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_NAMESPACE_H_
-#define TEREBINTH_NAMESPACE_H_
+#pragma once
 
 #include "action.h"
 #include "ast_node.h"
@@ -162,5 +161,3 @@ private:
   ///
   std::vector<Action> destructor_actions_;
 };
-
-#endif // TEREBINTH_NAMESPACE_H_
