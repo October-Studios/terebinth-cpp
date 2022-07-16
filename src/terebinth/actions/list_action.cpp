@@ -2,7 +2,7 @@
 #include "error_handler.h"
 
 class ListAction : public ActionData {
-public:
+ public:
   ListAction(const std::vector<Action> &actions_in,
              const std::vector<Action> &destroyers_in)
       : ActionData(
@@ -22,9 +22,9 @@ public:
     }
   }
 
-  ~ListAction() {}
+  ~ListAction() = default;
 
-  std::string GetDescription() {
+  auto GetDescription() -> decltype(str::MakeList(data)) {
     std::vector<std::string> data;
 
     for (auto i = actions_.begin(); i != actions_.end(); ++i) {
@@ -38,7 +38,7 @@ public:
     return str::MakeList(data);
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> decltype(return_val) {
     auto i = actions_.begin();
 
     for (; i != std::prev(actions_.end()); ++i) {
@@ -94,17 +94,19 @@ public:
     prog->PopBlock();
   }
 
-private:
+ private:
   std::vector<Action> actions_;
   std::vector<Action> destroyers_;
 };
 
-inline void AddListToProgWithCppCasting(ListAction* list, Type return_type, CppProgram* prog) {
-	list->addToProg(prog, return_type);
+void AddListToProgWithCppCasting(ListAction *list_in, Type return_type,
+                                 CppProgram *prog) {
+  list_in->AddToProg(prog, return_type);
 }
 
-Action ListAction(const std::vector<Action> &actions_in,
-                  const std::vector<Action> &destroyers_in) {
+auto ListActionT(const std::vector<Action> &actions_in,
+                 const std::vector<Action> &destroyers_in)
+    -> decltype(Action(new ListAction(actions_in, destroyers_in))) {
   if (actions_in.size() == 0 && destroyers_in.size() == 0) {
     return void_action_;
   } else if (actions_in.size() == 1 && destroyers_in.size() == 0) {

@@ -128,7 +128,7 @@ public:
       }
       prog->PopExpr();
     } else if (typeid(*action_) ==
-               typeid(*ListAction({void_action_, void_action_}, {}))) {
+               typeid(*ListActionT({void_action_, void_action_}, {}))) {
       AddListToProgWithCppCasting((ListAction *)&*action_, GetReturnType(),
                                   prog);
     } else if (GetReturnType()->GetType() != TypeBase::TUPLE) {
