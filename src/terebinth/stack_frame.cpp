@@ -2,8 +2,8 @@
 #include "error_handler.h"
 #include "util/string_utils.h"
 
-void *global_frame_ptr = nullptr;
-void *stack_ptr = nullptr;
+void *global_frame_ptr_ = nullptr;
+void *stack_ptr_ = nullptr;
 
 void StackFrame::AddMember(Type in) {
   if (!in->IsCreatable()) {

@@ -98,7 +98,7 @@ std::string GetText(Operator op) { return op->GetText(); }
 std::string GetText(std::string in) { return in; }
 
 void AddConst(void *data, Type type, std::string name) {
-  global_namespace_->AddNode(AstActionWrapper::Make(ConstGetAction(
+  global_namespace_->AddNode(AstActionWrapper::Make(ConstGetActionT(
                                  data, type, name, global_namespace_)),
                              name);
 }
@@ -110,7 +110,7 @@ void AddAction(
     std::function<void(Action in_left, Action in_right, CppProgram *prog)>
         cpp_writer) {
   global_namespace_->AddNode(
-      AstActionWrapper::Make(LambdaAction(left_type, right_type, return_type,
+      AstActionWrapper::Make(LambdaActionT(left_type, right_type, return_type,
                                           lambda, cpp_writer, GetText(id))),
       GetText(id));
 }
@@ -318,9 +318,9 @@ void PopulateConstants() {
   {
     Type version_tuple_type = MakeTuple(
         std::vector<NamedType>{
-            NamedType{"x", Int},
-            NamedType{"y", Int},
-            NamedType{"z", Int},
+            NamedType{"major", Int},
+            NamedType{"minor", Int},
+            NamedType{"patch", Int},
         },
         false);
 
@@ -644,7 +644,7 @@ void PopulateTypeInfoFuncs() {
 
             std::string val = left_type->GetName();
 
-            return LambdaAction(
+            return LambdaActionT(
                 left_type, right_type, String,
 
                 [=](void *left_in, void *right_in) -> void * {
@@ -653,7 +653,7 @@ void PopulateTypeInfoFuncs() {
 
                 [=](Action in_left, Action in_right, CppProgram *prog) {
                   void *tb_str = CppStr2TbthStr(val);
-                  ConstGetAction(tb_str, String, val, global_namespace_)
+                  ConstGetActionT(tb_str, String, val, global_namespace_)
                       ->AddToProg(prog);
                   free(tb_str);
                 },
@@ -669,7 +669,7 @@ void PopulateTypeInfoFuncs() {
 
         int val = left_type->GetSize();
 
-        return LambdaAction(
+        return LambdaActionT(
             left_type, right_type, Int,
 
             [=](void *left_in, void *right_in) -> void * {
@@ -677,7 +677,7 @@ void PopulateTypeInfoFuncs() {
             },
 
             [=](Action in_left, Action in_right, CppProgram *prog) {
-              ConstGetAction(&val, Int, std::to_string(val), global_namespace_)
+              ConstGetActionT(&val, Int, std::to_string(val), global_namespace_)
                   ->AddToProg(prog);
             },
             "type_size");
@@ -692,7 +692,7 @@ void PopulateMemManagementFuncs() {
             if (!left_type->IsVoid() || right_type->IsVoid())
               return nullptr;
 
-            return LambdaAction(
+            return LambdaActionT(
                 left_type, right_type, right_type->GetPtr(),
 
                 [=](void *left_in, void *right_in) -> void * {
@@ -726,7 +726,7 @@ void PopulateMemManagementFuncs() {
                 !right_type->IsVoid())
               return nullptr;
 
-            return LambdaAction(
+            return LambdaActionT(
                 left_type, right_type, left_type->GetSubType(),
 
                 [=](void *left_in, void *right_in) -> void * {
@@ -753,7 +753,7 @@ void PopulateMemManagementFuncs() {
                 !right_type->Matches(left_type->GetSubType()))
               return nullptr;
 
-            return LambdaAction(
+            return LambdaActionT(
                 left_type, right_type, Void,
 
                 [=](void *left_in, void *right_in) -> void * {
@@ -890,7 +890,7 @@ void PopulateStringFuncs() {
         return out;
       },
       ADD_CPP_HEADER {
-        GetElemFromTupleAction(String, "_size")
+        GetElemFromTupleActionT(String, "_size")
             ->AddToProg(left, void_action_, prog);
       });
 
@@ -933,7 +933,7 @@ void PopulateStringFuncs() {
       },
       ADD_CPP_HEADER {
         prog->Code("(int)");
-        GetElemFromTupleAction(String, "_data")
+        GetElemFromTupleActionT(String, "_data")
             ->AddToProg(left, void_action_, prog);
         prog->Code("[");
         prog->PushExpr();
@@ -968,10 +968,10 @@ void PopulateStringFuncs() {
         prog->PushExpr();
         left->AddToProg(prog);
         prog->Code(", ");
-        GetElemFromTupleAction(right->GetReturnType(), "a")
+        GetElemFromTupleActionT(right->GetReturnType(), "a")
             ->AddToProg(right, void_action_, prog);
         prog->Code(", ");
-        GetElemFromTupleAction(right->GetReturnType(), "b")
+        GetElemFromTupleActionT(right->GetReturnType(), "b")
             ->AddToProg(right, void_action_, prog);
         prog->PopExpr();
       });
@@ -1046,21 +1046,21 @@ void PopulateArrayFuncs() {
                                                    otherwise return nullptr;
 
             Type contentsType = left_type;
-            Type arrayType =
+            Type array_type =
                 Array
                     ->ActuallyIs(MakeTuple(
                         {{"a", Int}, {"b", Int}, {"c", contentsType->GetPtr()}},
                         true))
                     ->GetPtr();
 
-            return LambdaAction(
-                left_type, right_type, arrayType,
+            return LambdaActionT(
+                left_type, right_type, array_type,
 
                 [=](void *left_in, void *right_in) -> void * {
-                  void *out = malloc(arrayType->GetSize());
-                  SetValInTuple(out, arrayType, "_size", 0);
-                  SetValInTuple(out, arrayType, "_capacity", 0);
-                  SetValInTuple<void *>(out, arrayType, "_data", nullptr);
+                  void *out = malloc(array_type->GetSize());
+                  SetValInTuple(out, array_type, "_size", 0);
+                  SetValInTuple(out, array_type, "_capacity", 0);
+                  SetValInTuple<void *>(out, array_type, "_data", nullptr);
                   return out;
                 },
 
@@ -1077,19 +1077,19 @@ void PopulateArrayFuncs() {
                                         Type right_type) -> Action {
         assert left_type->Matches(Array) otherwise return nullptr;
 
-        Type arrayType = Array->ActuallyIs(left_type->GetPtr());
-        Type contentsType = arrayType->GetSubType("_data").type->GetSubType();
+        Type array_type = Array->ActuallyIs(left_type->GetPtr());
+        Type contentsType = array_type->GetSubType("_data").type->GetSubType();
 
         assert right_type->Matches(contentsType) otherwise return nullptr;
 
-        return LambdaAction(
+        return LambdaActionT(
             left_type, right_type, Void,
 
             [=](void *left_in, void *right_in) -> void * {
-              int size = GetValFromTuple<int>(left_in, arrayType, "_size");
+              int size = GetValFromTuple<int>(left_in, array_type, "_size");
               int capacity =
-                  GetValFromTuple<int>(left_in, arrayType, "_capacity");
-              void *data = GetValFromTuple<void *>(left_in, arrayType, "_data");
+                  GetValFromTuple<int>(left_in, array_type, "_capacity");
+              void *data = GetValFromTuple<void *>(left_in, array_type, "_data");
 
               if (size + 1 > capacity) {
                 if (capacity < 1000)
@@ -1097,15 +1097,15 @@ void PopulateArrayFuncs() {
                 else
                   capacity *= 2;
 
-                SetValInTuple<int>(left_in, arrayType, "_capacity", capacity);
+                SetValInTuple<int>(left_in, array_type, "_capacity", capacity);
                 void *new_data = malloc(capacity * contentsType->GetSize());
                 memcpy(new_data, data, size * contentsType->GetSize());
                 free(data);
                 data = new_data;
-                SetValInTuple<void *>(left_in, arrayType, "_data", data);
+                SetValInTuple<void *>(left_in, array_type, "_data", data);
               }
 
-              SetValInTuple<int>(left_in, arrayType, "_size", size + 1);
+              SetValInTuple<int>(left_in, array_type, "_size", size + 1);
               memcpy((char *)data + size * contentsType->GetSize(), right_in,
                      contentsType->GetSize());
 
@@ -1125,15 +1125,15 @@ void PopulateArrayFuncs() {
         assert left_type->Matches(Array->GetPtr()) &&
             right_type->Matches(Int) otherwise return nullptr;
 
-        Type arrayType = Array->ActuallyIs(left_type->GetSubType());
-        Type contentsType = arrayType->GetSubType("_data").type->GetSubType();
+        Type array_type = Array->ActuallyIs(left_type->GetSubType());
+        Type contentsType = array_type->GetSubType("_data").type->GetSubType();
         size_t elemSize = contentsType->GetSize();
 
-        return LambdaAction(
+        return LambdaActionT(
             left_type, right_type, contentsType,
 
             [=](void *left_in, void *right_in) -> void * {
-              int size = GetValFromTuple<int>(left_in, arrayType, "_size");
+              int size = GetValFromTuple<int>(left_in, array_type, "_size");
               if (*(int *)right_in < 0 || *(int *)right_in >= size)
                 throw TerebinthError(
                     "index out of bounds, tried to get element at position " +
@@ -1143,7 +1143,7 @@ void PopulateArrayFuncs() {
 
               void *out = malloc(contentsType->GetSize());
               memcpy(out,
-                     GetValFromTuple<char *>(left_in, arrayType, "_data") +
+                     GetValFromTuple<char *>(left_in, array_type, "_data") +
                          (*(int *)right_in) * elemSize,
                      elemSize);
               return out;
@@ -1159,8 +1159,8 @@ void PopulateArrayFuncs() {
   global_namespace_->AddNode(
       AstWhatevToActionFactory::Make([](Type left_type,
                                         Type right_type) -> Action {
-        Type arrayType = Array->ActuallyIs(left_type->GetSubType());
-        Type contentsType = arrayType->GetSubType("_data").type->GetSubType();
+        Type array_type = Array->ActuallyIs(left_type->GetSubType());
+        Type contentsType = array_type->GetSubType("_data").type->GetSubType();
 
         Type inputType =
             MakeTuple({{"index", Int}, {"value", contentsType}}, true);
@@ -1170,11 +1170,11 @@ void PopulateArrayFuncs() {
 
         size_t elemSize = contentsType->GetSize();
 
-        return LambdaAction(
+        return LambdaActionT(
             left_type, right_type, contentsType,
 
             [=](void *left_in, void *right_in) -> void * {
-              int size = GetValFromTuple<int>(left_in, arrayType, "_size");
+              int size = GetValFromTuple<int>(left_in, array_type, "_size");
               int index = GetValFromTuple<int>(right_in, inputType, "index");
 
               if (index < 0 || index >= size)
@@ -1184,7 +1184,7 @@ void PopulateArrayFuncs() {
                         std::to_string(size) + " long",
                     RUNTIME_ERROR);
 
-              char *data = GetValFromTuple<char *>(left_in, arrayType, "_data");
+              char *data = GetValFromTuple<char *>(left_in, array_type, "_data");
 
               memcpy(data + index * elemSize,
                      (char *)right_in + inputType->GetSubType("value").offset,
@@ -1206,15 +1206,15 @@ void PopulateArrayFuncs() {
         assert left_type->Matches(Array) && right_type->IsVoid()
                                                 otherwise return nullptr;
 
-        Type arrayType = Array->ActuallyIs(left_type);
-        Type contentsType = arrayType->GetSubType("_data").type->GetSubType();
+        Type array_type = Array->ActuallyIs(left_type);
+        Type contentsType = array_type->GetSubType("_data").type->GetSubType();
 
-        return LambdaAction(
+        return LambdaActionT(
             left_type, right_type, Int,
 
             [=](void *left_in, void *right_in) -> void * {
               int *out = (int *)malloc(sizeof(int));
-              *out = GetValFromTuple<int>(left_in, arrayType, "_size");
+              *out = GetValFromTuple<int>(left_in, array_type, "_size");
               return out;
             },
 
@@ -1231,23 +1231,23 @@ void PopulateArrayFuncs() {
         assert left_type->IsVoid() && right_type->Matches(Array)
                                           otherwise return nullptr;
 
-        Type arrayType = Array->ActuallyIs(right_type);
-        Type contentsType = arrayType->GetSubType("_data").type->GetSubType();
+        Type array_type = Array->ActuallyIs(right_type);
+        Type contentsType = array_type->GetSubType("_data").type->GetSubType();
         size_t elemSize = contentsType->GetSize();
 
-        return LambdaAction(
+        return LambdaActionT(
             Void, right_type, right_type,
 
             [=](void *left_in, void *right_in) -> void * {
               // error.log("Array destroyer called", JSYK);
-              int size = GetValFromTuple<int>(right_in, arrayType, "_size");
+              int size = GetValFromTuple<int>(right_in, array_type, "_size");
               void *new_data = malloc(elemSize * size);
               void *old_data =
-                  GetValFromTuple<void *>(right_in, arrayType, "_data");
+                  GetValFromTuple<void *>(right_in, array_type, "_data");
               memcpy(new_data, old_data, elemSize * size);
-              SetValInTuple(right_in, arrayType, "_data", new_data);
-              void *out = malloc(arrayType->GetSize());
-              memcpy(out, right_in, arrayType->GetSize());
+              SetValInTuple(right_in, array_type, "_data", new_data);
+              void *out = malloc(array_type->GetSize());
+              memcpy(out, right_in, array_type->GetSize());
               return out;
             },
 
@@ -1264,13 +1264,13 @@ void PopulateArrayFuncs() {
             assert left_type->IsVoid() && right_type->Matches(Array)
                                               otherwise return nullptr;
 
-            Type arrayType = Array->ActuallyIs(right_type);
+            Type array_type = Array->ActuallyIs(right_type);
 
-            return LambdaAction(
+            return LambdaActionT(
                 Void, right_type, Void,
 
                 [=](void *left_in, void *right_in) -> void * {
-                  free(GetValFromTuple<void *>(right_in, arrayType, "_data"));
+                  free(GetValFromTuple<void *>(right_in, array_type, "_data"));
                   return nullptr;
                 },
 
@@ -1316,7 +1316,7 @@ void PopulateIntArrayAndFuncs() {
         return out;
       },
       ADD_CPP_HEADER {
-        GetElemFromTupleAction(IntArray, "_size")
+        GetElemFromTupleActionT(IntArray, "_size")
             ->AddToProg(left, void_action_, prog);
       });
 
@@ -1337,7 +1337,7 @@ void PopulateIntArrayAndFuncs() {
         return out;
       },
       ADD_CPP_HEADER {
-        GetElemFromTupleAction(IntArray, "_data")
+        GetElemFromTupleActionT(IntArray, "_data")
             ->AddToProg(left, void_action_, prog);
         prog->Code("[");
         prog->PushExpr();
@@ -1363,16 +1363,16 @@ void PopulateIntArrayAndFuncs() {
         return nullptr;
       },
       ADD_CPP_HEADER {
-        GetElemFromTupleAction(IntArray, "_data")
+        GetElemFromTupleActionT(IntArray, "_data")
             ->AddToProg(left, void_action_, prog);
         prog->Code("[");
         prog->PushExpr();
-        GetElemFromTupleAction(right->GetReturnType(), "a")
+        GetElemFromTupleActionT(right->GetReturnType(), "a")
             ->AddToProg(right, void_action_, prog);
         prog->PopExpr();
         prog->Code("]");
         prog->Code(" = ");
-        GetElemFromTupleAction(right->GetReturnType(), "b")
+        GetElemFromTupleActionT(right->GetReturnType(), "b")
             ->AddToProg(right, void_action_, prog);
       });
 }

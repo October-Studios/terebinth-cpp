@@ -22,10 +22,10 @@ Action ResolveIntLiteral(Token token, Type type) {
 
   if (type == Bool) {
     bool out = (val != 0);
-    return ConstGetAction(&out, type, token->GetText(), global_namespace_);
+    return ConstGetActionT(&out, type, token->GetText(), global_namespace_);
   } else {
     int out = val;
-    return ConstGetAction(&out, type, token->GetText(), global_namespace_);
+    return ConstGetActionT(&out, type, token->GetText(), global_namespace_);
   }
 }
 
@@ -61,7 +61,7 @@ Action ResolveDoubleLiteral(Token token) {
   }
 
   double out = val;
-  return ConstGetAction(&out, Double, token->GetText(), global_namespace_);
+  return ConstGetActionT(&out, Double, token->GetText(), global_namespace_);
 }
 
 std::string TbthStr2CppStr(void *obj);
@@ -80,7 +80,7 @@ Action ResolveStringLiteral(Token token) {
 
   void *obj = CppStr2TbthStr(text);
 
-  return ConstGetAction(obj, String, "\"" + text + "\"", global_namespace_);
+  return ConstGetActionT(obj, String, "\"" + text + "\"", global_namespace_);
 }
 
 Action ResolveLiteral(Token token) {

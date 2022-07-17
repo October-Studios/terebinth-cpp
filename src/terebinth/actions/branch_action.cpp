@@ -87,12 +87,12 @@ public:
     Action right_in_tmp = right_input_;
 
     if (left_in_tmp->GetReturnType() != action_->GetInLeftType()) {
-      left_in_tmp = CppTupleCastAction(left_in_tmp, action_->GetInLeftType());
+      left_in_tmp = CppTupleCastActionT(left_in_tmp, action_->GetInLeftType());
     }
 
     if (right_in_tmp->GetReturnType() != action_->GetInRightType()) {
       right_in_tmp =
-          CppTupleCastAction(right_in_tmp, action_->GetInRightType());
+          CppTupleCastActionT(right_in_tmp, action_->GetInRightType());
     }
 
     action_->AddToProg(left_in_tmp, right_in_tmp, prog);
@@ -161,7 +161,7 @@ public:
 
     if (right_in_tmp->GetReturnType() != action_->GetInRightType())
       right_in_tmp =
-          CppTupleCastAction(right_in_tmp, action_->GetInRightType());
+          CppTupleCastActionT(right_in_tmp, action_->GetInRightType());
 
     action_->AddToProg(void_action_, right_in_tmp, prog);
   }
@@ -225,7 +225,7 @@ public:
     Action left_in_tmp = left_input_;
 
     if (left_in_tmp->GetReturnType() != action_->GetInLeftType())
-      left_in_tmp = CppTupleCastAction(left_in_tmp, action_->GetInLeftType());
+      left_in_tmp = CppTupleCastActionT(left_in_tmp, action_->GetInLeftType());
 
     action_->AddToProg(left_in_tmp, void_action_, prog);
   }
@@ -235,7 +235,7 @@ private:
   Action action_;
 };
 
-Action BranchAction(Action left_input_in, Action action_in,
+Action BranchActionT(Action left_input_in, Action action_in,
                     Action right_input_in) {
   if (left_input_in->GetReturnType()->IsVoid()) {
     if (right_input_in->GetReturnType()->IsVoid()) {
@@ -247,7 +247,7 @@ Action BranchAction(Action left_input_in, Action action_in,
     if (right_input_in->GetReturnType()->IsVoid()) {
       return Action(new LeftBranchAction(left_input_in, action_in));
     } else {
-      return Action(BranchAction(left_input_in, action_in, right_input_in));
+      return Action(new BranchAction(left_input_in, action_in, right_input_in));
     }
   }
 }

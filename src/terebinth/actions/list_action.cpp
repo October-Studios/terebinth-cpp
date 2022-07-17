@@ -11,11 +11,11 @@ class ListAction : public ActionData {
     actions_ = actions_in;
     destroyers_ = destroyers_in;
 
-    for (auto i = actions_.begin(); i != actions_.end(); ++i) {
-      if (!(*i)->GetInLeftType()->Matches(Void) ||
-          !(*i)->GetInRightType()->Matches(Void)) {
+    for (auto i : actions_) {
+      if (!i->GetInLeftType()->Matches(Void) ||
+          !i->GetInRightType()->Matches(Void)) {
         error_.Log(
-            (*i)->GetDescription() +
+            i->GetDescription() +
                 " put into action list even though its inputs are not void",
             INTERNAL_ERROR);
       }
@@ -24,12 +24,12 @@ class ListAction : public ActionData {
 
   ~ListAction() = default;
 
-  auto GetDescription() -> decltype(str::MakeList(data)) {
+  std::string GetDescription() {
     std::vector<std::string> data;
 
-    for (auto i = actions_.begin(); i != actions_.end(); ++i) {
-      if (*i) {
-        data.push_back((*i)->GetDescription());
+    for (auto i : actions_) {
+      if (i) {
+        data.push_back(i->GetDescription());
       } else {
         data.push_back(str::PutStringInTreeNodeBox("[null action]"));
       }
@@ -38,7 +38,7 @@ class ListAction : public ActionData {
     return str::MakeList(data);
   }
 
-  auto Execute(void *in_left, void *in_right) -> decltype(return_val) {
+  void *Execute(void *in_left, void *in_right) {
     auto i = actions_.begin();
 
     for (; i != std::prev(actions_.end()); ++i) {
@@ -71,7 +71,7 @@ class ListAction : public ActionData {
         prog->Name("-out");
         prog->Code(" = ");
         if (i->GetReturnType() != return_type) {
-          CppTupleCastAction(i, return_type)->AddToProg(prog);
+          CppTupleCastActionT(i, return_type)->AddToProg(prog);
         } else {
           i->AddToProg(prog);
         }
@@ -104,9 +104,8 @@ void AddListToProgWithCppCasting(ListAction *list_in, Type return_type,
   list_in->AddToProg(prog, return_type);
 }
 
-auto ListActionT(const std::vector<Action> &actions_in,
-                 const std::vector<Action> &destroyers_in)
-    -> decltype(Action(new ListAction(actions_in, destroyers_in))) {
+Action ListActionT(const std::vector<Action> &actions_in,
+                 const std::vector<Action> &destroyers_in) {
   if (actions_in.size() == 0 && destroyers_in.size() == 0) {
     return void_action_;
   } else if (actions_in.size() == 1 && destroyers_in.size() == 0) {

@@ -84,8 +84,8 @@ void NamespaceData::SetInput(Type left, Type right) {
   if (left->IsCreatable()) {
     std::string left_name = "me";
     size_t left_offset = stack_frame_->GetLeftOffset();
-    Action left_get_action = VarGetAction(left_offset, left, left_name);
-    Action left_set_action = VarSetAction(left_offset, left, left_name);
+    Action left_get_action = VarGetActionT(left_offset, left, left_name);
+    Action left_set_action = VarSetActionT(left_offset, left, left_name);
     AddNode(AstActionWrapper::Make(left_get_action), left_name);
     AddNode(AstActionWrapper::Make(left_set_action), left_name);
   }
@@ -93,8 +93,8 @@ void NamespaceData::SetInput(Type left, Type right) {
   if (right->IsCreatable()) {
     std::string right_name = "in";
     size_t right_offset = stack_frame_->GetRightOffset();
-    Action right_get_action = VarGetAction(right_offset, right, right_name);
-    Action right_set_action = VarSetAction(right_offset, right, right_name);
+    Action right_get_action = VarGetActionT(right_offset, right, right_name);
+    Action right_set_action = VarSetActionT(right_offset, right, right_name);
     AddNode(AstActionWrapper::Make(right_get_action), right_name);
     AddNode(AstActionWrapper::Make(right_set_action), right_name);
   }
@@ -115,17 +115,17 @@ Action NamespaceData::AddVar(Type type, std::string name) {
   }
 
   if (stack_frame_ != top->stack_frame_) {
-    get_action = VarGetAction(offset, type, name);
-    set_action = VarSetAction(offset, type, name);
+    get_action = VarGetActionT(offset, type, name);
+    set_action = VarSetActionT(offset, type, name);
   } else {
-    get_action = GlobalGetAction(offset, type, name);
-    set_action = GlobalSetAction(offset, type, name);
+    get_action = GlobalGetActionT(offset, type, name);
+    set_action = GlobalSetActionT(offset, type, name);
   }
 
   copy_action = GetCopier(type);
 
   if (copy_action) {
-    dynamic_actions_.Add(name, AstActionWrapper::Make(BranchAction(
+    dynamic_actions_.Add(name, AstActionWrapper::Make(BranchActionT(
                                    void_action_, copy_action, get_action)));
   } else {
     dynamic_actions_.Add(name, AstActionWrapper::Make(get_action));
@@ -137,7 +137,7 @@ Action NamespaceData::AddVar(Type type, std::string name) {
 
   if (destructor) {
     destructor_actions_.push_back(
-        BranchAction(void_action_, destructor, get_action));
+        BranchActionT(void_action_, destructor, get_action));
   }
 
   return set_action;
@@ -196,7 +196,7 @@ Action NamespaceData::GetDestroyer(Type type) {
 Action NamespaceData::WrapInDestroyer(Action in) {
   Action destroyer = GetDestroyer(in->GetReturnType());
 
-  return destroyer ? BranchAction(void_action_, destroyer, in) : in;
+  return destroyer ? BranchActionT(void_action_, destroyer, in) : in;
 }
 
 Action NamespaceData::GetCopier(Type type) {
@@ -226,7 +226,7 @@ Action NamespaceData::GetActionForTokenWithInput(Token token, Type left,
     if (match.type) {
       if (right->IsVoid()) {
         tuple_node =
-            AstActionWrapper::Make(GetElemFromTupleAction(left, search_text));
+            AstActionWrapper::Make(GetElemFromTupleActionT(left, search_text));
         nodes.push_back(&*tuple_node);
       }
     }

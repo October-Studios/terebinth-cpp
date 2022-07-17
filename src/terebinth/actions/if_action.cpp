@@ -160,11 +160,11 @@ private:
   bool return_val_ = false;
 };
 
-Action IfAction(Action condition_in, Action if_action_in) {
-  return Action(IfAction(condition_in, if_action_in));
+Action IfActionT(Action condition_in, Action if_action_in) {
+  return Action(new IfAction(condition_in, if_action_in));
 }
 
-Action IfElseAction(Action condition_in, Action if_action_in,
+Action IfElseActionT(Action condition_in, Action if_action_in,
                     Action else_action_in) {
-  return Action(IfElseAction(condition_in, if_action_in, else_action_in));
+  return Action(new IfElseAction(condition_in, if_action_in, else_action_in));
 }

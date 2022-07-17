@@ -62,7 +62,7 @@ void AstList::ResolveAction() {
     }
   }
 
-  action_ = ListAction(actions, *ns_->GetDestroyerActions());
+  action_ = ListActionT(actions, *ns_->GetDestroyerActions());
 }
 
 std::string AstFuncBody::GetString() {
@@ -127,7 +127,7 @@ void AstFuncBody::ResolveAction() {
     func_return_type =
         func_return_type->ActuallyIs(body_node_->GetReturnType());
   }
-  action_ = FunctionAction(body_node_->MakeCopy(true), func_return_type,
+  action_ = FunctionActionT(body_node_->MakeCopy(true), func_return_type,
                            sub_ns->GetStackFrame());
 }
 
@@ -166,7 +166,7 @@ void AstExpression::ResolveAction() {
     right_in->SetInput(ns_, dynamic_, Void, Void);
     center->SetInput(ns_, dynamic_, left_in->GetReturnType(),
                      right_in->GetReturnType());
-    action_ = BranchAction(left_in->GetAction(), center->GetAction(),
+    action_ = BranchActionT(left_in->GetAction(), center->GetAction(),
                            right_in->GetAction());
   }
 
@@ -257,7 +257,7 @@ void AstOpWithInput::ResolveAction() {
       }
 
       if (right_in.size() == 1) {
-        action_ = IfAction(condition, a);
+        action_ = IfActionT(condition, a);
       } else {
         Action e;
 
@@ -268,7 +268,7 @@ void AstOpWithInput::ResolveAction() {
           e = void_action_;
         }
 
-        action_ = IfElseAction(condition, a, e);
+        action_ = IfElseActionT(condition, a, e);
       }
     } else {
       throw TerebinthError(
@@ -331,11 +331,11 @@ void AstOpWithInput::ResolveAction() {
       actions.push_back(ns_->WrapInDestroyer(init_action));
 
     actions.push_back(ns_->WrapInDestroyer(
-        LoopAction(condition_action, end_action, body_action)));
+        LoopActionT(condition_action, end_action, body_action)));
 
     action_ = uses_sub_ns
-                  ? action_ = ListAction(actions, *ns_->GetDestroyerActions())
-                  : action_ = ListAction(actions, {});
+                  ? action_ = ListActionT(actions, *ns_->GetDestroyerActions())
+                  : action_ = ListActionT(actions, {});
   } else if (token->GetOp() == ops_->and_op_ ||
              token->GetOp() == ops_->or_op_) {
     if (left_in.size() > 1 || right_in.size() > 1) {
@@ -369,9 +369,9 @@ void AstOpWithInput::ResolveAction() {
     }
 
     if (token->GetOp() == ops_->and_op_) {
-      action_ = AndAction(left_action, right_action);
+      action_ = AndActionT(left_action, right_action);
     } else {
-      action_ = OrAction(left_action, right_action);
+      action_ = OrActionT(left_action, right_action);
     }
   } else if (token->GetOp() == ops_->right_arrow_) {
     throw TerebinthError("AstOpWithInput::resolveAction called for token '" +
@@ -439,7 +439,7 @@ void AstTuple::ResolveAction() {
     actions.push_back(nodes[i]->GetAction());
   }
 
-  action_ = MakeTupleAction(actions);
+  action_ = MakeTupleActionT(actions);
 }
 
 std::string AstTokenType::GetString() { return "{" + token->GetText() + "}"; }

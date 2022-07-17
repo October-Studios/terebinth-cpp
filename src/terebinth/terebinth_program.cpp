@@ -10,7 +10,7 @@ void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens);
 Action ParseFunction(const std::vector<Token> &tokens, int left, int right,
                      Type left_in_type, Type right_in_type);
 
-extern Namespace global_namespace;
+extern Namespace global_namespace_;
 
 TerebinthProgram::TerebinthProgram() {}
 
@@ -63,7 +63,7 @@ void TerebinthProgram::ResolveProgram(std::string in_filename,
 
   if (!error_.GetIfErrorLogged()) {
     try {
-      ast_root_->SetInput(global_namespace, true, Void, Void);
+      ast_root_->SetInput(global_namespace_, true, Void, Void);
     } catch (TerebinthError err) {
       err.Log();
       ast_root_ = AstVoid::Make();
@@ -98,7 +98,7 @@ std::string TerebinthProgram::GetCpp() {
 void TerebinthProgram::Execute() {
   try {
     stack_ptr_ = global_frame_ptr_ =
-        malloc(global_namespace->GetStackFrame()->GetSize());
+        malloc(global_namespace_->GetStackFrame()->GetSize());
     free(action_root_->Execute(nullptr, nullptr));
     free(global_frame_ptr_);
     stack_ptr_ = global_frame_ptr_ = nullptr;

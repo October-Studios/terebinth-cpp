@@ -156,29 +156,29 @@ private:
   void *data_;
 };
 
-Action VarGetAction(size_t in, Type type_in, std::string text_in) {
+Action VarGetActionT(size_t in, Type type_in, std::string text_in) {
   return Action(new VarGetAction(in, &stack_ptr_, type_in, text_in));
 }
 
-Action VarSetAction(size_t in, Type type_in, std::string text_in) {
+Action VarSetActionT(size_t in, Type type_in, std::string text_in) {
   return Action(new VarSetAction(in, &stack_ptr_, type_in, text_in));
 }
 
-Action GlobalGetAction(size_t in, Type type_in, std::string text_in) {
+Action GlobalGetActionT(size_t in, Type type_in, std::string text_in) {
   return Action(new VarGetAction(in, &global_frame_ptr_, type_in, text_in));
 }
 
-Action GlobalSetAction(size_t in, Type type_in, std::string text_in) {
+Action GlobalSetActionT(size_t in, Type type_in, std::string text_in) {
   return Action(new VarSetAction(in, &global_frame_ptr_, type_in, text_in));
 }
 
-Action ConstGetAction(const void *in, Type type_in, std::string text_in,
+Action ConstGetActionT(const void *in, Type type_in, std::string text_in,
                       Namespace ns) {
   Action action = Action(new ConstGetAction(in, type_in, text_in));
   if (ns) {
     Action copier = ns->GetCopier(type_in);
     if (copier) {
-      action = BranchAction(void_action_, copier, action);
+      action = BranchActionT(void_action_, copier, action);
     }
   }
   return action;

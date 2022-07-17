@@ -129,10 +129,10 @@ private:
   Action second_action;
 };
 
-Action AndAction(Action first_action_in, Action second_action_in) {
-  return Action(AndAction(first_action_in, second_action_in));
+Action AndActionT(Action first_action_in, Action second_action_in) {
+  return Action(new AndAction(first_action_in, second_action_in));
 }
 
-Action OrAction(Action first_action_in, Action second_action_in) {
-  return Action(OrAction(first_action_in, second_action_in));
+Action OrActionT(Action first_action_in, Action second_action_in) {
+  return Action(new OrAction(first_action_in, second_action_in));
 }

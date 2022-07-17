@@ -56,7 +56,7 @@ using Action = std::shared_ptr<ActionData>;
 
 class AstNodeBase;
 
-Action LambdaAction(
+Action LambdaActionT(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,
     std::function<void *(void *, void *)> lambda_in,
     std::function<void(Action in_left, Action in_right, CppProgram *prog)>
@@ -64,35 +64,35 @@ Action LambdaAction(
     std::string text_in);
 Action CreateNewVoidAction();
 
-Action BranchAction(Action leftInputIn, Action actionIn, Action rightInputIn);
+Action BranchActionT(Action leftInputIn, Action actionIn, Action rightInputIn);
 
-Action FunctionAction(Action actionIn, std::shared_ptr<StackFrame> stackFameIn);
-Action FunctionAction(std::unique_ptr<AstNodeBase> nodeIn, Type returnTypeIn,
+Action FunctionActionT(Action actionIn, std::shared_ptr<StackFrame> stackFameIn);
+Action FunctionActionT(std::unique_ptr<AstNodeBase> nodeIn, Type returnTypeIn,
                       std::shared_ptr<StackFrame> stackFameIn);
 
-Action AndAction(Action firstActionIn, Action secondActionIn);
-Action OrAction(Action firstActionIn, Action secondActionIn);
+Action AndActionT(Action firstActionIn, Action secondActionIn);
+Action OrActionT(Action firstActionIn, Action secondActionIn);
 
-Action IfAction(Action conditionIn, Action ifActionIn);
-Action IfElseAction(Action conditionIn, Action ifActionIn, Action elseAction);
+Action IfActionT(Action conditionIn, Action ifActionIn);
+Action IfElseActionT(Action conditionIn, Action ifActionIn, Action elseAction);
 
-Action ListAction(const std::vector<Action> &actionsIn,
+Action ListActionT(const std::vector<Action> &actionsIn,
                   const std::vector<Action> &destroyersIn);
 
-Action LoopAction(Action conditionIn, Action loopActionIn);
-Action LoopAction(Action conditionIn, Action endActionIn, Action loopActionIn);
+Action LoopActionT(Action conditionIn, Action loopActionIn);
+Action LoopActionT(Action conditionIn, Action endActionIn, Action loopActionIn);
 
-Action MakeTupleAction(const std::vector<Action> &sourceActionsIn);
-Action GetElemFromTupleAction(Type source, std::string name);
-Action CppTupleCastAction(Action actionIn, Type returnType);
+Action MakeTupleActionT(const std::vector<Action> &sourceActionsIn);
+Action GetElemFromTupleActionT(Type source, std::string name);
+Action CppTupleCastActionT(Action actionIn, Type returnType);
 
-Action VarGetAction(size_t in, Type type_in, std::string text_in);
-Action VarSetAction(size_t in, Type type_in, std::string text_in);
-Action GlobalGetAction(size_t in, Type type_in, std::string text_in);
-Action GlobalSetAction(size_t in, Type type_in, std::string text_in);
+Action VarGetActionT(size_t in, Type type_in, std::string text_in);
+Action VarSetActionT(size_t in, Type type_in, std::string text_in);
+Action GlobalGetActionT(size_t in, Type type_in, std::string text_in);
+Action GlobalSetActionT(size_t in, Type type_in, std::string text_in);
 
 class NamespaceData;
-Action ConstGetAction(const void *in, Type type_in, std::string text_in,
+Action ConstGetActionT(const void *in, Type type_in, std::string text_in,
                       std::shared_ptr<NamespaceData> ns);
 
-Action TypeGetAction(Type type_in);
+Action TypeGetActionT(Type type_in);

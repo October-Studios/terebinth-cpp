@@ -7,6 +7,9 @@
 class GetElemFromTupleAction;
 class CppTupleCastAction;
 
+class ListAction;
+void AddListToProgWithCppCasting(ListAction* list, Type return_type, CppProgram* prog);
+
 class MakeTupleAction : public ActionData {
 public:
   MakeTupleAction(const std::vector<Action> &source_actions_in)
@@ -251,22 +254,22 @@ private:
   std::string name_;
 };
 
-Action MakeTupleAction(const std::vector<Action> &source_actions_in) {
-  return Action(MakeTupleAction(source_actions_in));
+Action MakeTupleActionT(const std::vector<Action> &source_actions_in) {
+  return Action(new MakeTupleAction(source_actions_in));
 }
 
-Action GetElemFromTupleAction(Type source, std::string name) {
+Action GetElemFromTupleActionT(Type source, std::string name) {
   if (!source->GetSubType(name).type) {
     throw TerebinthError("could not find '" + name + "' in " +
                              source->GetString(),
                          SOURCE_ERROR);
   }
 
-  Action out = Action(GetElemFromTupleAction(source, name));
+  Action out = Action(new GetElemFromTupleAction(source, name));
 
   return out;
 }
 
-Action CppTupleCastAction(Action action_in, Type return_type) {
-  return Action(CppTupleCastAction(action_in, return_type));
+Action CppTupleCastActionT(Action action_in, Type return_type) {
+  return Action(new CppTupleCastAction(action_in, return_type));
 }

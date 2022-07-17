@@ -83,11 +83,11 @@ private:
   Action end_action_;
 };
 
-Action LoopAction(Action condition_in, Action loop_action_in) {
-  return Action(LoopAction(condition_in, void_action_, loop_action_in));
+Action LoopActionT(Action condition_in, Action loop_action_in) {
+  return Action(new LoopAction(condition_in, void_action_, loop_action_in));
 }
 
-Action LoopAction(Action condition_in, Action end_action_in,
+Action LoopActionT(Action condition_in, Action end_action_in,
                   Action loop_action_in) {
-  return Action(LoopAction(condition_in, end_action_in, loop_action_in));
+  return Action(new LoopAction(condition_in, end_action_in, loop_action_in));
 }

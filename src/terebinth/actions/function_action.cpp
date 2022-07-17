@@ -116,7 +116,7 @@ public:
       prog->PushFunc(name, GetInLeftType(), GetInRightType(), GetReturnType());
       if (GetReturnType()->IsCreatable() &&
           action_->GetReturnType() != GetReturnType()) {
-        CppTupleCastAction(action_, GetReturnType())->AddToProg(prog);
+        CppTupleCastActionT(action_, GetReturnType())->AddToProg(prog);
       } else {
         action_->AddToProg(prog);
       }
@@ -149,13 +149,13 @@ private:
   AstNode node_ = nullptr;
 };
 
-Action FunctionAction(Action action_in,
+Action FunctionActionT(Action action_in,
                       std::shared_ptr<StackFrame> stack_frame_in) {
-  return Action(FunctionAction(action_in, stack_frame_in));
+  return Action(new FunctionAction(action_in, stack_frame_in));
 }
 
-Action FunctionAction(AstNode node_in, Type return_type_in,
+Action FunctionActionT(AstNode node_in, Type return_type_in,
                       std::shared_ptr<StackFrame> stack_frame_in) {
-  return Action(
+  return Action(new
       FunctionAction(std::move(node_in), return_type_in, stack_frame_in));
 }

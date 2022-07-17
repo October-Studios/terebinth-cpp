@@ -86,13 +86,13 @@ private:
   std::string cpp_code_;
 };
 
-Action LambdaAction(
+Action LambdaActionT(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,
     std::function<void *(void *, void *)> lambda_in,
     std::function<void(Action in_left, Action in_right, CppProgram *prog)>
         cpp_writer_in,
     std::string text_in) {
-  return Action(LambdaAction(in_left_type_in, in_right_type_in, return_type_in,
+  return Action(new LambdaAction(in_left_type_in, in_right_type_in, return_type_in,
                              lambda_in, cpp_writer_in, text_in));
 }
 
