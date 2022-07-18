@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_STRING_DRAWING_H_
-#define TEREBINTH_STRING_DRAWING_H_
+#pragma once
 
 #include "string_utils.h"
 
@@ -20,6 +19,4 @@ std::string MakeRootUpBinaryTree(const std::string &root,
                                  const std::string &left_leaf,
                                  const std::string &right_leaf);
 
-} // namespace str
-
-#endif // TEREBINTH_STRING_DRAWING_H_
+}  // namespace str

@@ -1,4 +1,5 @@
 #include "action.h"
+
 #include "error_handler.h"
 #include "util/string_utils.h"
 
@@ -21,10 +22,10 @@ std::string ActionData::GetTypesString() {
 }
 
 class VoidAction : public ActionData {
-public:
+ public:
   VoidAction() : ActionData(Void, Void, Void) { SetDescription("Void Action"); }
 
-  void *Execute(void *in_left, void *in_right) { return nullptr; }
+  auto Execute(void *in_left, void *in_right) -> void * { return nullptr; }
 
   void AddToProg(Action in_left, Action in_right, CppProgram *prog) {
     if (prog->GetExprLevel() > 0) {
@@ -32,11 +33,13 @@ public:
     }
   }
 
-  std::string GetDescription() { return str::PutStringInTreeNodeBox("void"); }
+  auto GetDescription() -> std::string {
+    return str::PutStringInTreeNodeBox("void");
+  }
 };
 
 class LambdaAction : public ActionData {
-public:
+ public:
   LambdaAction(
       Type in_left_type_in, Type in_right_type_in, Type return_type_in,
       std::function<void *(void *, void *)> lambda_in,
@@ -67,7 +70,7 @@ public:
     SetDescription(text_in);
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     return lambda_(in_left, in_right);
   }
 
@@ -75,25 +78,26 @@ public:
     cpp_writer_(in_left, in_right, prog);
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::PutStringInTreeNodeBox(description_);
   }
 
-private:
+ private:
   std::function<void *(void *, void *)> lambda_;
   std::function<void(Action in_left, Action in_right, CppProgram *prog)>
       cpp_writer_;
   std::string cpp_code_;
 };
 
-Action LambdaActionT(
+auto LambdaActionT(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,
     std::function<void *(void *, void *)> lambda_in,
     std::function<void(Action in_left, Action in_right, CppProgram *prog)>
         cpp_writer_in,
-    std::string text_in) {
-  return Action(new LambdaAction(in_left_type_in, in_right_type_in, return_type_in,
-                             lambda_in, cpp_writer_in, text_in));
+    std::string text_in) -> Action {
+  return Action(new LambdaAction(in_left_type_in, in_right_type_in,
+                                 return_type_in, lambda_in, cpp_writer_in,
+                                 text_in));
 }
 
-Action CreateNewVoidAction() { return Action(new VoidAction()); }
+auto CreateNewVoidAction() -> Action { return Action(new VoidAction()); }

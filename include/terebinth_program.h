@@ -1,13 +1,13 @@
 #pragma once
 
-#include "VERSION.h"
+#include <math.h>
 
 #include <iostream>
 #include <list>
-#include <math.h>
 #include <string>
 #include <vector>
 
+#include "VERSION.h"
 #include "ast_node.h"
 #include "namespace.h"
 #include "source_file.h"
@@ -19,7 +19,7 @@ extern std::vector<std::string> cmd_line_args;
 class Element;
 
 class TerebinthProgram {
-public:
+ public:
   TerebinthProgram();
   ~TerebinthProgram() { CleanUp(); }
 
@@ -31,10 +31,10 @@ public:
 
   void Execute();
 
-private:
+ private:
   void CleanUp();
 
-private:
+ private:
   std::shared_ptr<SourceFile> file_ = nullptr;
   std::vector<Token> tokens_;
   AstNode ast_root_ = nullptr;

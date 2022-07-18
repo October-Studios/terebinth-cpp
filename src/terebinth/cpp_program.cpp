@@ -1,10 +1,11 @@
 #include "cpp_program.h"
-#include "VERSION.h"
-#include "error_handler.h"
-#include "util/string_utils.h"
 
 #include <map>
 #include <unordered_set>
+
+#include "VERSION.h"
+#include "error_handler.h"
+#include "util/string_utils.h"
 
 std::string GetValidCppId(std::string in) {
   std::string cpp;
@@ -162,8 +163,7 @@ void CppFuncBase::Code(const std::string &in) {
     fresh_line = (in.back() == '\n');
   } else if (str::SearchInString(in, "\n", 0) > 0) {
     source += "\n" + str::IndentString(in, indent);
-    if (in.back() != '\n')
-      source += "\n";
+    if (in.back() != '\n') source += "\n";
     fresh_line = true;
   } else {
     source += in;
@@ -182,10 +182,11 @@ void CppFuncBase::Line(const std::string &in) {
 
 void CppFuncBase::Endln() {
   if (expr_level > 0) {
-    throw TerebinthError("non zero expression level when ending line in C++ "
-                         "program, code so far:\n" +
-                             str::IndentString(source, " "),
-                         INTERNAL_ERROR);
+    throw TerebinthError(
+        "non zero expression level when ending line in C++ "
+        "program, code so far:\n" +
+            str::IndentString(source, " "),
+        INTERNAL_ERROR);
   } else if (fresh_line &&
              (source.size() < 2 || source[source.size() - 2] == ';' ||
               source[source.size() - 2] == '}' ||
@@ -387,86 +388,85 @@ void CppProgram::Setup() {
 
 std::string CppProgram::GetTypeCode(Type in) {
   switch (in->GetType()) {
-  case TypeBase::VOID:
-    return "void";
+    case TypeBase::VOID:
+      return "void";
 
-  case TypeBase::DOUBLE:
-    return "double";
+    case TypeBase::DOUBLE:
+      return "double";
 
-  case TypeBase::INT:
-    return "int";
+    case TypeBase::INT:
+      return "int";
 
-  case TypeBase::BYTE:
-    return "unsigned char";
+    case TypeBase::BYTE:
+      return "unsigned char";
 
-  case TypeBase::BOOL:
-    return "bool";
+    case TypeBase::BOOL:
+      return "bool";
 
-  case TypeBase::PTR:
-    if (in->GetSubType()->IsWhatev())
-      return "void *";
-    else
-      return GetTypeCode(in->GetSubType()) + " *";
+    case TypeBase::PTR:
+      if (in->GetSubType()->IsWhatev())
+        return "void *";
+      else
+        return GetTypeCode(in->GetSubType()) + " *";
 
-  case TypeBase::TUPLE: {
-    if (in->GetAllSubTypes()->size() == 1)
-      return GetTypeCode((*in->GetAllSubTypes())[0].type);
+    case TypeBase::TUPLE: {
+      if (in->GetAllSubTypes()->size() == 1)
+        return GetTypeCode((*in->GetAllSubTypes())[0].type);
 
-    std::string compact = "{" + in->GetCompactString() + "}";
+      std::string compact = "{" + in->GetCompactString() + "}";
 
-    if (!global_names->HasTb(compact)) {
-      global_names->AddTb(compact, in->name_hint_);
-      std::string code;
-      code += "struct ";
-      code += global_names->GetCpp(compact);
-      code += "\n{\n";
-      for (auto i : *in->GetAllSubTypes()) {
-        code += str::IndentString(GetTypeCode(i.type) + " " + i.name + ";\n",
-                                  indent);
-      }
-
-      code += "\n";
-      code += str::IndentString(global_names->GetCpp(compact), indent);
-      code += "() {}\n";
-
-      code += "\n";
-      auto con_names = global_names->MakeChild();
-      code += str::IndentString(global_names->GetCpp(compact), indent);
-      code += "(";
-      bool first = true;
-      for (auto i : *in->GetAllSubTypes()) {
-        if (first) {
-          first = false;
-        } else {
-          code += ", ";
+      if (!global_names->HasTb(compact)) {
+        global_names->AddTb(compact, in->name_hint_);
+        std::string code;
+        code += "struct ";
+        code += global_names->GetCpp(compact);
+        code += "\n{\n";
+        for (auto i : *in->GetAllSubTypes()) {
+          code += str::IndentString(GetTypeCode(i.type) + " " + i.name + ";\n",
+                                    indent);
         }
-        con_names->AddTb("+" + i.name + " _in");
-        code +=
-            GetTypeCode(i.type) + " " + con_names->GetCpp("+" + i.name + "_in");
-      }
-      code += ")\n";
-      code += str::IndentString("{\n", indent);
-      for (auto i : *in->GetAllSubTypes()) {
-        code += str::IndentString(
-            i.name + " = " + con_names->GetCpp("+" + i.name + "_in") + " ;\n",
-            indent);
-      }
-      code += str::IndentString("}\n", indent);
 
-      code += "};\n";
+        code += "\n";
+        code += str::IndentString(global_names->GetCpp(compact), indent);
+        code += "() {}\n";
 
-      if (!global_types_code.empty())
-        global_types_code += "\n";
-      global_types_code += code;
+        code += "\n";
+        auto con_names = global_names->MakeChild();
+        code += str::IndentString(global_names->GetCpp(compact), indent);
+        code += "(";
+        bool first = true;
+        for (auto i : *in->GetAllSubTypes()) {
+          if (first) {
+            first = false;
+          } else {
+            code += ", ";
+          }
+          con_names->AddTb("+" + i.name + " _in");
+          code += GetTypeCode(i.type) + " " +
+                  con_names->GetCpp("+" + i.name + "_in");
+        }
+        code += ")\n";
+        code += str::IndentString("{\n", indent);
+        for (auto i : *in->GetAllSubTypes()) {
+          code += str::IndentString(
+              i.name + " = " + con_names->GetCpp("+" + i.name + "_in") + " ;\n",
+              indent);
+        }
+        code += str::IndentString("}\n", indent);
+
+        code += "};\n";
+
+        if (!global_types_code.empty()) global_types_code += "\n";
+        global_types_code += code;
+      }
+
+      return global_names->GetCpp(compact);
     }
 
-    return global_names->GetCpp(compact);
-  }
-
-  default:
-    throw TerebinthError("CppProgram::getTypeCode called with invalid type " +
-                             (TypeBase::GetString(in->GetType())),
-                         INTERNAL_ERROR);
+    default:
+      throw TerebinthError("CppProgram::getTypeCode called with invalid type " +
+                               (TypeBase::GetString(in->GetType())),
+                           INTERNAL_ERROR);
   }
 }
 
@@ -704,7 +704,8 @@ std::string CppProgram::GetCppCode() {
     }
   }
 
-  out += "int main(int argcIn, char** argvIn) {\n\
+  out +=
+      "int main(int argcIn, char** argvIn) {\n\
   argc = argcIn;\n\
 	argv = argvIn;\n\
 	if (argc >= 2 && strcmp(argv[1], \"--running-from-terebinth\") == 0) {\n\

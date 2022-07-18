@@ -1,14 +1,16 @@
 #include "terebinth_program.h"
+
+#include <memory>
+
 #include "all_operators.h"
 #include "cpp_program.h"
 #include "error_handler.h"
 #include "operator.h"
-#include <memory>
 
 void PopulateTerebinthStdLib();
 void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens);
-Action ParseFunction(const std::vector<Token> &tokens, int left, int right,
-                     Type left_in_type, Type right_in_type);
+auto ParseFunction(const std::vector<Token> &tokens, int left, int right,
+                   Type left_in_type, Type right_in_type) -> Action;
 
 extern Namespace global_namespace_;
 

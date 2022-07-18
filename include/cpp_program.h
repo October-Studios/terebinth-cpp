@@ -1,14 +1,13 @@
 #pragma once
 
-#include "type.h"
-
 #include <map>
-
 #include <memory>
 #include <unordered_set>
 
+#include "type.h"
+
 class CppNameContainer {
-public:
+ public:
   static std::shared_ptr<CppNameContainer> MakeRoot();
   std::shared_ptr<CppNameContainer> MakeChild();
   void AddTb(const std::string &t, const std::string &cpp_name_hint =
@@ -18,7 +17,7 @@ public:
   std::string GetCpp(const std::string &t);
   CppNameContainer *GetParent() { return parent_; }
 
-private:
+ private:
   bool HasTbMe(const std::string &t);
   CppNameContainer();
   bool HasCpp(const std::string &cpp);
@@ -33,7 +32,7 @@ private:
 };
 
 class CppFuncBase {
-public:
+ public:
   CppFuncBase(std::string prototype_in,
               std::shared_ptr<CppNameContainer> my_names, bool returns_val_in);
 
@@ -55,7 +54,7 @@ public:
   std::string GetSource() { return source; }
   std::string GetPrototype() { return prototype; }
 
-private:
+ private:
   std::string indent = "\t";
   bool fresh_line = true;
   int block_level = 0;
@@ -75,7 +74,7 @@ private:
 typedef std::shared_ptr<CppFuncBase> CppFunc;
 
 class CppProgram {
-public:
+ public:
   CppProgram();
 
   void Code(const std::string &in) { active_func->Code(in); }
@@ -118,7 +117,7 @@ public:
 
   std::shared_ptr<CppNameContainer> GetGlobalNames() { return global_names; };
 
-private:
+ private:
   std::string indent = "\t";
   std::string global_top_code;
   std::string global_includes_code;

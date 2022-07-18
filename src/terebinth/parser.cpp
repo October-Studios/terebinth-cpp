@@ -1,37 +1,39 @@
+#include <iostream>
+#include <vector>
+
 #include "all_operators.h"
 #include "ast_node.h"
 #include "error_handler.h"
 #include "namespace.h"
 #include "stack_frame.h"
-#include "util/string_utils.h"
 #include "token.h"
-
-#include <iostream>
-#include <vector>
+#include "util/string_utils.h"
 
 void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens);
 
 void ParseTokenList(const std::vector<Token> &tokens, int left, int right,
                     std::vector<AstNode> &nodes);
 
-int FindExpressionSplit(const std::vector<Token> &tokens, int left, int right);
+auto FindExpressionSplit(const std::vector<Token> &tokens, int left, int right)
+    -> int;
 
-AstNode ParseExpression(const std::vector<Token> &tokens, int left, int right);
+auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
+    -> AstNode;
 
-int SkipBrace(const std::vector<Token> &tokens, int start);
+auto SkipBrace(const std::vector<Token> &tokens, int start) -> int;
 
 void ParseSequence(const std::vector<Token> &tokens, int left, int right,
                    Operator splitter, std::vector<AstNode> &out);
 
-AstNode ParseOperator(const std::vector<Token> &tokens, int left, int right,
-                      int index);
+auto ParseOperator(const std::vector<Token> &tokens, int left, int right,
+                   int index) -> AstNode;
 
-std::unique_ptr<AstType> ParseType(const std::vector<Token> &tokens, int left,
-                                   int right);
+auto ParseType(const std::vector<Token> &tokens, int left, int right)
+    -> std::unique_ptr<AstType>;
 void ImportFile(std::vector<AstNode> &nodes, std::string path);
 
-AstNode AstNodeFromTokens(const std::vector<Token> &tokens, int left,
-                          int right) {
+auto AstNodeFromTokens(const std::vector<Token> &tokens, int left, int right)
+    -> AstNode {
   std::vector<AstNode> nodes;
 
   ParseTokenList(tokens, left, right, nodes);
@@ -45,7 +47,7 @@ AstNode AstNodeFromTokens(const std::vector<Token> &tokens, int left,
   }
 }
 
-int SkipBrace(const std::vector<Token> &tokens, int start) {
+auto SkipBrace(const std::vector<Token> &tokens, int start) -> int {
   Operator open, close;
   int step;
 
@@ -102,7 +104,8 @@ int SkipBrace(const std::vector<Token> &tokens, int start) {
   }
 }
 
-int FindExpressionSplit(const std::vector<Token> &tokens, int left, int right) {
+auto FindExpressionSplit(const std::vector<Token> &tokens, int left, int right)
+    -> int {
   int min_prece = -1;
   int index_of_min = -1;
 
@@ -131,7 +134,8 @@ int FindExpressionSplit(const std::vector<Token> &tokens, int left, int right) {
   return index_of_min;
 }
 
-AstNode ParseExpression(const std::vector<Token> &tokens, int left, int right) {
+auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
+    -> AstNode {
   if (left > right) {
     throw TerebinthError(FUNC + " sent left higher then right", INTERNAL_ERROR,
                          tokens[left]);
@@ -146,9 +150,9 @@ AstNode ParseExpression(const std::vector<Token> &tokens, int left, int right) {
     } else if (tokens[left]->GetOp() == ops_->open_cr_brac_) {
       return ParseType(tokens, left + 1, right - 1);
     } else {
-      throw TerebinthError("unhandled brace '" +
-                               tokens[left]->GetOp()->GetText() + "'",
-                           INTERNAL_ERROR, tokens[left]);
+      throw TerebinthError(
+          "unhandled brace '" + tokens[left]->GetOp()->GetText() + "'",
+          INTERNAL_ERROR, tokens[left]);
     }
   }
 
@@ -173,8 +177,7 @@ AstNode ParseExpression(const std::vector<Token> &tokens, int left, int right) {
     std::vector<AstNode> left_nodes;
     std::vector<AstNode> right_nodes;
 
-    if (i > left)
-      ParseSequence(tokens, left, i - 1, ops_->pipe_, left_nodes);
+    if (i > left) ParseSequence(tokens, left, i - 1, ops_->pipe_, left_nodes);
 
     if (i < right)
       ParseSequence(tokens, i + 1, right, ops_->pipe_, right_nodes);
@@ -219,10 +222,10 @@ AstNode ParseExpression(const std::vector<Token> &tokens, int left, int right) {
         ops_->not_op_->GetText(), tokens[i]->GetFile(), tokens[i]->GetLine(),
         tokens[i]->GetCharPos(), TokenData::OPERATOR, ops_->not_op_));
 
-    return AstExpression::Make(AstVoid::Make(), std::move(not_node),
-                               AstExpression::Make(std::move(left_node),
-                                                   std::move(center_node),
-                                                   std::move(right_node)));
+    return AstExpression::Make(
+        AstVoid::Make(), std::move(not_node),
+        AstExpression::Make(std::move(left_node), std::move(center_node),
+                            std::move(right_node)));
   } else if (op == ops_->plus_plus_ || op == ops_->minus_minus_) {
     throw TerebinthError("++ and -- are not yet implemented", SOURCE_ERROR,
                          tokens[i]);
@@ -251,8 +254,7 @@ AstNode ParseExpression(const std::vector<Token> &tokens, int left, int right) {
 
     if ((center_node->IsType() || center_node->IsFunctionWithOutput()) &&
         (left_node->IsVoid() || left_node->IsType()) && !right_node->IsType()) {
-      if (left_node->IsVoid())
-        left_node = AstVoidType::Make();
+      if (left_node->IsVoid()) left_node = AstVoidType::Make();
 
       AstNode func_right_in;
       AstNode func_return;
@@ -348,8 +350,7 @@ void ParseSequence(const std::vector<Token> &tokens, int left, int right,
     if (ops_->IsOpenBrac(tokens[i]->GetOp())) {
       i = SkipBrace(tokens, i);
     } else if (tokens[i]->GetOp() == splitter) {
-      if (start <= i - 1)
-        out.push_back(ParseExpression(tokens, start, i - 1));
+      if (start <= i - 1) out.push_back(ParseExpression(tokens, start, i - 1));
       start = i + 1;
     } else if (tokens[i]->GetOp() && tokens[i]->GetOp()->GetPrecedence() ==
                                          splitter->GetPrecedence()) {
@@ -362,12 +363,11 @@ void ParseSequence(const std::vector<Token> &tokens, int left, int right,
     }
   }
 
-  if (start <= right)
-    out.push_back(ParseExpression(tokens, start, right));
+  if (start <= right) out.push_back(ParseExpression(tokens, start, right));
 }
 
-std::unique_ptr<AstType> ParseType(const std::vector<Token> &tokens, int left,
-                                   int right) {
+auto ParseType(const std::vector<Token> &tokens, int left, int right)
+    -> std::unique_ptr<AstType> {
   std::vector<AstTupleType::NamedType> types;
 
   while (left <= right) {
@@ -398,9 +398,9 @@ std::unique_ptr<AstType> ParseType(const std::vector<Token> &tokens, int left,
         type = ParseType(tokens, left + 2 + 1, j - 1);
         left = j + 1;
       } else {
-        throw TerebinthError("invalid thingy '" + tokens[left + 2]->GetText() +
-                                 "' in type",
-                             SOURCE_ERROR, tokens[left + 2]);
+        throw TerebinthError(
+            "invalid thingy '" + tokens[left + 2]->GetText() + "' in type",
+            SOURCE_ERROR, tokens[left + 2]);
       }
 
       types.push_back(AstTupleType::NamedType{name, std::move(type)});

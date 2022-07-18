@@ -1,4 +1,5 @@
 #include "ast_node.h"
+
 #include "all_operators.h"
 #include "error_handler.h"
 #include "namespace.h"
@@ -8,7 +9,7 @@
 extern StackFrame std_lib_stack_frame_;
 extern Namespace global_namespace_;
 
-Action ResolveLiteral(Token token);
+auto ResolveLiteral(Token token) -> Action;
 
 void AstNodeBase::CopyToNode(AstNodeBase *other, bool copy_cache) {
   other->in_left_type = in_left_type;
@@ -53,8 +54,7 @@ void AstList::ResolveAction() {
     try {
       Action action = nodes[i]->GetAction();
 
-      if (i != (int)nodes.size() - 1)
-        action = ns_->WrapInDestroyer(action);
+      if (i != (int)nodes.size() - 1) action = ns_->WrapInDestroyer(action);
 
       actions.push_back(action);
     } catch (TerebinthError err) {
@@ -128,7 +128,7 @@ void AstFuncBody::ResolveAction() {
         func_return_type->ActuallyIs(body_node_->GetReturnType());
   }
   action_ = FunctionActionT(body_node_->MakeCopy(true), func_return_type,
-                           sub_ns->GetStackFrame());
+                            sub_ns->GetStackFrame());
 }
 
 std::string AstExpression::GetString() {
@@ -167,11 +167,10 @@ void AstExpression::ResolveAction() {
     center->SetInput(ns_, dynamic_, left_in->GetReturnType(),
                      right_in->GetReturnType());
     action_ = BranchActionT(left_in->GetAction(), center->GetAction(),
-                           right_in->GetAction());
+                            right_in->GetAction());
   }
 
-  if (action_->name_hint_.empty())
-    action_->name_hint_ = name_hint_;
+  if (action_->name_hint_.empty()) action_->name_hint_ = name_hint_;
 }
 
 std::string AstConstExpression::GetString() {
@@ -327,8 +326,7 @@ void AstOpWithInput::ResolveAction() {
 
     std::vector<Action> actions;
 
-    if (init_action)
-      actions.push_back(ns_->WrapInDestroyer(init_action));
+    if (init_action) actions.push_back(ns_->WrapInDestroyer(init_action));
 
     actions.push_back(ns_->WrapInDestroyer(
         LoopActionT(condition_action, end_action, body_action)));
@@ -357,15 +355,15 @@ void AstOpWithInput::ResolveAction() {
     Action right_action = right_in[0]->GetAction();
 
     if (left_action->GetReturnType() != Bool) {
-      throw TerebinthError("'" + token->GetOp()->GetText() +
-                               "' can only be used with Bools",
-                           SOURCE_ERROR, left_in[0]->GetToken());
+      throw TerebinthError(
+          "'" + token->GetOp()->GetText() + "' can only be used with Bools",
+          SOURCE_ERROR, left_in[0]->GetToken());
     }
 
     if (right_action->GetReturnType() != Bool) {
-      throw TerebinthError("'" + token->GetOp()->GetText() +
-                               "' can only be used with Bools",
-                           SOURCE_ERROR, right_in[0]->GetToken());
+      throw TerebinthError(
+          "'" + token->GetOp()->GetText() + "' can only be used with Bools",
+          SOURCE_ERROR, right_in[0]->GetToken());
     }
 
     if (token->GetOp() == ops_->and_op_) {
@@ -379,9 +377,9 @@ void AstOpWithInput::ResolveAction() {
                              "', which it shouldn't have been",
                          INTERNAL_ERROR, token);
   } else {
-    throw TerebinthError("AstOpWithInput made with bad token '" +
-                             token->GetText() + "'",
-                         INTERNAL_ERROR, token);
+    throw TerebinthError(
+        "AstOpWithInput made with bad token '" + token->GetText() + "'",
+        INTERNAL_ERROR, token);
   }
 }
 
@@ -398,9 +396,10 @@ void AstToken::ResolveAction() {
   if (token->GetType() == TokenData::IDENTIFIER ||
       token->GetType() == TokenData::OPERATOR) {
     if (token->GetOp() && !token->GetOp()->IsOverloadable()) {
-      throw TerebinthError("non overloadable operator in AstToken, it should "
-                           "have been removed and processed by the parser",
-                           INTERNAL_ERROR, token);
+      throw TerebinthError(
+          "non overloadable operator in AstToken, it should "
+          "have been removed and processed by the parser",
+          INTERNAL_ERROR, token);
     }
 
     action_ = ns_->GetActionForTokenWithInput(

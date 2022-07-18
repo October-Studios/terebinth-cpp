@@ -1,15 +1,15 @@
 #pragma once
 
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "action.h"
 #include "ast_node.h"
 #include "operator.h"
 #include "token.h"
 #include "type.h"
-
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
 
 class StackFrame;
 
@@ -21,7 +21,7 @@ typedef std::shared_ptr<NamespaceData> Namespace;
  *
  */
 class NamespaceData : public std::enable_shared_from_this<NamespaceData> {
-public:
+ public:
   /**
    * @brief
    *
@@ -86,7 +86,7 @@ public:
   std::vector<Action> *GetDestroyerActions() { return &destructor_actions_; }
   Action WrapInDestroyer(Action in);
 
-private:
+ private:
   /**
    * @brief Get the Nodes object
    *
@@ -107,7 +107,7 @@ private:
    *
    */
   class IdMap {
-  public:
+   public:
     /**
      * @brief
      *
@@ -120,7 +120,7 @@ private:
      */
     void Get(std::string key, std::vector<AstNodeBase *> &out);
 
-  private:
+   private:
     ///
     std::unordered_map<std::string, std::vector<AstNode>> nodes_;
   };

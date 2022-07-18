@@ -32,7 +32,7 @@ struct OffsetAndType {
 };
 
 class TypeBase : public std::enable_shared_from_this<TypeBase> {
-public:
+ public:
   virtual ~TypeBase() = default;
 
   enum PrimitiveType {
@@ -92,7 +92,7 @@ public:
 
   std::string name_hint_ = "";
 
-protected:
+ protected:
   virtual bool MatchesSameTypeType(Type other) = 0;
 
   Type PtrToMe = nullptr;
@@ -101,7 +101,7 @@ protected:
 Type MakeTuple(const std::vector<NamedType> &in, bool is_anonymous);
 
 class TupleTypeMaker {
-public:
+ public:
   TupleTypeMaker();
 
   void Add(std::string name, Type type);
@@ -110,7 +110,7 @@ public:
 
   Type Get(bool is_anonymous);
 
-private:
+ private:
   std::string GetUniqueName();
 
   std::unique_ptr<std::vector<NamedType>> sub_types_;

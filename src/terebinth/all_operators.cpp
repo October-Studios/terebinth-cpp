@@ -1,10 +1,11 @@
 #include "all_operators.h"
+
 #include "error_handler.h"
 
 AllOperators *ops_ = nullptr;
 
-Operator OpCreate(std::string text_in, int left_precedence_in,
-                  int right_precedence_in, bool overloadable_in);
+auto OpCreate(std::string text_in, int left_precedence_in,
+              int right_precedence_in, bool overloadable_in) -> Operator;
 
 void AllOperators::Init() { ops_ = new AllOperators(); }
 

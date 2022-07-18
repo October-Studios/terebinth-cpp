@@ -7,30 +7,30 @@
 #include "util/string_utils.h"
 
 class VoidType : public TypeBase {
-public:
-  virtual std::string GetString() { return "VOID"; }
+ public:
+  virtual auto GetString() -> std::string { return "VOID"; }
 
-  std::string GetCompactString() { return "v"; }
+  auto GetCompactString() -> std::string { return "v"; }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     throw TerebinthError("tried to get the literal value of 'void;",
                          INTERNAL_ERROR);
   }
 
-  bool IsCreatable() { return false; }
+  auto IsCreatable() -> bool { return false; }
 
-  bool IsVoid() { return true; }
+  auto IsVoid() -> bool { return true; }
 
-  size_t GetSize() { return 0; }
+  auto GetSize() -> size_t { return 0; }
 
-  PrimitiveType GetType() { return VOID; };
+  auto GetType() -> PrimitiveType { return VOID; };
 
-protected:
-  bool MatchesSameTypeType(Type other) { return true; }
+ protected:
+  auto MatchesSameTypeType(Type other) -> bool { return true; }
 };
 
 class UnknownType : public TypeBase {
-public:
+ public:
   virtual std::string GetString() { return "UNKNOWN"; }
 
   std::string GetCompactString() { return "u"; }
@@ -47,28 +47,28 @@ public:
 
   PrimitiveType GetType() { return UNKNOWN; };
 
-protected:
+ protected:
   bool MatchesSameTypeType(Type other) { return false; }
 };
 
 class PrimType : public TypeBase {
-public:
+ public:
   PrimType(PrimitiveType in) { primType = in; }
 
   std::string GetCompactString() {
     switch (primType) {
-    case BOOL:
-      return "b";
-    case BYTE:
-      return "y";
-    case INT:
-      return "i";
-    case DOUBLE:
-      return "d";
+      case BOOL:
+        return "b";
+      case BYTE:
+        return "y";
+      case INT:
+        return "i";
+      case DOUBLE:
+        return "d";
 
-    default:
-      throw TerebinthError("tried to make " + GetString() + " compact",
-                           INTERNAL_ERROR);
+      default:
+        throw TerebinthError("tried to make " + GetString() + " compact",
+                             INTERNAL_ERROR);
     }
   }
 
@@ -78,28 +78,28 @@ public:
     std::string val;
 
     switch (primType) {
-    case BOOL:
-      val = (*(bool *)data) ? "true" : "false";
-      break;
-    case BYTE:
-      val = std::to_string(*(unsigned char *)data);
-      break;
-    case INT:
-      val = std::to_string(*(int *)data);
-      break;
-    case DOUBLE:
-      val = str::DoubleToString(*(double *)data);
-      break;
-      /*{
-        std::ostringstream ss;
-        ss << *(double*)data;
-        val = ss.str();
-      }
-      break;*/
+      case BOOL:
+        val = (*(bool *)data) ? "true" : "false";
+        break;
+      case BYTE:
+        val = std::to_string(*(unsigned char *)data);
+        break;
+      case INT:
+        val = std::to_string(*(int *)data);
+        break;
+      case DOUBLE:
+        val = str::DoubleToString(*(double *)data);
+        break;
+        /*{
+          std::ostringstream ss;
+          ss << *(double*)data;
+          val = ss.str();
+        }
+        break;*/
 
-    default:
-      throw TerebinthError("tried to convert " + GetString() + " to C++ code",
-                           INTERNAL_ERROR);
+      default:
+        throw TerebinthError("tried to convert " + GetString() + " to C++ code",
+                             INTERNAL_ERROR);
     }
 
     return val;
@@ -107,35 +107,36 @@ public:
 
   size_t GetSize() {
     switch (primType) {
-    case BOOL:
-      return sizeof(bool);
-    case BYTE:
-      return sizeof(unsigned char);
-    case INT:
-      return sizeof(int);
-    case DOUBLE:
-      return sizeof(double);
+      case BOOL:
+        return sizeof(bool);
+      case BYTE:
+        return sizeof(unsigned char);
+      case INT:
+        return sizeof(int);
+      case DOUBLE:
+        return sizeof(double);
 
-    default:
-      throw TerebinthError("tried to get size of " + GetString(),
-                           INTERNAL_ERROR);
+      default:
+        throw TerebinthError("tried to get size of " + GetString(),
+                             INTERNAL_ERROR);
     }
   }
 
   PrimitiveType GetType() { return primType; }
 
-protected:
+ protected:
   PrimitiveType primType;
 
   bool MatchesSameTypeType(Type other) { return other->GetType() == primType; }
 };
 
 class TupleType : public TypeBase {
-public:
+ public:
   TupleType(std::unique_ptr<std::vector<NamedType>> in, bool isAnonymousIn) {
     if (in == nullptr)
-      error_.Log(FUNC + " sent null input, compiler will likely shit itself in "
-                        "the near future",
+      error_.Log(FUNC +
+                     " sent null input, compiler will likely shit itself in "
+                     "the near future",
                  INTERNAL_ERROR);
 
     sub_types_ = std::move(in);
@@ -153,7 +154,7 @@ public:
     isAnonymous = isAnonymousIn;
   }
 
-  ~TupleType() {}
+  ~TupleType() = default;
 
   std::string GetString() {
     std::string out;
@@ -161,8 +162,7 @@ public:
     out += "{";
 
     for (int i = 0; i < int(sub_types_->size()); i++) {
-      if (i)
-        out += ", ";
+      if (i) out += ", ";
 
       out += (*sub_types_)[i].name + ": " + (*sub_types_)[i].type->GetString();
     }
@@ -198,8 +198,7 @@ public:
     out += "(";
 
     for (int i = 0; i < int(sub_types_->size()); i++) {
-      if (i)
-        out += ", ";
+      if (i) out += ", ";
 
       out += (*sub_types_)[i].type->GetCppLiteral(
           (char *)data + GetSubType((*sub_types_)[i].name).offset, prog);
@@ -264,15 +263,13 @@ public:
     return maker.Get(true);
   }
 
-protected:
+ protected:
   bool MatchesSameTypeType(Type other) {
     auto o = (TupleType *)(&(*other));
 
-    if (!isAnonymous && !o->isAnonymous)
-      return false;
+    if (!isAnonymous && !o->isAnonymous) return false;
 
-    if (sub_types_->size() != o->sub_types_->size())
-      return false;
+    if (sub_types_->size() != o->sub_types_->size()) return false;
 
     for (int i = 0; i < int(sub_types_->size()); i++) {
       // if ((*sub_types_)[i].name!=(*o->sub_types_)[i].name)
@@ -288,7 +285,7 @@ protected:
     return true;
   }
 
-private:
+ private:
   std::unique_ptr<std::vector<NamedType>> sub_types_;
   bool isAnonymous = true;
   bool hasWhatev = false;
@@ -296,10 +293,12 @@ private:
 };
 
 class PtrType : public TypeBase {
-public:
-  PtrType(Type in) { type = in; }
+ public:
+  explicit PtrType(Type in) { type = in; }
 
-  std::string GetString() { return "-> " + type->GetString() + " (pointer)"; }
+  auto GetString() -> std::string {
+    return "-> " + type->GetString() + " (pointer)";
+  }
 
   std::string GetCompactString() {
     return "Pp_" + type->GetCompactString() + "_pP";
@@ -316,23 +315,23 @@ public:
 
   PrimitiveType GetType() { return PTR; }
 
-  Type GetSubType() { return type; }
+  auto GetSubType() -> Type { return type; }
 
-  Type ActuallyIs(Type target) {
+  auto ActuallyIs(Type target) -> Type {
     return GetSubType()->ActuallyIs(target->GetSubType())->GetPtr();
   }
 
-protected:
+ protected:
   Type type;
 
-  bool MatchesSameTypeType(Type other) {
+  auto MatchesSameTypeType(Type other) -> bool {
     return ((PtrType *)(&(*other)))->type->Matches(type);
   }
 };
 
 class MetaType : public TypeBase {
-public:
-  MetaType(Type in) { type = in; }
+ public:
+  explicit MetaType(Type in) { type = in; }
 
   std::string GetString() { return "{" + type->GetString() + "} (meta type)"; }
 
@@ -358,7 +357,7 @@ public:
     return GetSubType()->ActuallyIs(target->GetSubType())->GetMeta();
   }
 
-protected:
+ protected:
   Type type;
 
   bool MatchesSameTypeType(Type other) {
@@ -367,8 +366,8 @@ protected:
 };
 
 class WhatevType : public TypeBase {
-public:
-  WhatevType() {}
+ public:
+  WhatevType() = default;
 
   std::string GetString() { return "(whatev type)"; }
 
@@ -400,7 +399,7 @@ public:
 
   Type ActuallyIs(Type target) { return target; }
 
-protected:
+ protected:
   Type type;
 
   bool MatchesSameTypeType(Type other) { return true; }
@@ -431,48 +430,44 @@ Type String = nullptr;
 Type TypeBase::GetMeta() { return Type(new MetaType(shared_from_this())); }
 
 Type TypeBase::GetPtr() {
-  if (!PtrToMe)
-    PtrToMe = Type(new PtrType(shared_from_this()));
+  if (!PtrToMe) PtrToMe = Type(new PtrType(shared_from_this()));
 
   return PtrToMe;
 }
 
 std::string TypeBase::GetString(PrimitiveType in) {
   switch (in) {
-  case UNKNOWN:
-    return "UNKNOWN_TYPE";
-  case VOID:
-    return "VOID";
-  case BOOL:
-    return "BOOL";
-  case BYTE:
-    return "BYTE";
-  case INT:
-    return "INT";
-  case DOUBLE:
-    return "DOUBLE";
-  case TUPLE:
-    return "TUPLE";
-  case METATYPE:
-    return "METATYPE";
-  default:
-    return "ERROR_GETTING_TYPE";
+    case UNKNOWN:
+      return "UNKNOWN_TYPE";
+    case VOID:
+      return "VOID";
+    case BOOL:
+      return "BOOL";
+    case BYTE:
+      return "BYTE";
+    case INT:
+      return "INT";
+    case DOUBLE:
+      return "DOUBLE";
+    case TUPLE:
+      return "TUPLE";
+    case METATYPE:
+      return "METATYPE";
+    default:
+      return "ERROR_GETTING_TYPE";
   }
 }
 
 bool TypeBase::Matches(Type other) {
-  if (other == shared_from_this())
-    return true;
+  if (other == shared_from_this()) return true;
 
-  if (GetType() == WHATEV || other->GetType() == WHATEV)
-    return true;
+  if (GetType() == WHATEV || other->GetType() == WHATEV) return true;
 
   if (GetType() == TUPLE) {
     auto sub_types_ = GetAllSubTypes();
 
     if (sub_types_->size() == 1) {
-      if ((*sub_types_)[0].type->Matches(other))
-        return true;
+      if ((*sub_types_)[0].type->Matches(other)) return true;
     }
   }
 
@@ -480,13 +475,11 @@ bool TypeBase::Matches(Type other) {
     auto sub_types_ = other->GetAllSubTypes();
 
     if (sub_types_->size() == 1) {
-      if ((*sub_types_)[0].type->Matches(shared_from_this()))
-        return true;
+      if ((*sub_types_)[0].type->Matches(shared_from_this())) return true;
     }
   }
 
-  if (other->GetType() != GetType())
-    return false;
+  if (other->GetType() != GetType()) return false;
 
   return MatchesSameTypeType(other);
 }
@@ -505,7 +498,7 @@ Type TypeBase::ActuallyIs(Type target) {
   return shared_from_this();
 }
 
-Type MakeTuple(const std::vector<NamedType> &in, bool isAnonymous) {
+auto MakeTuple(const std::vector<NamedType> &in, bool isAnonymous) -> Type {
   auto ptr =
       std::unique_ptr<std::vector<NamedType>>(new std::vector<NamedType>(in));
   return Type(new TupleType(move(ptr), isAnonymous));
@@ -555,8 +548,7 @@ std::string TupleTypeMaker::GetUniqueName() {
       }
     }
 
-    if (valid)
-      return str;
+    if (valid) return str;
   }
 
   error_.Log("you've gotta be fuckin kidding", SOURCE_ERROR);

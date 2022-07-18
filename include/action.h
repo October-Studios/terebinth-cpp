@@ -1,23 +1,24 @@
 #pragma once
 
-#include "cpp_program.h"
-#include "stack_frame.h"
-#include "util/string_drawing.h"
-#include "type.h"
+#include <stdlib.h>
+
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <stdlib.h>
+#include "cpp_program.h"
+#include "stack_frame.h"
+#include "type.h"
+#include "util/string_drawing.h"
 
 class ActionData;
 
 extern std::shared_ptr<ActionData> void_action_;
 
 class ActionData {
-public:
-  ActionData(Type returnTypeIn, Type inLeftTypeIn, Type inRightTypeIn);
+ public:
+  ActionData(Type return_type_in, Type in_left_type_in, Type in_right_type_in);
 
   virtual ~ActionData() {}
 
@@ -32,9 +33,9 @@ public:
   Type &GetInRightType() { return in_right_type_; }
 
   virtual std::string GetDescription() { return description_; }
-  virtual void *Execute(void *inLeft, void *inRight) = 0;
-  virtual void AddToProg(std::shared_ptr<ActionData> inLeft,
-                         std::shared_ptr<ActionData> inRight,
+  virtual void *Execute(void *in_left, void *in_right) = 0;
+  virtual void AddToProg(std::shared_ptr<ActionData> in_left,
+                         std::shared_ptr<ActionData> in_right,
                          CppProgram *prog) {
     prog->Comment("action '" + GetDescription() +
                   "' to cpp code not yet implemented");
@@ -45,7 +46,7 @@ public:
 
   std::string name_hint_ = "";
 
-protected:
+ protected:
   Type return_type_;
   Type in_left_type_;
   Type in_right_type_;
@@ -64,27 +65,32 @@ Action LambdaActionT(
     std::string text_in);
 Action CreateNewVoidAction();
 
-Action BranchActionT(Action leftInputIn, Action actionIn, Action rightInputIn);
+Action BranchActionT(Action left_input_in, Action action_in,
+                     Action right_input_in);
 
-Action FunctionActionT(Action actionIn, std::shared_ptr<StackFrame> stackFameIn);
-Action FunctionActionT(std::unique_ptr<AstNodeBase> nodeIn, Type returnTypeIn,
-                      std::shared_ptr<StackFrame> stackFameIn);
+Action FunctionActionT(Action action_in,
+                       std::shared_ptr<StackFrame> stack_frame_in);
+Action FunctionActionT(std::unique_ptr<AstNodeBase> node_in,
+                       Type return_type_in,
+                       std::shared_ptr<StackFrame> stack_frame_in);
 
-Action AndActionT(Action firstActionIn, Action secondActionIn);
-Action OrActionT(Action firstActionIn, Action secondActionIn);
+Action AndActionT(Action first_action_in, Action second_action_in);
+Action OrActionT(Action first_action_in, Action second_action_in);
 
-Action IfActionT(Action conditionIn, Action ifActionIn);
-Action IfElseActionT(Action conditionIn, Action ifActionIn, Action elseAction);
+Action IfActionT(Action condition_in, Action if_action_in);
+Action IfElseActionT(Action condition_in, Action if_action_in,
+                     Action else_action);
 
-Action ListActionT(const std::vector<Action> &actionsIn,
-                  const std::vector<Action> &destroyersIn);
+Action ListActionT(const std::vector<Action> &actions_in,
+                   const std::vector<Action> &destroyers_in);
 
-Action LoopActionT(Action conditionIn, Action loopActionIn);
-Action LoopActionT(Action conditionIn, Action endActionIn, Action loopActionIn);
+Action LoopActionT(Action condition_in, Action loop_action_in);
+Action LoopActionT(Action condition_in, Action end_action_in,
+                   Action loop_action_in);
 
-Action MakeTupleActionT(const std::vector<Action> &sourceActionsIn);
+Action MakeTupleActionT(const std::vector<Action> &source_actions_in);
 Action GetElemFromTupleActionT(Type source, std::string name);
-Action CppTupleCastActionT(Action actionIn, Type returnType);
+Action CppTupleCastActionT(Action action_in, Type returnType);
 
 Action VarGetActionT(size_t in, Type type_in, std::string text_in);
 Action VarSetActionT(size_t in, Type type_in, std::string text_in);
@@ -93,6 +99,6 @@ Action GlobalSetActionT(size_t in, Type type_in, std::string text_in);
 
 class NamespaceData;
 Action ConstGetActionT(const void *in, Type type_in, std::string text_in,
-                      std::shared_ptr<NamespaceData> ns);
+                       std::shared_ptr<NamespaceData> ns);
 
 Action TypeGetActionT(Type type_in);

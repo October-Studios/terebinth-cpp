@@ -1,18 +1,18 @@
+#include <unordered_map>
+#include <vector>
+
 #include "all_operators.h"
 #include "error_handler.h"
 #include "operator.h"
 #include "source_file.h"
 #include "token.h"
 
-#include <unordered_map>
-#include <vector>
-
 /**
  * @brief
  *
  */
 class CharacterClassifier {
-public:
+ public:
   enum Type {
     WHITESPACE,
     LINE_BREAK,
@@ -32,10 +32,10 @@ public:
 
   inline CharacterClassifier::Type Get(std::shared_ptr<SourceFile> file, int i);
 
-private:
+ private:
   void SetUp();
 
-private:
+ private:
   std::unordered_map<char, CharacterClassifier::Type> hm_;
   bool has_set_up_ = false;
 };
@@ -79,38 +79,30 @@ void CharacterClassifier::SetUp() {
   has_set_up_ = true;
 }
 
-inline CharacterClassifier::Type
-CharacterClassifier::Get(std::shared_ptr<SourceFile> file, int index) {
-  //	set up the first time this function is called
-  if (!has_set_up_)
-    SetUp();
-
-  //	chack fo multi line comments in a special way, because they are multi
-  // character
+inline CharacterClassifier::Type CharacterClassifier::Get(
+    std::shared_ptr<SourceFile> file, int index) {
+  if (!has_set_up_) SetUp();
 
   switch ((*file)[index]) {
-  case '/':
-    if (index < int(file->Size()) - 1 && (*file)[index + 1] == '/')
-      return MULTI_LINE_COMMENT_START;
-    break;
+    case '/':
+      if (index < int(file->Size()) - 1 && (*file)[index + 1] == '/')
+        return MULTI_LINE_COMMENT_START;
+      break;
 
-  case '\\':
-    if (index > 0 && (*file)[index - 1] == '\\')
-      return MULTI_LINE_COMMENT_END;
-    break;
+    case '\\':
+      if (index > 0 && (*file)[index - 1] == '\\')
+        return MULTI_LINE_COMMENT_END;
+      break;
 
-  case '.': // allow a . to be a digit character only if it is followed by a
-            // digit
-    if (index < int(file->Size()) - 1) {
-      auto i = hm_.find((*file)[index + 1]);
+    case '.':
+      if (index < int(file->Size()) - 1) {
+        auto i = hm_.find((*file)[index + 1]);
 
-      if (i != hm_.end() && i->second == DIGIT)
-        return DIGIT;
-    }
-    break;
+        if (i != hm_.end() && i->second == DIGIT) return DIGIT;
+      }
+      break;
   }
 
-  //	handle all other cases using the hashmap
   char c = (*file)[index];
 
   auto i = hm_.find(c);
@@ -121,9 +113,8 @@ CharacterClassifier::Get(std::shared_ptr<SourceFile> file, int index) {
     return i->second;
 }
 
-inline TokenData::Type
-CharacterClassifier::GetTokenType(CharacterClassifier::Type type,
-                                  TokenData::Type previous_type) {
+inline TokenData::Type CharacterClassifier::GetTokenType(
+    CharacterClassifier::Type type, TokenData::Type previous_type) {
   if (previous_type == TokenData::LINE_COMMENT) {
     if (type == NEWLINE)
       return TokenData::WHITESPACE;
@@ -142,42 +133,41 @@ CharacterClassifier::GetTokenType(CharacterClassifier::Type type,
   }
 
   switch (type) {
+    case SINGLE_LINE_COMMENT:
+      return TokenData::LINE_COMMENT;
 
-  case SINGLE_LINE_COMMENT:
-    return TokenData::LINE_COMMENT;
+    case MULTI_LINE_COMMENT_START:
+      return TokenData::BLOCK_COMMENT;
 
-  case MULTI_LINE_COMMENT_START:
-    return TokenData::BLOCK_COMMENT;
+    case MULTI_LINE_COMMENT_END:
+      error_.Log("block comment end without start", SOURCE_ERROR);
+      return TokenData::UNKNOWN;
 
-  case MULTI_LINE_COMMENT_END:
-    error_.Log("block comment end without start", SOURCE_ERROR);
-    return TokenData::UNKNOWN;
+    case WHITESPACE:
+      return TokenData::WHITESPACE;
 
-  case WHITESPACE:
-    return TokenData::WHITESPACE;
+    case LINE_BREAK:
+    case NEWLINE:
+      return TokenData::LINE_END;
 
-  case LINE_BREAK:
-  case NEWLINE:
-    return TokenData::LINE_END;
+    case OPERATOR:
+      return TokenData::OPERATOR;
 
-  case OPERATOR:
-    return TokenData::OPERATOR;
+    case LETTER:
+    case DIGIT:
+      if (previous_type == TokenData::IDENTIFIER ||
+          previous_type == TokenData::LITERAL)
+        return previous_type;
+      else if (type == DIGIT)
+        return TokenData::LITERAL;
+      else
+        return TokenData::IDENTIFIER;
 
-  case LETTER:
-  case DIGIT:
-    if (previous_type == TokenData::IDENTIFIER ||
-        previous_type == TokenData::LITERAL)
-      return previous_type;
-    else if (type == DIGIT)
-      return TokenData::LITERAL;
-    else
-      return TokenData::IDENTIFIER;
+    case STRING_QUOTE:
+      return TokenData::STRING_LITERAL;
 
-  case STRING_QUOTE:
-    return TokenData::STRING_LITERAL;
-
-  default:
-    return TokenData::UNKNOWN;
+    default:
+      return TokenData::UNKNOWN;
   }
 }
 
@@ -205,7 +195,7 @@ void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens) {
           }
         } else if (type == TokenData::LINE_COMMENT ||
                    type == TokenData::BLOCK_COMMENT) {
-          // do nothing
+          // NOOP
         } else {
           Token token = MakeToken(token_txt, file, line,
                                   char_pos - token_txt.size(), type);
@@ -234,11 +224,11 @@ void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens) {
         else if ((*file)[i] == '\\')
           token_txt += '\\';
         else
-          throw TerebinthError(std::string() + "invalid escape character '\\" +
-                                   (*file)[i] + "'",
-                               SOURCE_ERROR,
-                               MakeToken(token_txt + (*file)[i], file, line,
-                                         char_pos - token_txt.size(), type));
+          throw TerebinthError(
+              std::string() + "invalid escape character '\\" + (*file)[i] + "'",
+              SOURCE_ERROR,
+              MakeToken(token_txt + (*file)[i], file, line,
+                        char_pos - token_txt.size(), type));
       } else {
         token_txt += (*file)[i];
       }

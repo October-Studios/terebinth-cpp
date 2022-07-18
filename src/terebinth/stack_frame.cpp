@@ -1,4 +1,5 @@
 #include "stack_frame.h"
+
 #include "error_handler.h"
 #include "util/string_utils.h"
 
@@ -66,9 +67,10 @@ size_t StackFrame::GetLeftOffset() {
   if (left_input_offset_ >= 0) {
     return left_input_offset_;
   } else {
-    error_.Log("tried to get the left input offset from a stack frame that "
-               "does not have a left input",
-               INTERNAL_ERROR);
+    error_.Log(
+        "tried to get the left input offset from a stack frame that "
+        "does not have a left input",
+        INTERNAL_ERROR);
     return 0;
   }
 }
@@ -77,9 +79,10 @@ size_t StackFrame::GetRightOffset() {
   if (right_input_offset_ >= 0) {
     return right_input_offset_;
   } else {
-    error_.Log("tried to get the right input offset from a stack frame that "
-               "does not have a right input",
-               INTERNAL_ERROR);
+    error_.Log(
+        "tried to get the right input offset from a stack frame that "
+        "does not have a right input",
+        INTERNAL_ERROR);
     return 0;
   }
 }

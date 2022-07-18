@@ -1,13 +1,12 @@
-#ifndef TEREBINTH_STRING_UTILS_H_
-#define TEREBINTH_STRING_UTILS_H_
+#pragma once
+
+#include <math.h>
+#include <unistd.h>
 
 #include <exception>
 #include <functional>
 #include <iostream>
-#include <math.h>
 #include <string>
-#include <sys/ioctl.h>
-#include <unistd.h>
 #include <vector>
 
 #include "error_handler.h"
@@ -63,11 +62,9 @@ inline std::string PadString(const std::string &in, int size, int alignment = 1,
     if (alignment == 0) {
       std::string left_pad, right_pad;
 
-      for (int i = 0; i < floor(pad_size / 2.0); i++)
-        left_pad += pad;
+      for (int i = 0; i < floor(pad_size / 2.0); i++) left_pad += pad;
 
-      for (int i = 0; i < ceil(pad_size / 2.0); i++)
-        right_pad += pad;
+      for (int i = 0; i < ceil(pad_size / 2.0); i++) right_pad += pad;
 
       return left_pad + left_cap + in + right_cap + right_pad;
     }
@@ -75,12 +72,11 @@ inline std::string PadString(const std::string &in, int size, int alignment = 1,
     else {
       std::string pad_str;
 
-      for (int i = 0; i < pad_size; i++)
-        pad_str += pad;
+      for (int i = 0; i < pad_size; i++) pad_str += pad;
 
-      if (alignment > 0) // right align
+      if (alignment > 0)  // right align
         return left_cap + in + right_cap + pad_str;
-      else // left align
+      else  // left align
         return pad_str + left_cap + in + right_cap;
     }
   }
@@ -118,12 +114,10 @@ inline int Seek(const std::string &in, int distGlyph, int startPosByte) {
 
 inline bool SubMatches(const std::string &in, int posBytes,
                        const std::string &sub) {
-  if (posBytes < 0 || sub.size() + posBytes > in.size())
-    return false;
+  if (posBytes < 0 || sub.size() + posBytes > in.size()) return false;
 
   for (int i = 0; i < (int)sub.size(); i++) {
-    if (in[i + posBytes] != sub[i])
-      return false;
+    if (in[i + posBytes] != sub[i]) return false;
   }
 
   return true;
@@ -137,8 +131,7 @@ inline std::string Sub(const std::string &in, int startGlyph, int endGlyph) {
 }
 
 inline bool Matches(const std::string &a, const std::string &b) {
-  if (a.size() != b.size())
-    return false;
+  if (a.size() != b.size()) return false;
 
   return SubMatches(a, 0, b);
 }
@@ -238,8 +231,7 @@ inline int StringToInt(std::string in) {
 inline std::string RunCmd(std::string cmd, bool print_output = false) {
   std::string result = "";
   FILE *pipe = popen(cmd.c_str(), "r");
-  if (!pipe)
-    throw std::runtime_error("popen() failed in GetOutputFromCmd");
+  if (!pipe) throw std::runtime_error("popen() failed in GetOutputFromCmd");
   try {
     while (!feof(pipe)) {
       char c;
@@ -491,9 +483,7 @@ inline std::string PutStringInBox(const std::string &in,
   return out;
 }
 
-} // namespace str
+}  // namespace str
 
 #include "string_array.h"
 #include "string_drawing.h"
-
-#endif // TEREBINTH_STRING_UTILS_H_

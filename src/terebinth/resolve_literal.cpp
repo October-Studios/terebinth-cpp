@@ -5,7 +5,7 @@
 
 extern Namespace global_namespace_;
 
-Action ResolveIntLiteral(Token token, Type type) {
+auto ResolveIntLiteral(Token token, Type type) -> Action {
   std::string in = token->GetText();
   int val = 0;
 
@@ -29,7 +29,7 @@ Action ResolveIntLiteral(Token token, Type type) {
   }
 }
 
-Action ResolveDoubleLiteral(Token token) {
+auto ResolveDoubleLiteral(Token token) -> Action {
   std::string in = token->GetText();
 
   double val = 0;
@@ -64,10 +64,10 @@ Action ResolveDoubleLiteral(Token token) {
   return ConstGetActionT(&out, Double, token->GetText(), global_namespace_);
 }
 
-std::string TbthStr2CppStr(void *obj);
-void *CppStr2TbthStr(std::string cpp);
+auto TbthStr2CppStr(void *obj) -> std::string;
+auto CppStr2TbthStr(std::string cpp) -> void *;
 
-Action ResolveStringLiteral(Token token) {
+auto ResolveStringLiteral(Token token) -> Action {
   std::string text = token->GetText();
 
   while (text.size() > 0 && text[0] == '"') {
@@ -83,7 +83,7 @@ Action ResolveStringLiteral(Token token) {
   return ConstGetActionT(obj, String, "\"" + text + "\"", global_namespace_);
 }
 
-Action ResolveLiteral(Token token) {
+auto ResolveLiteral(Token token) -> Action {
   if (token->GetType() == TokenData::STRING_LITERAL) {
     return ResolveStringLiteral(token);
   }
@@ -133,8 +133,8 @@ Action ResolveLiteral(Token token) {
   } else if (type == Double) {
     return ResolveDoubleLiteral(token);
   } else {
-    throw TerebinthError("tried to make literal with invalid type of " +
-                             type->GetString(),
-                         INTERNAL_ERROR, token);
+    throw TerebinthError(
+        "tried to make literal with invalid type of " + type->GetString(),
+        INTERNAL_ERROR, token);
   }
 }

@@ -7,7 +7,7 @@ extern void *global_frame_ptr_;
 extern void *stack_ptr_;
 
 class StackFrame {
-public:
+ public:
   void AddMember(Type in);
   void SetInput(Type left, Type right);
 
@@ -17,7 +17,7 @@ public:
   size_t GetLeftOffset();
   size_t GetRightOffset();
 
-private:
+ private:
   std::vector<Type> members_;
   size_t frame_size_ = 0;
   bool input_set_ = false;

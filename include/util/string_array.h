@@ -1,5 +1,4 @@
-#ifndef TEREBINTH_STRING_ARRAY_H_
-#define TEREBINTH_STRING_ARRAY_H_
+#pragma once
 
 #include "string_utils.h"
 
@@ -22,6 +21,4 @@ std::string Join(std::vector<std::string> &in, std::string joiner = "\n",
 inline void SplitByLine(std::vector<std::string> &out, const std::string &in) {
   SplitBy(out, in, "\n");
 }
-} // namespace str
-
-#endif // TEREBINTH_STRING_ARRAY_H_
+}  // namespace str

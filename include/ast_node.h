@@ -1,9 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include "action.h"
 #include "error_handler.h"
 #include "token.h"
-#include <memory>
 
 class NamespaceData;
 typedef std::shared_ptr<NamespaceData> Namespace;
@@ -17,7 +18,7 @@ AstNode AstNodeFromTokens(const std::vector<Token> &tokens, int left,
                           int right);
 
 class AstNodeBase {
-public:
+ public:
   virtual ~AstNodeBase() = default;
 
   void SetInput(Namespace ns_in, bool dynamic_in, Type left, Type right) {
@@ -51,17 +52,18 @@ public:
   Type GetReturnType() {
     if (!return_type_) {
       if (!input_has_been_set_) {
-        throw TerebinthError("tried to get return type from AST node when "
-                             "input had not been set",
-                             INTERNAL_ERROR, GetToken());
+        throw TerebinthError(
+            "tried to get return type from AST node when "
+            "input had not been set",
+            INTERNAL_ERROR, GetToken());
       }
       ResolveReturnType();
     }
 
     if (!return_type_) {
-      throw TerebinthError("AST node " + GetString() +
-                               "failed to supply a return type",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          "AST node " + GetString() + "failed to supply a return type",
+          INTERNAL_ERROR);
     }
 
     return return_type_;
@@ -98,7 +100,7 @@ public:
   std::string name_hint_ = "";
   virtual void NameHintSet() {}
 
-protected:
+ protected:
   AstNodeBase() {}
 
   void CopyToNode(AstNodeBase *other, bool copy_cache);
@@ -119,7 +121,7 @@ protected:
 };
 
 class AstVoid : public AstNodeBase {
-public:
+ public:
   static std::unique_ptr<AstVoid> Make() {
     return std::unique_ptr<AstVoid>(new AstVoid);
   }
@@ -150,7 +152,7 @@ public:
 // extern AstNode astVoid;
 
 class AstList : public AstNodeBase {
-public:
+ public:
   //	Make a new instance of this type of node
   static std::unique_ptr<AstList> Make(std::vector<AstNode> &in) {
     std::unique_ptr<AstList> node(new AstList);
@@ -173,7 +175,7 @@ public:
 
   Token GetToken() { return nodes.empty() ? nullptr : nodes[0]->GetToken(); }
 
-private:
+ private:
   //	the list of sub nodes
   std::vector<AstNode> nodes;
 };
@@ -181,7 +183,7 @@ private:
 class AstConstExpression;
 
 class AstToken : public AstNodeBase {
-public:
+ public:
   static std::unique_ptr<AstToken> Make(Token token_in) {
     std::unique_ptr<AstToken> node(new AstToken);
     node->token = token_in;
@@ -201,14 +203,14 @@ public:
 
   Token GetToken() { return token; }
 
-private:
+ private:
   friend AstConstExpression;
 
   Token token = nullptr;
 };
 
 class AstFuncBody : public AstNodeBase {
-public:
+ public:
   static AstNode Make(AstNode left_type_in, AstNode right_type_in,
                       AstNode return_type_in, AstNode body_in) {
     auto node = new AstFuncBody();
@@ -269,9 +271,10 @@ public:
 };
 
 class AstExpression : public AstNodeBase {
-public:
-  static std::unique_ptr<AstExpression>
-  Make(AstNode left_in_in, AstNode center_in, AstNode right_in_in) {
+ public:
+  static std::unique_ptr<AstExpression> Make(AstNode left_in_in,
+                                             AstNode center_in,
+                                             AstNode right_in_in) {
     std::unique_ptr<AstExpression> node(new AstExpression);
 
     node->left_in = std::move(left_in_in);
@@ -300,9 +303,9 @@ public:
 };
 
 class AstConstExpression : public AstNodeBase {
-public:
-  static std::unique_ptr<AstConstExpression>
-  Make(std::unique_ptr<AstToken> center_in, AstNode right_in_in) {
+ public:
+  static std::unique_ptr<AstConstExpression> Make(
+      std::unique_ptr<AstToken> center_in, AstNode right_in_in) {
     std::unique_ptr<AstConstExpression> node(new AstConstExpression);
 
     node->center = std::move(center_in);
@@ -327,16 +330,16 @@ public:
 
   Token GetToken() { return center->GetToken(); }
 
-private:
+ private:
   std::unique_ptr<AstToken> center = nullptr;
   AstNode right_in = nullptr;
 };
 
 class AstOpWithInput : public AstNodeBase {
-public:
-  static std::unique_ptr<AstOpWithInput>
-  Make(std::vector<AstNode> &left_in_in, Token token_in,
-       std::vector<AstNode> &right_in_in) {
+ public:
+  static std::unique_ptr<AstOpWithInput> Make(
+      std::vector<AstNode> &left_in_in, Token token_in,
+      std::vector<AstNode> &right_in_in) {
     std::unique_ptr<AstOpWithInput> node(new AstOpWithInput);
 
     node->left_in = std::move(left_in_in);
@@ -372,7 +375,7 @@ public:
 };
 
 class AstTuple : public AstNodeBase {
-public:
+ public:
   //	Make a new instance of this type of node
   static std::unique_ptr<AstTuple> Make(std::vector<AstNode> &in) {
     std::unique_ptr<AstTuple> node(new AstTuple);
@@ -395,12 +398,12 @@ public:
 
   Token GetToken() { return nodes.empty() ? nullptr : nodes[0]->GetToken(); }
 
-private:
+ private:
   std::vector<AstNode> nodes;
 };
 
 class AstType : public AstNodeBase {
-public:
+ public:
   bool IsType() { return true; }
 
   void ResolveAction() {
@@ -411,7 +414,7 @@ public:
 };
 
 class AstTypeType : public AstType {
-public:
+ public:
   static std::unique_ptr<AstTypeType> Make(Type typeIn) {
     std::unique_ptr<AstTypeType> node(new AstTypeType);
     node->return_type_not_meta = typeIn;
@@ -436,12 +439,12 @@ public:
 
   Token GetToken() { return nullptr; }
 
-private:
+ private:
   Type return_type_not_meta;
 };
 
 class AstVoidType : public AstType {
-public:
+ public:
   static std::unique_ptr<AstVoidType> Make() {
     std::unique_ptr<AstVoidType> node(new AstVoidType);
     return node;
@@ -459,11 +462,11 @@ public:
 
   Token GetToken() { return nullptr; }
 
-private:
+ private:
 };
 
 class AstTokenType : public AstType {
-public:
+ public:
   static std::unique_ptr<AstTokenType> Make(Token tokenIn) {
     std::unique_ptr<AstTokenType> node(new AstTokenType);
     node->token = tokenIn;
@@ -483,14 +486,14 @@ public:
 
   Token GetToken() { return token; }
 
-private:
+ private:
   Token token = nullptr;
 };
 
 class AstTupleType : public AstType {
-public:
+ public:
   struct NamedType {
-    Token name; // can be null
+    Token name;  // can be null
     std::unique_ptr<AstType> type;
   };
 
@@ -518,12 +521,12 @@ public:
 
   Token GetToken() { return subTypes.empty() ? nullptr : subTypes[0].name; }
 
-private:
+ private:
   std::vector<NamedType> subTypes;
 };
 
 class AstActionWrapper : public AstNodeBase {
-public:
+ public:
   static std::unique_ptr<AstActionWrapper> Make(Action actionIn) {
     auto out = std::unique_ptr<AstActionWrapper>(new AstActionWrapper);
     out->in_left_type = actionIn->GetInLeftType();
@@ -554,7 +557,7 @@ public:
 };
 
 class AstWhatevToActionFactory : public AstNodeBase {
-public:
+ public:
   static AstNode Make(std::function<Action(Type left, Type right)> lambda) {
     auto node = new AstWhatevToActionFactory();
     node->lambda = lambda;
@@ -571,9 +574,10 @@ public:
   }
 
   void ResolveAction() {
-    throw TerebinthError("AstWhatevToActionFactory::resolveAction called, wich "
-                         "should never happen",
-                         INTERNAL_ERROR);
+    throw TerebinthError(
+        "AstWhatevToActionFactory::resolveAction called, wich "
+        "should never happen",
+        INTERNAL_ERROR);
   }
 
   AstNode MakeCopyWithSpecificTypes(Type left_in_type, Type right_in_type) {
@@ -588,6 +592,6 @@ public:
 
   bool CanBeWhatev() { return true; }
 
-private:
+ private:
   std::function<Action(Type left_in_type, Type right_in_type)> lambda;
 };

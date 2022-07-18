@@ -8,7 +8,7 @@ class TokenData;
 class AllOperators;
 
 class OperatorData {
-public:
+ public:
   enum InputTaken { LEFT, RIGHT, BOTH };
 
   std::string GetText() { return text_; }
@@ -17,7 +17,7 @@ public:
   bool TakesLeftInput() { return input_ == BOTH || input_ == LEFT; }
   bool TakesRightInput() { return input_ == BOTH || input_ == RIGHT; }
 
-private:
+ private:
   friend AllOperators;
 
   OperatorData(std::string text_in, int precedence_in, InputTaken input_in,

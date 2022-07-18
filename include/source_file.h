@@ -3,7 +3,7 @@
 #include <string>
 
 class SourceFile {
-public:
+ public:
   SourceFile() {
     filename_ = "[empty_file]";
     contents_ = "";
@@ -30,7 +30,7 @@ public:
     return contents_.substr(start, len);
   }
 
-private:
+ private:
   std::string filename_;
   std::string contents_;
 };

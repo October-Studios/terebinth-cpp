@@ -1,7 +1,8 @@
 #pragma once
 
-#include "token.h"
 #include <string>
+
+#include "token.h"
 
 #define FUNC std::string(__FUNCTION__)
 
@@ -14,7 +15,7 @@ enum ErrorPriority {
 };
 
 class ErrorHandler {
-public:
+ public:
   static std::string PriorityToStr(ErrorPriority in);
 
   void Log(std::string msg, ErrorPriority priority, Token token = nullptr);
@@ -23,20 +24,20 @@ public:
 
   bool GetIfErrorLogged() { return error_has_been_logged_; }
 
-private:
+ private:
   bool error_has_been_logged_;
 };
 
 extern ErrorHandler error_;
 
 class TerebinthError {
-public:
+ public:
   TerebinthError(std::string msg_in, ErrorPriority priority_in,
                  Token token_in = nullptr);
 
   void Log();
 
-private:
+ private:
   std::string msg_;
   ErrorPriority priority_;
   Token token_;

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "operator.h"
-#include "source_file.h"
-
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "operator.h"
+#include "source_file.h"
+
 class SourceFile;
 
 class TokenData {
-public:
+ public:
   enum Type {
     WHITESPACE,
     LINE_END,
@@ -57,7 +57,7 @@ public:
   std::string GetDescription();
   std::string GetTypeDescription();
 
-private:
+ private:
   std::string text_;
   std::shared_ptr<SourceFile> file_;
   int line_;

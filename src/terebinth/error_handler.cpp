@@ -1,31 +1,32 @@
 #include "error_handler.h"
-#include "source_file.h"
-#include "util/string_utils.h"
 
 #include <iostream>
+
+#include "source_file.h"
+#include "util/string_utils.h"
 
 ErrorHandler error_;
 
 std::string ErrorHandler::PriorityToStr(ErrorPriority in) {
   switch (in) {
-  case SOURCE_ERROR:
-    return "error";
-    break;
-  case SOURCE_WARNING:
-    return "warning";
-    break;
-  case JSYK:
-    return "jsyk";
-    break;
-  case INTERNAL_ERROR:
-    return "INTERNAL ERROR";
-    break;
-  case RUNTIME_ERROR:
-    return "runtime error";
-    break;
-  default:
-    return "UNKNOWN PRIORITY LEVEL";
-    break;
+    case SOURCE_ERROR:
+      return "error";
+      break;
+    case SOURCE_WARNING:
+      return "warning";
+      break;
+    case JSYK:
+      return "jsyk";
+      break;
+    case INTERNAL_ERROR:
+      return "INTERNAL ERROR";
+      break;
+    case RUNTIME_ERROR:
+      return "runtime error";
+      break;
+    default:
+      return "UNKNOWN PRIORITY LEVEL";
+      break;
   }
 }
 

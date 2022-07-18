@@ -1,13 +1,12 @@
+#include <iostream>
+
 #include "error_handler.h"
 #include "terebinth_program.h"
-
 #include "util/file_utils.h"
 #include "util/string_array.h"
 #include "util/string_drawing.h"
 #include "util/string_num_conversion.h"
 #include "util/string_utils.h"
-
-#include <iostream>
 
 std::vector<std::string> cmd_line_args;
 

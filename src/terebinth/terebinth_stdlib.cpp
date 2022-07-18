@@ -1,3 +1,5 @@
+#include <ios>
+
 #include "action.h"
 #include "all_operators.h"
 #include "ast_node.h"
@@ -5,16 +7,15 @@
 #include "error_handler.h"
 #include "namespace.h"
 #include "stack_frame.h"
-#include "util/string_utils.h"
 #include "terebinth_program.h"
 #include "type.h"
-#include <ios>
+#include "util/string_utils.h"
 
 #define CONCAT(a, b) a##_##b
 #define GET_TYPES_Tuple(t0, t1) t0, t1
 
 #define assert if (
-#define otherwise ) {}                                                         \
+#define otherwise ) {} \
   else
 
 #define GetTbthType(type_in) CONCAT(TBTH, type_in)
@@ -33,27 +34,27 @@
 #define TBTH_Bool Bool
 #define TBTH_Void Void
 
-#define TBTH_Tuple(t1, t2)                                                     \
+#define TBTH_Tuple(t1, t2) \
   MakeTuple(std::vector<NamedType>({{"a", t1}, {"b", t2}}), true)
 
 #define LAMBDA_HEADER [](void *left_in, void *right_in) -> void *
 #define ADD_CPP_HEADER [](Action left, Action right, CppProgram * prog) -> void
 
 #define retrn out =
-#define GET_PTR_VAL(type_in, var_in_name)                                      \
+#define GET_PTR_VAL(type_in, var_in_name) \
   = *((GetCppType(type_in) *)(var_in_name))
 
-#define DO_INSTANTIATE(type_in, var_out_name, val_in)                          \
+#define DO_INSTANTIATE(type_in, var_out_name, val_in) \
   GetCppType(type_in) var_out_name val_in;
 #define DONT_INSTANTIATE(type_in, var_out_name, val_in) ;
-#define INSTANTIATE_CPP_TUPLE(t0, t1, var_out_name, val_in)                    \
-  DO_INSTANTIATE(t0, CONCAT(var_out_name, 0), val_in)                          \
-  DO_INSTANTIATE(t1, CONCAT(var_out_name, 1),                                  \
+#define INSTANTIATE_CPP_TUPLE(t0, t1, var_out_name, val_in) \
+  DO_INSTANTIATE(t0, CONCAT(var_out_name, 0), val_in)       \
+  DO_INSTANTIATE(t1, CONCAT(var_out_name, 1),               \
                  ((char *)val_in) + sizeof(GetCppType(t0)))
 
-#define DO_RETURN_VAL(type_in, var_name)                                       \
-  void *out_ptr = malloc(GetTbthType(type_in)->GetSize());                     \
-  memcpy(out_ptr, &var_name, GetTbthType(type_in)->GetSize());                 \
+#define DO_RETURN_VAL(type_in, var_name)                       \
+  void *out_ptr = malloc(GetTbthType(type_in)->GetSize());     \
+  memcpy(out_ptr, &var_name, GetTbthType(type_in)->GetSize()); \
   return out_ptr;
 #define DONT_RETURN_VAL(type_in, var_name) return nullptr;
 
@@ -63,9 +64,9 @@
 #define INSTANTIATE_Byte DO_INSTANTIATE
 #define INSTANTIATE_Bool DO_INSTANTIATE
 #define INSTANTIATE_Void DONT_INSTANTIATE
-#define INSTANTIATE_Tuple__(type_in, var_out_name, val_in)                     \
+#define INSTANTIATE_Tuple__(type_in, var_out_name, val_in) \
   INSTANTIATE_CPP_TUPLE(type_in, var_out_name, val_in)
-#define INSTANTIATE_Tuple_(type_in, var_out_name, val_in)                      \
+#define INSTANTIATE_Tuple_(type_in, var_out_name, val_in) \
   INSTANTIATE_Tuple__(GET_TYPES##_##type_in, var_out_name, val_in)
 #define INSTANTIATE_Tuple(t1, t2) INSTANTIATE_Tuple_
 
@@ -75,18 +76,18 @@
 #define RETURN_Bool DO_RETURN_VAL
 #define RETURN_Void DONT_RETURN_VAL
 
-#define func(name_text, left_type, right_type, return_type, lambda_body, cpp)  \
-  AddAction(                                                                   \
-      name_text, GetTbthType(left_type), GetTbthType(right_type),              \
-      GetTbthType(return_type),                                                \
-      LAMBDA_HEADER {                                                          \
-        INSTANTIATE##_##left_type(left_type, left,                             \
-                                  GET_PTR_VAL(left_type, left_in))             \
-            INSTANTIATE##_##right_type(right_type, right,                      \
-                                       GET_PTR_VAL(right_type, right_in))      \
-                INSTANTIATE##_##return_type(return_type, out, ;) lambda_body;  \
-        CONCAT(RETURN, return_type)(return_type, out)                          \
-      },                                                                       \
+#define func(name_text, left_type, right_type, return_type, lambda_body, cpp) \
+  AddAction(                                                                  \
+      name_text, GetTbthType(left_type), GetTbthType(right_type),             \
+      GetTbthType(return_type),                                               \
+      LAMBDA_HEADER {                                                         \
+        INSTANTIATE##_##left_type(left_type, left,                            \
+                                  GET_PTR_VAL(left_type, left_in))            \
+            INSTANTIATE##_##right_type(right_type, right,                     \
+                                       GET_PTR_VAL(right_type, right_in))     \
+                INSTANTIATE##_##return_type(return_type, out, ;) lambda_body; \
+        CONCAT(RETURN, return_type)(return_type, out)                         \
+      },                                                                      \
       cpp)
 
 Action void_action_;
@@ -111,7 +112,7 @@ void AddAction(
         cpp_writer) {
   global_namespace_->AddNode(
       AstActionWrapper::Make(LambdaActionT(left_type, right_type, return_type,
-                                          lambda, cpp_writer, GetText(id))),
+                                           lambda, cpp_writer, GetText(id))),
       GetText(id));
 }
 
@@ -348,17 +349,17 @@ void PopulateConstants() {
 
 #else
 
-#ifdef _WIN32 // works forboth 32 and 64 bit systems
+#ifdef _WIN32  // works forboth 32 and 64 bit systems
   is_windows = true;
 
 #else
 #ifdef __APPLE__
   is_mac = true;
   is_unix = true;
-#endif // __APPLE__
-#endif // _WIN32
+#endif  // __APPLE__
+#endif  // _WIN32
 
-#endif // __linux__
+#endif  // __linux__
 
   AddConst(&is_linux, Bool, "OS_IS_LINUX");
   AddConst(&is_windows, Bool, "OS_IS_WINDOWS");
@@ -412,7 +413,6 @@ void PopulateConstants() {
 }
 
 void PopulateOperators() {
-
   /// +
 
   func(ops_->plus_, Int, Int, Int, retrn left + right;, "$. + $:");
@@ -639,8 +639,7 @@ void PopulateTypeInfoFuncs() {
   global_namespace_->AddNode(
       AstWhatevToActionFactory::Make(
           [](Type left_type, Type right_type) -> Action {
-            if (left_type->IsVoid() || !right_type->IsVoid())
-              return nullptr;
+            if (left_type->IsVoid() || !right_type->IsVoid()) return nullptr;
 
             std::string val = left_type->GetName();
 
@@ -664,8 +663,7 @@ void PopulateTypeInfoFuncs() {
   global_namespace_->AddNode(
       AstWhatevToActionFactory::Make([](Type left_type,
                                         Type right_type) -> Action {
-        if (left_type->IsVoid() || !right_type->IsVoid())
-          return nullptr;
+        if (left_type->IsVoid() || !right_type->IsVoid()) return nullptr;
 
         int val = left_type->GetSize();
 
@@ -689,8 +687,7 @@ void PopulateMemManagementFuncs() {
   global_namespace_->AddNode(
       AstWhatevToActionFactory::Make(
           [](Type left_type, Type right_type) -> Action {
-            if (!left_type->IsVoid() || right_type->IsVoid())
-              return nullptr;
+            if (!left_type->IsVoid() || right_type->IsVoid()) return nullptr;
 
             return LambdaActionT(
                 left_type, right_type, right_type->GetPtr(),
@@ -899,9 +896,9 @@ void PopulateStringFuncs() {
       LAMBDA_HEADER {
         int val = *((int *)left_in);
         if (val < 0 || val >= 256) {
-          throw TerebinthError("tried to make ascii string out of value " +
-                                   std::to_string(val),
-                               RUNTIME_ERROR);
+          throw TerebinthError(
+              "tried to make ascii string out of value " + std::to_string(val),
+              RUNTIME_ERROR);
         }
         std::string out;
         out += (char)val;
@@ -1089,7 +1086,8 @@ void PopulateArrayFuncs() {
               int size = GetValFromTuple<int>(left_in, array_type, "_size");
               int capacity =
                   GetValFromTuple<int>(left_in, array_type, "_capacity");
-              void *data = GetValFromTuple<void *>(left_in, array_type, "_data");
+              void *data =
+                  GetValFromTuple<void *>(left_in, array_type, "_data");
 
               if (size + 1 > capacity) {
                 if (capacity < 1000)
@@ -1184,7 +1182,8 @@ void PopulateArrayFuncs() {
                         std::to_string(size) + " long",
                     RUNTIME_ERROR);
 
-              char *data = GetValFromTuple<char *>(left_in, array_type, "_data");
+              char *data =
+                  GetValFromTuple<char *>(left_in, array_type, "_data");
 
               memcpy(data + index * elemSize,
                      (char *)right_in + inputType->GetSubType("value").offset,

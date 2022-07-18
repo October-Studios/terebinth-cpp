@@ -1,4 +1,5 @@
 #include "token.h"
+
 #include "util/string_utils.h"
 
 Token MakeToken(std::string text_in, std::shared_ptr<SourceFile> file_in,
@@ -19,28 +20,28 @@ Token MakeToken(std::string text_in) {
 
 std::string TokenData::TypeToString(TokenData::Type in) {
   switch (in) {
-  case WHITESPACE:
-    return "whitespace";
-  case LINE_END:
-    return "newline";
-  case IDENTIFIER:
-    return "identifier";
-  case LITERAL:
-    return "literal";
-  case STRING_LITERAL:
-    return "string literal";
-  case OPERATOR:
-    return "operator";
-  case LINE_COMMENT:
-    return "single line comment";
-  case BLOCK_COMMENT:
-    return "block comment";
-  case SCOPE:
-    return "scope";
-  case UNKNOWN:
-    return "UNKNOWN";
-  default:
-    return "ERROR GETTING TOKEN TYPE";
+    case WHITESPACE:
+      return "whitespace";
+    case LINE_END:
+      return "newline";
+    case IDENTIFIER:
+      return "identifier";
+    case LITERAL:
+      return "literal";
+    case STRING_LITERAL:
+      return "string literal";
+    case OPERATOR:
+      return "operator";
+    case LINE_COMMENT:
+      return "single line comment";
+    case BLOCK_COMMENT:
+      return "block comment";
+    case SCOPE:
+      return "scope";
+    case UNKNOWN:
+      return "UNKNOWN";
+    default:
+      return "ERROR GETTING TOKEN TYPE";
   }
 }
 
@@ -109,7 +110,8 @@ std::string TableStringFromTokens(const std::vector<Token> &tokens,
   lines.push_back(str);
   lines.push_back(blw);
 
-  return str::LineListToBoxedString(lines, table_name, -1, false, max_width + 4);
+  return str::LineListToBoxedString(lines, table_name, -1, false,
+                                    max_width + 4);
 }
 
 std::string StringFromTokens(const std::vector<Token> &tokens, int left,
@@ -118,8 +120,7 @@ std::string StringFromTokens(const std::vector<Token> &tokens, int left,
 
   for (int i = left; i <= right; ++i) {
     out += tokens[i]->GetText();
-    if (i < right)
-      out += " ";
+    if (i < right) out += " ";
   }
 
   return out;

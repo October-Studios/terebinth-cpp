@@ -1,12 +1,14 @@
 #include "namespace.h"
+
+#include <tuple>
+
 #include "action.h"
 #include "ast_node.h"
 #include "error_handler.h"
 #include "stack_frame.h"
+#include "type.h"
 #include "util/string_num_conversion.h"
 #include "util/string_utils.h"
-#include "type.h"
-#include <tuple>
 
 void NamespaceData::IdMap::Add(std::string key, AstNode node) {
   auto i = nodes_.find(key);
@@ -242,9 +244,9 @@ Action NamespaceData::GetActionForTokenWithInput(Token token, Type left,
     if (matches.size() == 1) {
       return matches[0];
     } else if (throw_source_error) {
-      throw TerebinthError("multiple matching instances of '" +
-                               token->GetText() + "' found",
-                           SOURCE_ERROR, token_for_error);
+      throw TerebinthError(
+          "multiple matching instances of '" + token->GetText() + "' found",
+          SOURCE_ERROR, token_for_error);
     } else {
       return nullptr;
     }
@@ -270,9 +272,9 @@ Action NamespaceData::GetActionForTokenWithInput(Token token, Type left,
     if (matches.size() == 1) {
       return matches[0];
     } else if (throw_source_error) {
-      throw TerebinthError("multiple whatev instances of '" + token->GetText() +
-                               "' found",
-                           SOURCE_ERROR, token_for_error);
+      throw TerebinthError(
+          "multiple whatev instances of '" + token->GetText() + "' found",
+          SOURCE_ERROR, token_for_error);
     } else {
       return nullptr;
     }
