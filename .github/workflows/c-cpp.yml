@@ -12,5 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v0.1.0
     - name: make
       run: make
