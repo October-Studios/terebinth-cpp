@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 #include <exception>
 #include <functional>
