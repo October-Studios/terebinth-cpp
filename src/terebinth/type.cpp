@@ -53,8 +53,11 @@ class UnknownType : public TypeBase {
 
 class PrimType : public TypeBase {
  public:
+  explicit PrimType(PrimitiveType in) { primType = in; }
+
+  auto GetCompactString() -> std::string {
     switch (primType) {
-        return "b";
+      return "b";
       case BYTE:
         return "y";
       case INT:
@@ -86,12 +89,6 @@ class PrimType : public TypeBase {
       case DOUBLE:
         val = str::DoubleToString(*(double *)data);
         break;
-        /*{
-          std::ostringstream ss;
-          ss << *(double*)data;
-          val = ss.str();
-        }
-        break;*/
 
       default:
         throw TerebinthError("tried to convert " + GetString() + " to C++ code",
