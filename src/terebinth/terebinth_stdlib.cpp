@@ -95,8 +95,8 @@ Action void_action_;
 Namespace global_namespace_;
 Namespace table;
 
-std::string GetText(Operator op) { return op->GetText(); }
-std::string GetText(std::string in) { return in; }
+auto GetText(Operator op) -> std::string { return op->GetText(); }
+auto GetText(std::string in) -> std::string { return in; }
 
 void AddConst(void *data, Type type, std::string name) {
   global_namespace_->AddNode(AstActionWrapper::Make(ConstGetActionT(
@@ -122,8 +122,8 @@ void AddType(Type type, std::string id) {
   global_namespace_->AddNode(std::move(node), id);
 }
 
-std::function<void(Action in_left, Action in_right, CppProgram *prog)>
-StringToLambda(std::string cpp_code) {
+auto StringToLambda(std::string cpp_code)
+    -> std::function<void(Action in_left, Action in_right, CppProgram *prog)> {
   if (cpp_code.empty()) {
     return nullptr;
   }
@@ -179,7 +179,7 @@ Type IntArray = nullptr;
 Type Array = nullptr;
 
 template <typename T>
-inline T GetValFromTuple(void *data, Type type, std::string name) {
+inline auto GetValFromTuple(void *data, Type type, std::string name) -> T {
   while (type->GetType() == TypeBase::PTR) {
     type = type->GetSubType();
     data = *(void **)data;
@@ -214,9 +214,9 @@ inline void SetValInTuple(void *data, Type type, std::string name, T val) {
   *((T *)((char *)data + a.offset)) = val;
 }
 
-inline std::string TbthStr2CppStr(void *obj) {
+inline auto TbthStr2CppStr(void *obj) -> std::string {
   int len = GetValFromTuple<int>(obj, String, "_size");
-  char *data = (char *)malloc((len + 1) * sizeof(char));
+  char *data = static_cast<char *>(malloc((len + 1) * sizeof(char)));
   memcpy(data, GetValFromTuple<char *>(obj, String, "_data"),
          len * sizeof(char));
   data[len] = 0;
@@ -224,9 +224,9 @@ inline std::string TbthStr2CppStr(void *obj) {
   return out;
 }
 
-inline void *CppStr2TbthStr(std::string cpp) {
+inline auto CppStr2TbthStr(std::string cpp) -> void * {
   void *obj = malloc(String->GetSize());
-  char *str_data = (char *)malloc(cpp.size() * sizeof(char));
+  char *str_data = static_cast<char *>(malloc(cpp.size() * sizeof(char)));
   memcpy(str_data, cpp.c_str(), cpp.size() * sizeof(char));
 
   *((int *)((char *)obj + String->GetSubType("_size").offset)) = cpp.size();
@@ -349,7 +349,7 @@ void PopulateConstants() {
 
 #else
 
-#ifdef _WIN32  // works forboth 32 and 64 bit systems
+#ifdef _WIN32  // works for both 32 and 64 bit systems
   is_windows = true;
 
 #else

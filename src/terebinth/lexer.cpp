@@ -27,10 +27,12 @@ class CharacterClassifier {
     UNKNOWN
   };
 
-  static inline TokenData::Type GetTokenType(CharacterClassifier::Type type,
-                                             TokenData::Type previous_type);
+  static inline auto GetTokenType(CharacterClassifier::Type type,
+                                  TokenData::Type previous_type)
+      -> TokenData::Type;
 
-  inline CharacterClassifier::Type Get(std::shared_ptr<SourceFile> file, int i);
+  inline auto Get(std::shared_ptr<SourceFile> file, int i)
+      -> CharacterClassifier::Type;
 
  private:
   void SetUp();
@@ -81,7 +83,11 @@ void CharacterClassifier::SetUp() {
 
 inline CharacterClassifier::Type CharacterClassifier::Get(
     std::shared_ptr<SourceFile> file, int index) {
+  //	set up the first time this function is called
   if (!has_set_up_) SetUp();
+
+  //	chack fo multi line comments in a special way, because they are multi
+  // character
 
   switch ((*file)[index]) {
     case '/':
@@ -94,7 +100,8 @@ inline CharacterClassifier::Type CharacterClassifier::Get(
         return MULTI_LINE_COMMENT_END;
       break;
 
-    case '.':
+    case '.':  // allow a . to be a digit character only if it is followed by a
+               // digit
       if (index < int(file->Size()) - 1) {
         auto i = hm_.find((*file)[index + 1]);
 

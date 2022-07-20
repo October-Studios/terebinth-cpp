@@ -7,7 +7,7 @@
 #include "util/string_num_conversion.h"
 
 class VarGetAction : public ActionData {
-public:
+ public:
   VarGetAction(size_t in, void **stack_ptr_ptr_in, Type type_in,
                std::string id_in)
       : ActionData(type_in, Void, Void) {
@@ -18,7 +18,7 @@ public:
     SetDescription("get " + type_in->GetString() + " '" + id_in + "'");
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     if (!(*stack_ptr_ptr_)) {
       throw TerebinthError(
           "VarGetAction::Executed called while stack pointer is still null",
@@ -35,17 +35,17 @@ public:
     prog->Name(name_hint_);
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::PutStringInTreeNodeBox("get " + name_hint_);
   }
 
-private:
+ private:
   void **stack_ptr_ptr_;
   size_t offset_;
 };
 
 class VarSetAction : public ActionData {
-public:
+ public:
   VarSetAction(size_t in, void **stack_ptr_ptr_in, Type type_in,
                std::string id_in)
       : ActionData(Void, Void, type_in) {
@@ -56,7 +56,7 @@ public:
     SetDescription("set " + type_in->GetString() + " '" + id_in + "'");
   }
 
-  void *Execute(void *left, void *right) {
+  auto Execute(void *left, void *right) -> void * {
     if (!(*stack_ptr_ptr_)) {
       throw TerebinthError(
           "VarSetAction::Execute called while stack pointer is still null",
@@ -80,17 +80,17 @@ public:
     prog->PopExpr();
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::PutStringInTreeNodeBox("set " + name_hint_);
   }
 
-private:
+ private:
   void **stack_ptr_ptr_;
   size_t offset_;
 };
 
 class ConstGetAction : public ActionData {
-public:
+ public:
   ConstGetAction(const void *in, Type type_in, std::string text_in)
       : ActionData(type_in, Void, Void) {
     data_ = malloc(return_type_->GetSize());
@@ -101,7 +101,7 @@ public:
 
   ~ConstGetAction() { free(data_); }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *out = malloc(return_type_->GetSize());
     memcpy(out, data_, return_type_->GetSize());
     return out;
@@ -148,32 +148,32 @@ public:
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::PutStringInTreeNodeBox(description_);
   }
 
-private:
+ private:
   void *data_;
 };
 
-Action VarGetActionT(size_t in, Type type_in, std::string text_in) {
+auto VarGetActionT(size_t in, Type type_in, std::string text_in) -> Action {
   return Action(new VarGetAction(in, &stack_ptr_, type_in, text_in));
 }
 
-Action VarSetActionT(size_t in, Type type_in, std::string text_in) {
+auto VarSetActionT(size_t in, Type type_in, std::string text_in) -> Action {
   return Action(new VarSetAction(in, &stack_ptr_, type_in, text_in));
 }
 
-Action GlobalGetActionT(size_t in, Type type_in, std::string text_in) {
+auto GlobalGetActionT(size_t in, Type type_in, std::string text_in) -> Action {
   return Action(new VarGetAction(in, &global_frame_ptr_, type_in, text_in));
 }
 
-Action GlobalSetActionT(size_t in, Type type_in, std::string text_in) {
+auto GlobalSetActionT(size_t in, Type type_in, std::string text_in) -> Action {
   return Action(new VarSetAction(in, &global_frame_ptr_, type_in, text_in));
 }
 
-Action ConstGetActionT(const void *in, Type type_in, std::string text_in,
-                      Namespace ns) {
+auto ConstGetActionT(const void *in, Type type_in, std::string text_in,
+                     Namespace ns) -> Action {
   Action action = Action(new ConstGetAction(in, type_in, text_in));
   if (ns) {
     Action copier = ns->GetCopier(type_in);

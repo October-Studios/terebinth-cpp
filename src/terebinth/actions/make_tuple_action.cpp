@@ -1,18 +1,19 @@
-#include "action.h"
-#include "error_handler.h"
-
 #include <typeinfo>
 #include <vector>
+
+#include "action.h"
+#include "error_handler.h"
 
 class GetElemFromTupleAction;
 class CppTupleCastAction;
 
 class ListAction;
-void AddListToProgWithCppCasting(ListAction* list, Type return_type, CppProgram* prog);
+void AddListToProgWithCppCasting(ListAction *list, Type return_type,
+                                 CppProgram *prog);
 
 class MakeTupleAction : public ActionData {
-public:
-  MakeTupleAction(const std::vector<Action> &source_actions_in)
+ public:
+  explicit MakeTupleAction(const std::vector<Action> &source_actions_in)
       : ActionData(
             [&]() -> Type {
               TupleTypeMaker tuple;
@@ -48,12 +49,12 @@ public:
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::PutStringInTreeNodeBox("make tuple of type " +
                                        GetReturnType()->GetName());
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *out = malloc(GetReturnType()->GetSize());
     size_t offset = 0;
 
@@ -77,8 +78,7 @@ public:
     prog->PushExpr();
     bool start = true;
     for (auto i : source_actions_) {
-      if (!start)
-        prog->Code(", ");
+      if (!start) prog->Code(", ");
       start = false;
 
       i->AddToProg(prog);
@@ -86,7 +86,7 @@ public:
     prog->PopExpr();
   }
 
-private:
+ private:
   std::vector<Action> source_actions_;
 
   friend class GetElemFromTupleAction;
@@ -94,23 +94,24 @@ private:
 };
 
 class CppTupleCastAction : public ActionData {
-public:
+ public:
   CppTupleCastAction(Action action_in, Type return_type)
       : ActionData(return_type, Void, Void) {
     if ((action_in->GetReturnType()->GetType() != TypeBase::TUPLE &&
          GetReturnType()->GetType() != TypeBase::TUPLE) ||
         !action_in->GetReturnType()->Matches(GetReturnType())) {
-      throw TerebinthError("CppCastAction was only designed to case matching "
-                           "tuples, which is not how it is being used",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          "CppCastAction was only designed to case matching "
+          "tuples, which is not how it is being used",
+          INTERNAL_ERROR);
     }
 
     action_ = action_in;
   }
 
-  std::string GetDescription() { return "C++ cast"; }
+  auto GetDescription() -> std::string { return "C++ cast"; }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     throw TerebinthError(
         "CppCastAction was executed in the interpreter, which is not possible",
         INTERNAL_ERROR);
@@ -126,8 +127,7 @@ public:
       prog->PushExpr();
       for (auto i : real_action->source_actions_) {
         i->AddToProg(prog);
-        if (i != real_action->source_actions_.back())
-          prog->Code(", ");
+        if (i != real_action->source_actions_.back()) prog->Code(", ");
       }
       prog->PopExpr();
     } else if (typeid(*action_) ==
@@ -188,14 +188,14 @@ public:
     }
   }
 
-private:
+ private:
   Action action_;
 
   friend class GetElemFromTupleAction;
 };
 
 class GetElemFromTupleAction : public ActionData {
-public:
+ public:
   GetElemFromTupleAction(Type type_in_in, std::string name_in)
       : ActionData(type_in_in->GetSubType(name_in).type, type_in_in, Void) {
     type_in_ = type_in_in;
@@ -205,11 +205,13 @@ public:
     offset_ = type_in_->GetSubType(name_).offset;
   }
 
-  std::string GetDescription() { return str::PutStringInTreeNodeBox(name_); }
+  auto GetDescription() -> std::string {
+    return str::PutStringInTreeNodeBox(name_);
+  }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *out = malloc(size_);
-    memcpy(out, (char *)in_left + offset_, size_);
+    memcpy(out, static_cast<char *>(in_left) + offset_, size_);
     return out;
   }
 
@@ -246,7 +248,7 @@ public:
     }
   }
 
-private:
+ private:
   Type type_in_;
   Type type_out_;
   int offset_;
@@ -254,15 +256,15 @@ private:
   std::string name_;
 };
 
-Action MakeTupleActionT(const std::vector<Action> &source_actions_in) {
+auto MakeTupleActionT(const std::vector<Action> &source_actions_in) -> Action {
   return Action(new MakeTupleAction(source_actions_in));
 }
 
-Action GetElemFromTupleActionT(Type source, std::string name) {
+auto GetElemFromTupleActionT(Type source, std::string name) -> Action {
   if (!source->GetSubType(name).type) {
-    throw TerebinthError("could not find '" + name + "' in " +
-                             source->GetString(),
-                         SOURCE_ERROR);
+    throw TerebinthError(
+        "could not find '" + name + "' in " + source->GetString(),
+        SOURCE_ERROR);
   }
 
   Action out = Action(new GetElemFromTupleAction(source, name));
@@ -270,6 +272,6 @@ Action GetElemFromTupleActionT(Type source, std::string name) {
   return out;
 }
 
-Action CppTupleCastActionT(Action action_in, Type return_type) {
+auto CppTupleCastActionT(Action action_in, Type return_type) -> Action {
   return Action(new CppTupleCastAction(action_in, return_type));
 }

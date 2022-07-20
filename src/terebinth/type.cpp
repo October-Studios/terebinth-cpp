@@ -31,33 +31,29 @@ class VoidType : public TypeBase {
 
 class UnknownType : public TypeBase {
  public:
-  virtual std::string GetString() { return "UNKNOWN"; }
+  virtual auto GetString() -> std::string { return "UNKNOWN"; }
 
-  std::string GetCompactString() { return "u"; }
+  auto GetCompactString() -> std::string { return "u"; }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     return "/* can not instantiate unknown type */";
   }
 
-  bool IsCreatable() { return false; }
+  auto IsCreatable() -> bool { return false; }
 
-  bool IsVoid() { return false; }
+  auto IsVoid() -> bool { return false; }
 
-  size_t GetSize() { return 0; }
+  auto GetSize() -> size_t { return 0; }
 
-  PrimitiveType GetType() { return UNKNOWN; };
+  auto GetType() -> PrimitiveType { return UNKNOWN; };
 
  protected:
-  bool MatchesSameTypeType(Type other) { return false; }
+  auto MatchesSameTypeType(Type other) -> bool { return false; }
 };
 
 class PrimType : public TypeBase {
  public:
-  PrimType(PrimitiveType in) { primType = in; }
-
-  std::string GetCompactString() {
     switch (primType) {
-      case BOOL:
         return "b";
       case BYTE:
         return "y";
@@ -72,9 +68,9 @@ class PrimType : public TypeBase {
     }
   }
 
-  std::string GetString() { return TypeBase::GetString(primType); }
+  auto GetString() -> std::string { return TypeBase::GetString(primType); }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     std::string val;
 
     switch (primType) {
@@ -105,7 +101,7 @@ class PrimType : public TypeBase {
     return val;
   }
 
-  size_t GetSize() {
+  auto GetSize() -> size_t {
     switch (primType) {
       case BOOL:
         return sizeof(bool);
@@ -122,17 +118,20 @@ class PrimType : public TypeBase {
     }
   }
 
-  PrimitiveType GetType() { return primType; }
+  auto GetType() -> PrimitiveType { return primType; }
 
  protected:
   PrimitiveType primType;
 
-  bool MatchesSameTypeType(Type other) { return other->GetType() == primType; }
+  auto MatchesSameTypeType(Type other) -> bool {
+    return other->GetType() == primType;
+  }
 };
 
 class TupleType : public TypeBase {
  public:
-  TupleType(std::unique_ptr<std::vector<NamedType>> in, bool isAnonymousIn) {
+  explicit TupleType(std::unique_ptr<std::vector<NamedType>> in,
+                     bool isAnonymousIn) {
     if (in == nullptr)
       error_.Log(FUNC +
                      " sent null input, compiler will likely shit itself in "
@@ -156,7 +155,7 @@ class TupleType : public TypeBase {
 
   ~TupleType() = default;
 
-  std::string GetString() {
+  auto GetString() -> std::string {
     std::string out;
 
     out += "{";
@@ -172,7 +171,7 @@ class TupleType : public TypeBase {
     return out;
   }
 
-  std::string GetCompactString() {
+  auto GetCompactString() -> std::string {
     std::string out;
 
     out += "Tt_";
@@ -187,7 +186,7 @@ class TupleType : public TypeBase {
     return out;
   }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     if (sub_types_->size() == 1) {
       return (*sub_types_)[0].type->GetCppLiteral(data, prog);
     }
@@ -209,7 +208,7 @@ class TupleType : public TypeBase {
     return out;
   }
 
-  size_t GetSize() {
+  auto GetSize() -> size_t {
     size_t sum = 0;
 
     for (auto i : *sub_types_) {
@@ -219,9 +218,9 @@ class TupleType : public TypeBase {
     return sum;
   }
 
-  PrimitiveType GetType() { return TUPLE; }
+  auto GetType() -> PrimitiveType { return TUPLE; }
 
-  OffsetAndType GetSubType(std::string name) {
+  auto GetSubType(std::string name) -> OffsetAndType {
     size_t offset = 0;
 
     for (auto i : *sub_types_) {
@@ -234,13 +233,13 @@ class TupleType : public TypeBase {
     return {0, nullptr};
   }
 
-  std::vector<NamedType> *GetAllSubTypes() { return &(*sub_types_); }
+  auto *GetAllSubTypes() -> std::vector<NamedType> { return &(*sub_types_); }
 
-  bool IsWhatev() { return hasWhatev; }
+  auto IsWhatev() -> bool { return hasWhatev; }
 
-  bool IsCreatable() { return hasOnlyCreatable; }
+  auto IsCreatable() -> bool { return hasOnlyCreatable; }
 
-  Type ActuallyIs(Type target) {
+  auto ActuallyIs(Type target) -> Type {
     if (target->GetType() != TUPLE) {
       if ((*sub_types_).size() == 1) {
         return (*sub_types_)[0].type->ActuallyIs(target);
@@ -264,7 +263,7 @@ class TupleType : public TypeBase {
   }
 
  protected:
-  bool MatchesSameTypeType(Type other) {
+  auto MatchesSameTypeType(Type other) -> bool {
     auto o = (TupleType *)(&(*other));
 
     if (!isAnonymous && !o->isAnonymous) return false;
@@ -300,20 +299,20 @@ class PtrType : public TypeBase {
     return "-> " + type->GetString() + " (pointer)";
   }
 
-  std::string GetCompactString() {
+  auto GetCompactString() -> std::string {
     return "Pp_" + type->GetCompactString() + "_pP";
   }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     std::string name = std::to_string((long long)data);
     prog->DeclareGlobal(name, type, type->GetCppLiteral(*(void **)data, prog));
     std::string out = "&" + prog->GetGlobalNames()->GetCpp(name);
     return out;
   }
 
-  size_t GetSize() { return sizeof(void *); }
+  auto GetSize() -> size_t { return sizeof(void *); }
 
-  PrimitiveType GetType() { return PTR; }
+  auto GetType() -> PrimitiveType { return PTR; }
 
   auto GetSubType() -> Type { return type; }
 
@@ -333,34 +332,36 @@ class MetaType : public TypeBase {
  public:
   explicit MetaType(Type in) { type = in; }
 
-  std::string GetString() { return "{" + type->GetString() + "} (meta type)"; }
+  auto GetString() -> std::string {
+    return "{" + type->GetString() + "} (meta type)";
+  }
 
-  std::string GetCompactString() {
+  auto GetCompactString() -> std::string {
     return "Mm_" + type->GetCompactString() + "_mM";
   }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     return "/* can't add meta type to C++ code */";
   }
 
-  size_t GetSize() { return 0; }
+  auto GetSize() -> size_t { return 0; }
 
-  bool IsCreatable() { return false; }
+  auto IsCreatable() -> bool { return false; }
 
-  PrimitiveType GetType() { return METATYPE; }
+  auto GetType() -> PrimitiveType { return METATYPE; }
 
-  Type GetSubType() { return type; }
+  auto GetSubType() -> Type { return type; }
 
-  bool IsWhatev() { return type->IsWhatev(); }
+  auto IsWhatev() -> bool { return type->IsWhatev(); }
 
-  Type ActuallyIs(Type target) {
+  auto ActuallyIs(Type target) -> Type {
     return GetSubType()->ActuallyIs(target->GetSubType())->GetMeta();
   }
 
  protected:
   Type type;
 
-  bool MatchesSameTypeType(Type other) {
+  auto MatchesSameTypeType(Type other) -> bool {
     return ((MetaType *)(&(*other)))->type == type;
   }
 };
@@ -369,40 +370,40 @@ class WhatevType : public TypeBase {
  public:
   WhatevType() = default;
 
-  std::string GetString() { return "(whatev type)"; }
+  auto GetString() -> std::string { return "(whatev type)"; }
 
-  std::string GetCompactString() { return "W"; }
+  auto GetCompactString() -> std::string { return "W"; }
 
-  bool IsCreatable() { return false; }
+  auto IsCreatable() -> bool { return false; }
 
-  std::string GetCppLiteral(void *data, CppProgram *prog) {
+  auto GetCppLiteral(void *data, CppProgram *prog) -> std::string {
     throw TerebinthError(
         "GetCppLiteral called on whatev type, wich should not have happened",
         INTERNAL_ERROR);
   }
 
-  size_t GetSize() {
+  auto GetSize() -> size_t {
     throw TerebinthError(
         "GetSize called on whatev type, wich should not have happened",
         INTERNAL_ERROR);
   }
 
-  PrimitiveType GetType() { return WHATEV; }
+  auto GetType() -> PrimitiveType { return WHATEV; }
 
-  bool IsWhatev() { return true; }
+  auto IsWhatev() -> bool { return true; }
 
-  Type GetSubType() {
+  auto GetSubType() -> Type {
     throw TerebinthError(
         "GetSubType called on whatev type, wich should not have happened",
         INTERNAL_ERROR);
   }
 
-  Type ActuallyIs(Type target) { return target; }
+  auto ActuallyIs(Type target) -> Type { return target; }
 
  protected:
   Type type;
 
-  bool MatchesSameTypeType(Type other) { return true; }
+  auto MatchesSameTypeType(Type other) -> bool { return true; }
 };
 
 Type TypeBase::MakeNewVoid() { return Type(new VoidType); }

@@ -2,7 +2,7 @@
 #include "error_handler.h"
 
 class IfAction : public ActionData {
-public:
+ public:
   IfAction(Action condition_in, Action if_action_in)
       : ActionData(Void, Void, Void) {
     condition_ = condition_in;
@@ -16,28 +16,30 @@ public:
 
     if (condition_->GetInLeftType() != Void ||
         condition_->GetInRightType() != Void) {
-      error_.Log("IfAction created with condition action that takes in "
-                 "something other than Void",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "IfAction created with condition action that takes in "
+          "something other than Void",
+          INTERNAL_ERROR);
     }
 
     if (if_action_->GetInLeftType() != Void ||
         if_action_->GetInRightType() != Void) {
-      error_.Log("IfAction created with action that takes in something other "
-                 "than Void",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "IfAction created with action that takes in something other "
+          "than Void",
+          INTERNAL_ERROR);
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::MakeRootUpBinaryTree(
         "?", condition_->GetReturnType()->GetName(), "",
         condition_->GetDescription(), if_action_->GetDescription());
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *condition_out = condition_->Execute(nullptr, nullptr);
-    if (*((bool *)condition_out)) {
+    if (*(static_cast<bool *>(condition_out))) {
       free(if_action_->Execute(nullptr, nullptr));
     }
     free(condition_out);
@@ -55,13 +57,13 @@ public:
     prog->PopBlock();
   }
 
-private:
+ private:
   Action condition_;
   Action if_action_;
 };
 
 class IfElseAction : public ActionData {
-public:
+ public:
   IfElseAction(Action condition_in, Action if_action_in, Action else_action_in)
       : ActionData(
             [&]() {
@@ -77,27 +79,30 @@ public:
     else_action_ = else_action_in;
 
     if (condition_->GetReturnType() != Bool) {
-      error_.Log("IfElseAction created with condition action that does not "
-                 "return Bool",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "IfElseAction created with condition action that does not "
+          "return Bool",
+          INTERNAL_ERROR);
     }
 
     if (condition_->GetInLeftType() != Void ||
         condition_->GetInRightType() != Void) {
-      error_.Log("IfElseAction created with condition action that takes in "
-                 "something other than Void",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "IfElseAction created with condition action that takes in "
+          "something other than Void",
+          INTERNAL_ERROR);
     }
 
     if (if_action_->GetInLeftType() != Void ||
         if_action_->GetInRightType() != Void) {
-      error_.Log("IfElseAction created with action that takes in something "
-                 "other than Void",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "IfElseAction created with action that takes in something "
+          "other than Void",
+          INTERNAL_ERROR);
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     std::string branch = str::MakeRootUpBinaryTree(
         "╭┴╮\n| |", "fls", "tru", else_action_->GetDescription(),
         if_action_->GetDescription());
@@ -106,10 +111,10 @@ public:
                                      condition_->GetDescription(), branch);
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *out;
     void *condition_out = condition_->Execute(nullptr, nullptr);
-    if (*((bool *)condition_out)) {
+    if (*(static_cast<bool *>(condition_out))) {
       out = if_action_->Execute(nullptr, nullptr);
     } else {
       out = else_action_->Execute(nullptr, nullptr);
@@ -153,18 +158,18 @@ public:
     }
   }
 
-private:
+ private:
   Action condition_;
   Action if_action_;
   Action else_action_;
   bool return_val_ = false;
 };
 
-Action IfActionT(Action condition_in, Action if_action_in) {
+auto IfActionT(Action condition_in, Action if_action_in) -> Action {
   return Action(new IfAction(condition_in, if_action_in));
 }
 
-Action IfElseActionT(Action condition_in, Action if_action_in,
-                    Action else_action_in) {
+auto IfElseActionT(Action condition_in, Action if_action_in,
+                   Action else_action_in) -> Action {
   return Action(new IfElseAction(condition_in, if_action_in, else_action_in));
 }

@@ -24,7 +24,7 @@ class ListAction : public ActionData {
 
   ~ListAction() = default;
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     std::vector<std::string> data;
 
     for (auto i : actions_) {
@@ -38,7 +38,7 @@ class ListAction : public ActionData {
     return str::MakeList(data);
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     auto i = actions_.begin();
 
     for (; i != std::prev(actions_.end()); ++i) {
@@ -104,8 +104,8 @@ void AddListToProgWithCppCasting(ListAction *list_in, Type return_type,
   list_in->AddToProg(prog, return_type);
 }
 
-Action ListActionT(const std::vector<Action> &actions_in,
-                 const std::vector<Action> &destroyers_in) {
+auto ListActionT(const std::vector<Action> &actions_in,
+                 const std::vector<Action> &destroyers_in) -> Action {
   if (actions_in.size() == 0 && destroyers_in.size() == 0) {
     return void_action_;
   } else if (actions_in.size() == 1 && destroyers_in.size() == 0) {

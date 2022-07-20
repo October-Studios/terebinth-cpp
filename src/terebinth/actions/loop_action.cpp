@@ -2,7 +2,7 @@
 #include "error_handler.h"
 
 class LoopAction : public ActionData {
-public:
+ public:
   LoopAction(Action condition_in, Action end_action_in, Action loop_action_in)
       : ActionData(Void, Void, Void) {
     condition_ = condition_in;
@@ -17,20 +17,22 @@ public:
 
     if (condition_->GetInLeftType() != Void ||
         condition_->GetInRightType() != Void) {
-      error_.Log("LoopAction created with condition action that takes in "
-                 "something other than Void",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "LoopAction created with condition action that takes in "
+          "something other than Void",
+          INTERNAL_ERROR);
     }
 
     if (loop_action_->GetInLeftType() != Void ||
         loop_action_->GetInRightType() != Void) {
-      error_.Log("LoopAction created with action that takes in something other "
-                 "than Void",
-                 INTERNAL_ERROR);
+      error_.Log(
+          "LoopAction created with action that takes in something other "
+          "than Void",
+          INTERNAL_ERROR);
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     std::string body = loop_action_->GetDescription();
     if (end_action_ != void_action_) {
       std::vector<std::string> data = {body, end_action_->GetDescription()};
@@ -42,12 +44,12 @@ public:
                                      condition_->GetDescription(), body);
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *condition_out;
 
     while (true) {
       condition_out = condition_->Execute(nullptr, nullptr);
-      if (!(*((bool *)condition_out))) {
+      if (!(*(static_cast<bool *>(condition_out)))) {
         break;
       }
       free(condition_out);
@@ -77,17 +79,17 @@ public:
     prog->PopBlock();
   }
 
-private:
+ private:
   Action condition_;
   Action loop_action_;
   Action end_action_;
 };
 
-Action LoopActionT(Action condition_in, Action loop_action_in) {
+auto LoopActionT(Action condition_in, Action loop_action_in) -> Action {
   return Action(new LoopAction(condition_in, void_action_, loop_action_in));
 }
 
-Action LoopActionT(Action condition_in, Action end_action_in,
-                  Action loop_action_in) {
+auto LoopActionT(Action condition_in, Action end_action_in,
+                 Action loop_action_in) -> Action {
   return Action(new LoopAction(condition_in, end_action_in, loop_action_in));
 }

@@ -4,25 +4,25 @@
 #include "util/string_drawing.h"
 
 class BranchAction : public ActionData {
-public:
+ public:
   BranchAction(Action left_input_in, Action action_in, Action right_input_in)
       : ActionData(action_in->GetReturnType(), Void, Void) {
     if (!action_in) {
-      throw TerebinthError(std::string() +
-                               "branch action created sent null action",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null action",
+          INTERNAL_ERROR);
     }
 
     if (!left_input_in) {
-      throw TerebinthError(std::string() +
-                               "branch action created sent null left_input",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null left_input",
+          INTERNAL_ERROR);
     }
 
     if (!right_input_in) {
-      throw TerebinthError(std::string() +
-                               "branch action created sent null right_input",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null right_input",
+          INTERNAL_ERROR);
     }
 
     action_ = action_in;
@@ -62,7 +62,7 @@ public:
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     if (left_input_ && action_ && right_input_) {
       return str::MakeRootUpBinaryTree(
           action_->GetDescription(), left_input_->GetReturnType()->GetName(),
@@ -73,7 +73,7 @@ public:
     }
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *left_data = left_input_->Execute(nullptr, nullptr);
     void *right_data = right_input_->Execute(nullptr, nullptr);
     void *out_data = action_->Execute(left_data, right_data);
@@ -98,25 +98,25 @@ public:
     action_->AddToProg(left_in_tmp, right_in_tmp, prog);
   }
 
-private:
+ private:
   Action action_;
   Action left_input_;
   Action right_input_;
 };
 
 class RightBranchAction : public ActionData {
-public:
+ public:
   RightBranchAction(Action action_in, Action right_input_in)
       : ActionData(action_in->GetReturnType(), Void, Void) {
     if (!action_in)
-      throw TerebinthError(std::string() +
-                               "branch action created sent null action",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null action",
+          INTERNAL_ERROR);
 
     if (!right_input_in)
-      throw TerebinthError(std::string() +
-                               "branch action created sent null right_input",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null right_input",
+          INTERNAL_ERROR);
 
     action_ = action_in;
     right_input_ = right_input_in;
@@ -138,18 +138,19 @@ public:
     }
   }
 
-  ~RightBranchAction() {}
+  ~RightBranchAction() = default;
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     if (action_ && right_input_) {
       return str::MakeRootUpBinaryTree(action_->GetDescription(), "",
                                        right_input_->GetReturnType()->GetName(),
                                        "", right_input_->GetDescription());
-    } else
+    } else {
       return "[branch with null element]";
+    }
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *right_data = right_input_->Execute(nullptr, nullptr);
     void *out_data = action_->Execute(nullptr, right_data);
     free(right_data);
@@ -166,24 +167,24 @@ public:
     action_->AddToProg(void_action_, right_in_tmp, prog);
   }
 
-private:
+ private:
   Action action_ = nullptr;
   Action right_input_ = nullptr;
 };
 
 class LeftBranchAction : public ActionData {
-public:
+ public:
   LeftBranchAction(Action left_input_in, Action action_in)
       : ActionData(action_in->GetReturnType(), Void, Void) {
     if (!action_in)
-      throw TerebinthError(std::string() +
-                               "branch action created sent null action",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null action",
+          INTERNAL_ERROR);
 
     if (!left_input_in)
-      throw TerebinthError(std::string() +
-                               "branch action created sent null leftInput",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          std::string() + "branch action created sent null leftInput",
+          INTERNAL_ERROR);
 
     action_ = action_in;
     left_input_ = left_input_in;
@@ -205,16 +206,17 @@ public:
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     if (left_input_ && action_) {
       return str::MakeRootUpBinaryTree(action_->GetDescription(),
                                        left_input_->GetReturnType()->GetName(),
                                        "", left_input_->GetDescription(), "");
-    } else
+    } else {
       return "[branch with null element]";
+    }
   }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     void *left_data = left_input_->Execute(nullptr, nullptr);
     void *out_data = action_->Execute(left_data, nullptr);
     free(left_data);
@@ -230,13 +232,13 @@ public:
     action_->AddToProg(left_in_tmp, void_action_, prog);
   }
 
-private:
+ private:
   Action left_input_;
   Action action_;
 };
 
-Action BranchActionT(Action left_input_in, Action action_in,
-                    Action right_input_in) {
+auto BranchActionT(Action left_input_in, Action action_in,
+                   Action right_input_in) -> Action {
   if (left_input_in->GetReturnType()->IsVoid()) {
     if (right_input_in->GetReturnType()->IsVoid()) {
       return action_in;

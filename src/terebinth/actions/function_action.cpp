@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "action.h"
 #include "ast_node.h"
 #include "error_handler.h"
@@ -5,10 +7,8 @@
 #include "util/string_num_conversion.h"
 #include "util/string_utils.h"
 
-#include <cstring>
-
 class FunctionAction : public ActionData {
-public:
+ public:
   FunctionAction(Action action_in, std::shared_ptr<StackFrame> stack_frame_in)
       : ActionData(action_in->GetReturnType(), stack_frame_in->GetLeftInType(),
                    stack_frame_in->GetRightInType()) {
@@ -43,9 +43,10 @@ public:
 
   void ResolveAction() {
     if (!node_ || action_) {
-      throw TerebinthError("FunctionAction::ResolveAction called when this "
-                           "action is in the wrong state",
-                           INTERNAL_ERROR);
+      throw TerebinthError(
+          "FunctionAction::ResolveAction called when this "
+          "action is in the wrong state",
+          INTERNAL_ERROR);
     }
 
     action_ = node_->GetAction();
@@ -68,13 +69,13 @@ public:
     }
   }
 
-  std::string GetDescription() {
+  auto GetDescription() -> std::string {
     return str::PutStringInTreeNodeBox("call func " + name_hint_);
   }
 
-  bool IsFunction() { return true; }
+  auto IsFunction() -> bool { return true; }
 
-  void *Execute(void *in_left, void *in_right) {
+  auto Execute(void *in_left, void *in_right) -> void * {
     if (!action_) {
       ResolveAction();
     }
@@ -143,19 +144,19 @@ public:
     prog->PopExpr();
   }
 
-private:
+ private:
   std::shared_ptr<StackFrame> stack_frame_;
   Action action_ = nullptr;
   AstNode node_ = nullptr;
 };
 
-Action FunctionActionT(Action action_in,
-                      std::shared_ptr<StackFrame> stack_frame_in) {
+auto FunctionActionT(Action action_in,
+                     std::shared_ptr<StackFrame> stack_frame_in) -> Action {
   return Action(new FunctionAction(action_in, stack_frame_in));
 }
 
-Action FunctionActionT(AstNode node_in, Type return_type_in,
-                      std::shared_ptr<StackFrame> stack_frame_in) {
-  return Action(new
-      FunctionAction(std::move(node_in), return_type_in, stack_frame_in));
+auto FunctionActionT(AstNode node_in, Type return_type_in,
+                     std::shared_ptr<StackFrame> stack_frame_in) -> Action {
+  return Action(
+      new FunctionAction(std::move(node_in), return_type_in, stack_frame_in));
 }

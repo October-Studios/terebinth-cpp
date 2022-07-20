@@ -30,7 +30,7 @@ class AndAction : public ActionData {
   }
 
   auto Execute(void *in_left, void *in_right) -> void * {
-    bool *out = (bool *)malloc(sizeof(bool));
+    bool *out = static_cast<bool *>(malloc(sizeof(bool)));
     *out = false;
     void *first_val = first_action_->Execute(nullptr, nullptr);
 
@@ -92,8 +92,8 @@ class OrAction : public ActionData {
         first_action->GetDescription(), second_action->GetDescription());
   }
 
-  auto Execute(void *in_left, void *in_right) -> void * {
-    bool *out = (bool *)malloc(sizeof(bool));
+  auto Execute(void *inLeft, void *inRight) -> void * {
+    bool *out = static_cast<bool *>(malloc(sizeof(bool)));
     *out = true;
     void *first_val = first_action->Execute(nullptr, nullptr);
 

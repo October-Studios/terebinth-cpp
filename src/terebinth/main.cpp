@@ -23,9 +23,9 @@ struct Flags {
   bool flag_error = false;
 };
 
-Flags GetFlags(int argc, char **argv);
+auto GetFlags(int argc, char **argv) -> Flags;
 
-int main(int argc, char **argv) {
+auto main(int argc, char **argv) -> int {
   Flags flags = GetFlags(argc, argv);
 
   if (flags.flag_error) {
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
   }
 }
 
-Flags GetFlags(int argc, char **argv) {
+auto GetFlags(int argc, char **argv) -> Flags {
   bool after = false;
   Flags flags;
 
