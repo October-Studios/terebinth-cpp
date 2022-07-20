@@ -57,7 +57,8 @@ class PrimType : public TypeBase {
 
   auto GetCompactString() -> std::string {
     switch (primType) {
-      return "b";
+      case BOOL:
+        return "b";
       case BYTE:
         return "y";
       case INT:
@@ -230,7 +231,7 @@ class TupleType : public TypeBase {
     return {0, nullptr};
   }
 
-  auto *GetAllSubTypes() -> std::vector<NamedType> { return &(*sub_types_); }
+  auto GetAllSubTypes() -> std::vector<NamedType> { return &(*sub_types_); }
 
   auto IsWhatev() -> bool { return hasWhatev; }
 
