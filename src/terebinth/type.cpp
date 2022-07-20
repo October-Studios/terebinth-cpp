@@ -231,7 +231,7 @@ class TupleType : public TypeBase {
     return {0, nullptr};
   }
 
-  auto GetAllSubTypes() -> std::vector<NamedType> { return &(*sub_types_); }
+  auto GetAllSubTypes() -> std::vector<NamedType> * { return &(*sub_types_); }
 
   auto IsWhatev() -> bool { return hasWhatev; }
 
