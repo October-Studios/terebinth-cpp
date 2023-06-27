@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <vector>
 #include "error_handler.h"
 #include "terebinth_program.h"
 #include "util/file_utils.h"
