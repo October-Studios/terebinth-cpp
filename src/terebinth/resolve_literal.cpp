@@ -64,8 +64,8 @@ auto ResolveDoubleLiteral(Token token) -> Action {
   return ConstGetActionT(&out, Double, token->GetText(), global_namespace_);
 }
 
-auto TbthStr2CppStr(void *obj) -> std::string;
-auto CppStr2TbthStr(std::string cpp) -> void *;
+auto TerStr2CppStr(void *obj) -> std::string;
+auto CppStr2TerStr(std::string cpp) -> void *;
 
 auto ResolveStringLiteral(Token token) -> Action {
   std::string text = token->GetText();
@@ -78,7 +78,7 @@ auto ResolveStringLiteral(Token token) -> Action {
     text = text.substr(0, text.size() - 1);
   }
 
-  void *obj = CppStr2TbthStr(text);
+  void *obj = CppStr2TerStr(text);
 
   return ConstGetActionT(obj, String, "\"" + text + "\"", global_namespace_);
 }

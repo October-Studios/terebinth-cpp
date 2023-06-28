@@ -18,7 +18,7 @@
 #define otherwise ) {} \
   else
 
-#define GetTbthType(type_in) CONCAT(TBTH, type_in)
+#define GetTerType(type_in) CONCAT(TER, type_in)
 #define GetCppType(type_in) CONCAT(CPP, type_in)
 
 #define CPP_Double double
@@ -27,14 +27,14 @@
 #define CPP_Bool bool
 #define CPP_Void char
 
-#define TBTH_String String
-#define TBTH_Double Double
-#define TBTH_Int Int
-#define TBTH_Byte Byte
-#define TBTH_Bool Bool
-#define TBTH_Void Void
+#define TER_String String
+#define TER_Double Double
+#define TER_Int Int
+#define TER_Byte Byte
+#define TER_Bool Bool
+#define TER_Void Void
 
-#define TBTH_Tuple(t1, t2) \
+#define TER_Tuple(t1, t2) \
   MakeTuple(std::vector<NamedType>({{"a", t1}, {"b", t2}}), true)
 
 #define LAMBDA_HEADER [](void *left_in, void *right_in) -> void *
@@ -53,8 +53,8 @@
                  ((char *)val_in) + sizeof(GetCppType(t0)))
 
 #define DO_RETURN_VAL(type_in, var_name)                       \
-  void *out_ptr = malloc(GetTbthType(type_in)->GetSize());     \
-  memcpy(out_ptr, &var_name, GetTbthType(type_in)->GetSize()); \
+  void *out_ptr = malloc(GetTerType(type_in)->GetSize());     \
+  memcpy(out_ptr, &var_name, GetTerType(type_in)->GetSize()); \
   return out_ptr;
 #define DONT_RETURN_VAL(type_in, var_name) return nullptr;
 
@@ -78,8 +78,8 @@
 
 #define func(name_text, left_type, right_type, return_type, lambda_body, cpp) \
   AddAction(                                                                  \
-      name_text, GetTbthType(left_type), GetTbthType(right_type),             \
-      GetTbthType(return_type),                                               \
+      name_text, GetTerType(left_type), GetTerType(right_type),             \
+      GetTerType(return_type),                                               \
       LAMBDA_HEADER {                                                         \
         INSTANTIATE##_##left_type(left_type, left,                            \
                                   GET_PTR_VAL(left_type, left_in))            \
@@ -214,7 +214,7 @@ inline void SetValInTuple(void *data, Type type, std::string name, T val) {
   *((T *)((char *)data + a.offset)) = val;
 }
 
-inline auto TbthStr2CppStr(void *obj) -> std::string {
+inline auto TerStr2CppStr(void *obj) -> std::string {
   int len = GetValFromTuple<int>(obj, String, "_size");
   char *data = static_cast<char *>(malloc((len + 1) * sizeof(char)));
   memcpy(data, GetValFromTuple<char *>(obj, String, "_data"),
@@ -224,7 +224,7 @@ inline auto TbthStr2CppStr(void *obj) -> std::string {
   return out;
 }
 
-inline auto CppStr2TbthStr(std::string cpp) -> void * {
+inline auto CppStr2TerStr(std::string cpp) -> void * {
   void *obj = malloc(String->GetSize());
   char *str_data = static_cast<char *>(malloc(cpp.size() * sizeof(char)));
   memcpy(str_data, cpp.c_str(), cpp.size() * sizeof(char));
@@ -373,9 +373,9 @@ void PopulateConstants() {
       LAMBDA_HEADER {
         int right = *(int *)right_in;
         if (right < (int)cmd_line_args.size()) {
-          return CppStr2TbthStr(cmd_line_args[right]);
+          return CppStr2TerStr(cmd_line_args[right]);
         } else {
-          return CppStr2TbthStr("");
+          return CppStr2TerStr("");
         }
       },
       ADD_CPP_HEADER {
@@ -541,7 +541,7 @@ void PopulateConverters() {
       "Int", String, Void, Int,
       LAMBDA_HEADER {
         int *out = (int *)malloc(sizeof(int));
-        *out = str::StringToInt(TbthStr2CppStr(left_in));
+        *out = str::StringToInt(TerStr2CppStr(left_in));
         return out;
       },
       ADD_CPP_HEADER {
@@ -566,7 +566,7 @@ void PopulateConverters() {
       "Double", String, Void, Double,
       LAMBDA_HEADER {
         double *out = (double *)malloc(sizeof(double));
-        *out = str::StringToDouble(TbthStr2CppStr(left_in));
+        *out = str::StringToDouble(TerStr2CppStr(left_in));
         return out;
       },
       ADD_CPP_HEADER {
@@ -618,7 +618,7 @@ void PopulateStdFuncs() {
   AddAction(
       "print", Void, String, Void,
       LAMBDA_HEADER {
-        std::cout << TbthStr2CppStr(right_in) << std::endl;
+        std::cout << TerStr2CppStr(right_in) << std::endl;
         return nullptr;
       },
       ADD_CPP_HEADER {
@@ -647,11 +647,11 @@ void PopulateTypeInfoFuncs() {
                 left_type, right_type, String,
 
                 [=](void *left_in, void *right_in) -> void * {
-                  return CppStr2TbthStr(val);
+                  return CppStr2TerStr(val);
                 },
 
                 [=](Action in_left, Action in_right, CppProgram *prog) {
-                  void *tb_str = CppStr2TbthStr(val);
+                  void *tb_str = CppStr2TerStr(val);
                   ConstGetActionT(tb_str, String, val, global_namespace_)
                       ->AddToProg(prog);
                   free(tb_str);
@@ -820,20 +820,20 @@ void PopulateStringFuncs() {
 
   AddAction(
       "String", Void, Void, String,
-      LAMBDA_HEADER { return CppStr2TbthStr(""); },
+      LAMBDA_HEADER { return CppStr2TerStr(""); },
       ADD_CPP_HEADER {
         prog->Code(prog->GetTypeCode(String) + "(0, nullptr)");
       });
 
   AddAction(
       "String", String, Void, String,
-      LAMBDA_HEADER { return CppStr2TbthStr(TbthStr2CppStr(left_in)); },
+      LAMBDA_HEADER { return CppStr2TerStr(TerStr2CppStr(left_in)); },
       ADD_CPP_HEADER { left->AddToProg(prog); });
 
   AddAction(
       "String", Int, Void, String,
       LAMBDA_HEADER {
-        return CppStr2TbthStr(std::to_string(*((int *)left_in)));
+        return CppStr2TerStr(std::to_string(*((int *)left_in)));
       },
       ADD_CPP_HEADER {
         AddToProgIntToStr(prog);
@@ -847,7 +847,7 @@ void PopulateStringFuncs() {
   AddAction(
       "String", Double, Void, String,
       LAMBDA_HEADER {
-        return CppStr2TbthStr(str::DoubleToString(*((double *)left_in)));
+        return CppStr2TerStr(str::DoubleToString(*((double *)left_in)));
       },
       ADD_CPP_HEADER {
         AddToProgDoubleToStr(prog);
@@ -862,9 +862,9 @@ void PopulateStringFuncs() {
       "String", Bool, Void, String,
       LAMBDA_HEADER {
         if (*((bool *)left_in)) {
-          return CppStr2TbthStr("tru");
+          return CppStr2TerStr("tru");
         } else {
-          return CppStr2TbthStr("fls");
+          return CppStr2TerStr("fls");
         }
       },
       ADD_CPP_HEADER {
@@ -902,7 +902,7 @@ void PopulateStringFuncs() {
         }
         std::string out;
         out += (char)val;
-        return CppStr2TbthStr(out);
+        return CppStr2TerStr(out);
       },
       ADD_CPP_HEADER {
         AddToProgAsciiToStr(prog);
@@ -918,7 +918,7 @@ void PopulateStringFuncs() {
       LAMBDA_HEADER {
         int index = *((int *)right_in);
         int *out = (int *)malloc(sizeof(int));
-        std::string str = TbthStr2CppStr(left_in);
+        std::string str = TerStr2CppStr(left_in);
         if (index < 0 || index >= int(str.size())) {
           throw TerebinthError("tried to access location " +
                                    std::to_string(index) + " in string " +
@@ -951,12 +951,12 @@ void PopulateStringFuncs() {
             true);
         int start = GetValFromTuple<int>(right_in, RightType, "a");
         int end = GetValFromTuple<int>(right_in, RightType, "b");
-        std::string str = TbthStr2CppStr(left_in);
+        std::string str = TerStr2CppStr(left_in);
         if (start < 0 || end > int(str.size()) || start > end) {
           throw TerebinthError("invalid arguments sent to String.sub",
                                RUNTIME_ERROR);
         }
-        return CppStr2TbthStr(str.substr(start, end - start));
+        return CppStr2TerStr(str.substr(start, end - start));
       },
       ADD_CPP_HEADER {
         AddToProgSubStr(prog);
@@ -977,9 +977,9 @@ void PopulateStringFuncs() {
       "input", String, Void, String,
       LAMBDA_HEADER {
         std::string in;
-        std::cout << TbthStr2CppStr(left_in);
+        std::cout << TerStr2CppStr(left_in);
         std::getline(std::cin, in);
-        return CppStr2TbthStr(in);
+        return CppStr2TerStr(in);
       },
       ADD_CPP_HEADER {
         AddToProgGetInputLine(prog);
@@ -994,7 +994,7 @@ void PopulateStringFuncs() {
       ops_->plus_, String, String, String,
       [=](void *left_in, void *right_in) -> void * {
         void *out =
-            CppStr2TbthStr(TbthStr2CppStr(left_in) + TbthStr2CppStr(right_in));
+            CppStr2TerStr(TerStr2CppStr(left_in) + TerStr2CppStr(right_in));
         return out;
       },
       ADD_CPP_HEADER {
@@ -1012,7 +1012,7 @@ void PopulateStringFuncs() {
       ops_->equal_, String, String, Bool,
       LAMBDA_HEADER {
         bool *out = (bool *)malloc(sizeof(bool));
-        *out = TbthStr2CppStr(left_in) == TbthStr2CppStr(right_in);
+        *out = TerStr2CppStr(left_in) == TerStr2CppStr(right_in);
         return out;
       },
       ADD_CPP_HEADER {
@@ -1346,9 +1346,9 @@ void PopulateIntArrayAndFuncs() {
       });
 
   AddAction(
-      "set", IntArray, TBTH_Tuple(Int, Int), Void,
+      "set", IntArray, TER_Tuple(Int, Int), Void,
       LAMBDA_HEADER {
-        Type right_type = TBTH_Tuple(Int, Int);
+        Type right_type = TER_Tuple(Int, Int);
         int pos = GetValFromTuple<int>(right_in, right_type, "a");
         int size = GetValFromTuple<int>(left_in, IntArray, "_size");
         if (pos < 0 || pos >= size)
@@ -1406,7 +1406,7 @@ void PopulateNonStdFuncs() {
   AddAction(
       "runCmd", Void, String, String,
       LAMBDA_HEADER {
-        return CppStr2TbthStr(str::RunCmd(TbthStr2CppStr(right_in)));
+        return CppStr2TerStr(str::RunCmd(TerStr2CppStr(right_in)));
       },
       ADD_CPP_HEADER {
         AddToProgRunCmd(prog);
@@ -1428,7 +1428,7 @@ void PopulateCppInterfaceFuncs() {
       ADD_CPP_HEADER {
         prog->PushBlock();
         AddToProgStrWithEscapedNames(
-            prog, TbthStr2CppStr(right->Execute(nullptr, nullptr)));
+            prog, TerStr2CppStr(right->Execute(nullptr, nullptr)));
         prog->PopBlock();
       });
 
@@ -1440,7 +1440,7 @@ void PopulateCppInterfaceFuncs() {
             SOURCE_ERROR);
       },
       ADD_CPP_HEADER {
-        prog->AddHeadCode(TbthStr2CppStr(right->Execute(nullptr, nullptr)));
+        prog->AddHeadCode(TerStr2CppStr(right->Execute(nullptr, nullptr)));
       });
 }
 
