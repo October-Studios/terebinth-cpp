@@ -19,10 +19,10 @@
       src="https://img.shields.io/github/stars/October-Studios/terebinth?style=for-the-badge&logo=starship&color=c678dd&logoColor=d9e0ee&labelColor=282a36"
     />
   </a>
-  <a href="https://github.com/October-Studios/autocommit.nvim/releases/latest">
+  <a href="https://github.com/October-Studios/terebinth/releases/latest">
     <img
       alt="Releases"
-      src="https://img.shields.io/github/release/October-Studios/autocommit.nvim.svg?style=for-the-badge&include_prereleases&logo=github&color=F2CDCD&logoColor=d9e0ee&labelColor=282a36"
+      src="https://img.shields.io/github/release/October-Studios/terebinth.svg?style=for-the-badge&include_prereleases&logo=github&color=F2CDCD&logoColor=d9e0ee&labelColor=282a36"
     />
   </a>
   <a href="https://github.com/October-Studios/terebinth/issues">
