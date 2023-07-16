@@ -1,4 +1,5 @@
 #include "source_file.h"
+
 #include "error_handler.h"
 #include "util/file_utils.h"
 #include "util/string_utils.h"
@@ -8,13 +9,13 @@ SourceFile::SourceFile(std::string filename_in, bool print_output) {
   try {
     LoadFile(filename_in, contents_);
     contents_ += "\n";
-  } catch (std::string err) {
+  } catch (std::string& err) {
     throw TerebinthError(err, SOURCE_ERROR);
   }
 }
 
 std::string SourceFile::GetDirPath() {
-  int i = filename_.size();
+  auto i = filename_.size();
 
   while (i >= 0 && filename_[i] != '/') {
     i--;

@@ -37,12 +37,12 @@
 #define TER_Tuple(t1, t2) \
   MakeTuple(std::vector<NamedType>({{"a", t1}, {"b", t2}}), true)
 
-#define LAMBDA_HEADER [](void *left_in, void *right_in) -> void *
+#define LAMBDA_HEADER [](void* left_in, void* right_in) -> void*
 #define ADD_CPP_HEADER [](Action left, Action right, CppProgram * prog) -> void
 
 #define retrn out =
 #define GET_PTR_VAL(type_in, var_in_name) \
-  = *((GetCppType(type_in) *)(var_in_name))
+  = *((GetCppType(type_in)*)(var_in_name))
 
 #define DO_INSTANTIATE(type_in, var_out_name, val_in) \
   GetCppType(type_in) var_out_name val_in;
@@ -50,10 +50,10 @@
 #define INSTANTIATE_CPP_TUPLE(t0, t1, var_out_name, val_in) \
   DO_INSTANTIATE(t0, CONCAT(var_out_name, 0), val_in)       \
   DO_INSTANTIATE(t1, CONCAT(var_out_name, 1),               \
-                 ((char *)val_in) + sizeof(GetCppType(t0)))
+                 ((char*)val_in) + sizeof(GetCppType(t0)))
 
-#define DO_RETURN_VAL(type_in, var_name)                       \
-  void *out_ptr = malloc(GetTerType(type_in)->GetSize());     \
+#define DO_RETURN_VAL(type_in, var_name)                      \
+  void* out_ptr = malloc(GetTerType(type_in)->GetSize());     \
   memcpy(out_ptr, &var_name, GetTerType(type_in)->GetSize()); \
   return out_ptr;
 #define DONT_RETURN_VAL(type_in, var_name) return nullptr;
@@ -78,8 +78,8 @@
 
 #define func(name_text, left_type, right_type, return_type, lambda_body, cpp) \
   AddAction(                                                                  \
-      name_text, GetTerType(left_type), GetTerType(right_type),             \
-      GetTerType(return_type),                                               \
+      name_text, GetTerType(left_type), GetTerType(right_type),               \
+      GetTerType(return_type),                                                \
       LAMBDA_HEADER {                                                         \
         INSTANTIATE##_##left_type(left_type, left,                            \
                                   GET_PTR_VAL(left_type, left_in))            \
@@ -98,7 +98,7 @@ Namespace table;
 auto GetText(Operator op) -> std::string { return op->GetText(); }
 auto GetText(std::string in) -> std::string { return in; }
 
-void AddConst(void *data, Type type, std::string name) {
+void AddConst(void* data, Type type, std::string name) {
   global_namespace_->AddNode(AstActionWrapper::Make(ConstGetActionT(
                                  data, type, name, global_namespace_)),
                              name);
@@ -107,8 +107,8 @@ void AddConst(void *data, Type type, std::string name) {
 template <typename T>
 void AddAction(
     T id, Type left_type, Type right_type, Type return_type,
-    std::function<void *(void *, void *)> lambda,
-    std::function<void(Action in_left, Action in_right, CppProgram *prog)>
+    std::function<void*(void*, void*)> lambda,
+    std::function<void(Action in_left, Action in_right, CppProgram* prog)>
         cpp_writer) {
   global_namespace_->AddNode(
       AstActionWrapper::Make(LambdaActionT(left_type, right_type, return_type,
@@ -123,12 +123,12 @@ void AddType(Type type, std::string id) {
 }
 
 auto StringToLambda(std::string cpp_code)
-    -> std::function<void(Action in_left, Action in_right, CppProgram *prog)> {
+    -> std::function<void(Action in_left, Action in_right, CppProgram* prog)> {
   if (cpp_code.empty()) {
     return nullptr;
   }
 
-  return [=](Action in_left, Action in_right, CppProgram *prog) {
+  return [=](Action in_left, Action in_right, CppProgram* prog) {
     int start = 0;
     int i;
 
@@ -163,14 +163,14 @@ auto StringToLambda(std::string cpp_code)
 }
 
 void AddAction(std::string text, Type left_type, Type right_type,
-               Type return_type, std::function<void *(void *, void *)> lambda,
+               Type return_type, std::function<void*(void*, void*)> lambda,
                std::string cpp) {
   AddAction(text, left_type, right_type, return_type, lambda,
             StringToLambda(cpp));
 }
 
 void AddAction(Operator op, Type left_type, Type right_type, Type return_type,
-               std::function<void *(void *, void *)> lambda, std::string cpp) {
+               std::function<void*(void*, void*)> lambda, std::string cpp) {
   AddAction(op, left_type, right_type, return_type, lambda,
             StringToLambda(cpp));
 }
@@ -179,10 +179,10 @@ Type IntArray = nullptr;
 Type Array = nullptr;
 
 template <typename T>
-inline auto GetValFromTuple(void *data, Type type, std::string name) -> T {
+inline auto GetValFromTuple(void* data, Type type, std::string name) -> T {
   while (type->GetType() == TypeBase::PTR) {
     type = type->GetSubType();
-    data = *(void **)data;
+    data = *(void**)data;
   }
 
   OffsetAndType a = type->GetSubType(name);
@@ -193,14 +193,14 @@ inline auto GetValFromTuple(void *data, Type type, std::string name) -> T {
                          INTERNAL_ERROR);
   }
 
-  return *((T *)((char *)data + a.offset));
+  return *((T*)((char*)data + a.offset));
 }
 
 template <typename T>
-inline void SetValInTuple(void *data, Type type, std::string name, T val) {
+inline void SetValInTuple(void* data, Type type, std::string name, T val) {
   while (type->GetType() == TypeBase::PTR) {
     type = type->GetSubType();
-    data = *(void **)data;
+    data = *(void**)data;
   }
 
   OffsetAndType a = type->GetSubType(name);
@@ -211,31 +211,31 @@ inline void SetValInTuple(void *data, Type type, std::string name, T val) {
                          INTERNAL_ERROR);
   }
 
-  *((T *)((char *)data + a.offset)) = val;
+  *((T*)((char*)data + a.offset)) = val;
 }
 
-inline auto TerStr2CppStr(void *obj) -> std::string {
+inline auto TerStr2CppStr(void* obj) -> std::string {
   int len = GetValFromTuple<int>(obj, String, "_size");
-  char *data = static_cast<char *>(malloc((len + 1) * sizeof(char)));
-  memcpy(data, GetValFromTuple<char *>(obj, String, "_data"),
+  char* data = static_cast<char*>(malloc((len + 1) * sizeof(char)));
+  memcpy(data, GetValFromTuple<char*>(obj, String, "_data"),
          len * sizeof(char));
   data[len] = 0;
   std::string out(data);
   return out;
 }
 
-inline auto CppStr2TerStr(std::string cpp) -> void * {
-  void *obj = malloc(String->GetSize());
-  char *str_data = static_cast<char *>(malloc(cpp.size() * sizeof(char)));
+inline auto CppStr2TerStr(std::string cpp) -> void* {
+  void* obj = malloc(String->GetSize());
+  char* str_data = static_cast<char*>(malloc(cpp.size() * sizeof(char)));
   memcpy(str_data, cpp.c_str(), cpp.size() * sizeof(char));
 
-  *((int *)((char *)obj + String->GetSubType("_size").offset)) = cpp.size();
-  *((char **)((char *)obj + String->GetSubType("_data").offset)) = str_data;
+  *((int*)((char*)obj + String->GetSubType("_size").offset)) = cpp.size();
+  *((char**)((char*)obj + String->GetSubType("_data").offset)) = str_data;
 
   return obj;
 }
 
-void AddToProgTbStr(CppProgram *prog) {
+void AddToProgTbStr(CppProgram* prog) {
   if (!prog->HasFunc("$TbStr")) {
     std::string str_type = prog->GetTypeCode(String);
 
@@ -247,7 +247,7 @@ void AddToProgTbStr(CppProgram *prog) {
   }
 }
 
-void AddToProgCStr(CppProgram *prog) {
+void AddToProgCStr(CppProgram* prog) {
   if (!prog->HasFunc("$CStr")) {
     if (prog->HasFunc("$CStr")) {
       return;
@@ -263,29 +263,29 @@ void AddToProgCStr(CppProgram *prog) {
   }
 }
 
-void AddToProgSubStr(CppProgram *prog) {}
+void AddToProgSubStr(CppProgram* prog) {}
 
-void AddToProgIntToStr(CppProgram *prog) {}
+void AddToProgIntToStr(CppProgram* prog) {}
 
-void AddToProgStrToInt(CppProgram *prog) {}
+void AddToProgStrToInt(CppProgram* prog) {}
 
-void AddToProgStrToDouble(CppProgram *prog) {}
+void AddToProgStrToDouble(CppProgram* prog) {}
 
-void AddToProgConcatStr(CppProgram *prog) {}
+void AddToProgConcatStr(CppProgram* prog) {}
 
-void AddToProgDoubleToStr(CppProgram *prog) {}
+void AddToProgDoubleToStr(CppProgram* prog) {}
 
-void AddToProgAsciiToStr(CppProgram *prog) {}
+void AddToProgAsciiToStr(CppProgram* prog) {}
 
-void AddToProgGetInputLine(CppProgram *prog) {}
+void AddToProgGetInputLine(CppProgram* prog) {}
 
-void AddToProgEqStr(CppProgram *prog) {}
+void AddToProgEqStr(CppProgram* prog) {}
 
-void AddToProgRunCmd(CppProgram *prog) {}
+void AddToProgRunCmd(CppProgram* prog) {}
 
-void AddToProgMakeIntArray(CppProgram *prog) {}
+void AddToProgMakeIntArray(CppProgram* prog) {}
 
-void AddToProgStrWithEscapedNames(CppProgram *prog, std::string str) {}
+void AddToProgStrWithEscapedNames(CppProgram* prog, std::string str) {}
 
 void BasicSetup() {
   table = global_namespace_ = NamespaceData::MakeRootNamespace();
@@ -325,14 +325,14 @@ void PopulateConstants() {
         },
         false);
 
-    void *version_tuple_data = malloc(version_tuple_type->GetSize());
+    void* version_tuple_data = malloc(version_tuple_type->GetSize());
 
     SetValInTuple(version_tuple_data, version_tuple_type, "major",
-                  VERSION_MAJOR);
+                  kVersionMajor);
     SetValInTuple(version_tuple_data, version_tuple_type, "minor",
-                  VERSION_MINOR);
+                  kVersionMinor);
     SetValInTuple(version_tuple_data, version_tuple_type, "patch",
-                  VERSION_PATCH);
+                  kVersionPatch);
 
     AddConst(version_tuple_data, version_tuple_type, "VERSION");
   }
@@ -371,7 +371,7 @@ void PopulateConstants() {
   AddAction(
       "arg", Void, Int, String,
       LAMBDA_HEADER {
-        int right = *(int *)right_in;
+        int right = *(int*)right_in;
         if (right < (int)cmd_line_args.size()) {
           return CppStr2TerStr(cmd_line_args[right]);
         } else {
@@ -540,7 +540,7 @@ void PopulateConverters() {
   AddAction(
       "Int", String, Void, Int,
       LAMBDA_HEADER {
-        int *out = (int *)malloc(sizeof(int));
+        int* out = (int*)malloc(sizeof(int));
         *out = str::StringToInt(TerStr2CppStr(left_in));
         return out;
       },
@@ -565,7 +565,7 @@ void PopulateConverters() {
   AddAction(
       "Double", String, Void, Double,
       LAMBDA_HEADER {
-        double *out = (double *)malloc(sizeof(double));
+        double* out = (double*)malloc(sizeof(double));
         *out = str::StringToDouble(TerStr2CppStr(left_in));
         return out;
       },
@@ -646,12 +646,12 @@ void PopulateTypeInfoFuncs() {
             return LambdaActionT(
                 left_type, right_type, String,
 
-                [=](void *left_in, void *right_in) -> void * {
+                [=](void* left_in, void* right_in) -> void* {
                   return CppStr2TerStr(val);
                 },
 
-                [=](Action in_left, Action in_right, CppProgram *prog) {
-                  void *tb_str = CppStr2TerStr(val);
+                [=](Action in_left, Action in_right, CppProgram* prog) {
+                  void* tb_str = CppStr2TerStr(val);
                   ConstGetActionT(tb_str, String, val, global_namespace_)
                       ->AddToProg(prog);
                   free(tb_str);
@@ -670,11 +670,11 @@ void PopulateTypeInfoFuncs() {
         return LambdaActionT(
             left_type, right_type, Int,
 
-            [=](void *left_in, void *right_in) -> void * {
-              return &(*(int *)malloc(sizeof(int)) = val);
+            [=](void* left_in, void* right_in) -> void* {
+              return &(*(int*)malloc(sizeof(int)) = val);
             },
 
-            [=](Action in_left, Action in_right, CppProgram *prog) {
+            [=](Action in_left, Action in_right, CppProgram* prog) {
               ConstGetActionT(&val, Int, std::to_string(val), global_namespace_)
                   ->AddToProg(prog);
             },
@@ -692,15 +692,15 @@ void PopulateMemManagementFuncs() {
             return LambdaActionT(
                 left_type, right_type, right_type->GetPtr(),
 
-                [=](void *left_in, void *right_in) -> void * {
+                [=](void* left_in, void* right_in) -> void* {
                   size_t size = right_type->GetSize();
-                  void **data_ptr = (void **)malloc(sizeof(void *));
+                  void** data_ptr = (void**)malloc(sizeof(void*));
                   *data_ptr = malloc(size);
                   memcpy(*data_ptr, right_in, size);
                   return data_ptr;
                 },
 
-                [=](Action in_left, Action in_right, CppProgram *prog) {
+                [=](Action in_left, Action in_right, CppProgram* prog) {
                   prog->Code("&");
                   prog->PushExpr();
                   std::string type_code = prog->GetTypeCode(right_type);
@@ -726,14 +726,14 @@ void PopulateMemManagementFuncs() {
             return LambdaActionT(
                 left_type, right_type, left_type->GetSubType(),
 
-                [=](void *left_in, void *right_in) -> void * {
+                [=](void* left_in, void* right_in) -> void* {
                   size_t size = left_type->GetSubType()->GetSize();
-                  void *data = malloc(size);
-                  memcpy(data, *(void **)left_in, size);
+                  void* data = malloc(size);
+                  memcpy(data, *(void**)left_in, size);
                   return data;
                 },
 
-                [=](Action in_left, Action in_right, CppProgram *prog) {
+                [=](Action in_left, Action in_right, CppProgram* prog) {
                   prog->Code("*");
                   prog->PushExpr();
                   in_left->AddToProg(prog);
@@ -753,12 +753,12 @@ void PopulateMemManagementFuncs() {
             return LambdaActionT(
                 left_type, right_type, Void,
 
-                [=](void *left_in, void *right_in) -> void * {
-                  memcpy(*(void **)left_in, right_in, right_type->GetSize());
+                [=](void* left_in, void* right_in) -> void* {
+                  memcpy(*(void**)left_in, right_in, right_type->GetSize());
                   return nullptr;
                 },
 
-                [=](Action in_left, Action in_right, CppProgram *prog) {
+                [=](Action in_left, Action in_right, CppProgram* prog) {
                   prog->Code("*");
                   prog->PushExpr();
                   in_left->AddToProg(prog);
@@ -775,7 +775,7 @@ void PopulateMemManagementFuncs() {
 
 void PopulateStringFuncs() {
   auto destructor_lambda = LAMBDA_HEADER {
-    free(GetValFromTuple<char *>(right_in, String, "_data"));
+    free(GetValFromTuple<char*>(right_in, String, "_data"));
     return nullptr;
   };
 
@@ -792,11 +792,11 @@ void PopulateStringFuncs() {
       "__copy__", Void, String, String,
       LAMBDA_HEADER {
         int size = GetValFromTuple<int>(right_in, String, "_size");
-        void *new_data = malloc(size);
-        memcpy(new_data, GetValFromTuple<void *>(right_in, String, "_data"),
+        void* new_data = malloc(size);
+        memcpy(new_data, GetValFromTuple<void*>(right_in, String, "_data"),
                size);
         SetValInTuple(right_in, String, "_data", new_data);
-        void *out = malloc(String->GetSize());
+        void* out = malloc(String->GetSize());
         memcpy(out, right_in, String->GetSize());
         return out;
       },
@@ -819,8 +819,7 @@ void PopulateStringFuncs() {
       });
 
   AddAction(
-      "String", Void, Void, String,
-      LAMBDA_HEADER { return CppStr2TerStr(""); },
+      "String", Void, Void, String, LAMBDA_HEADER { return CppStr2TerStr(""); },
       ADD_CPP_HEADER {
         prog->Code(prog->GetTypeCode(String) + "(0, nullptr)");
       });
@@ -832,9 +831,7 @@ void PopulateStringFuncs() {
 
   AddAction(
       "String", Int, Void, String,
-      LAMBDA_HEADER {
-        return CppStr2TerStr(std::to_string(*((int *)left_in)));
-      },
+      LAMBDA_HEADER { return CppStr2TerStr(std::to_string(*((int*)left_in))); },
       ADD_CPP_HEADER {
         AddToProgIntToStr(prog);
 
@@ -847,7 +844,7 @@ void PopulateStringFuncs() {
   AddAction(
       "String", Double, Void, String,
       LAMBDA_HEADER {
-        return CppStr2TerStr(str::DoubleToString(*((double *)left_in)));
+        return CppStr2TerStr(str::DoubleToString(*((double*)left_in)));
       },
       ADD_CPP_HEADER {
         AddToProgDoubleToStr(prog);
@@ -861,7 +858,7 @@ void PopulateStringFuncs() {
   AddAction(
       "String", Bool, Void, String,
       LAMBDA_HEADER {
-        if (*((bool *)left_in)) {
+        if (*((bool*)left_in)) {
           return CppStr2TerStr("tru");
         } else {
           return CppStr2TerStr("fls");
@@ -882,7 +879,7 @@ void PopulateStringFuncs() {
   AddAction(
       "len", String, Void, Int,
       LAMBDA_HEADER {
-        int *out = (int *)malloc(sizeof(int));
+        int* out = (int*)malloc(sizeof(int));
         *out = GetValFromTuple<int>(left_in, String, "_size");
         return out;
       },
@@ -894,7 +891,7 @@ void PopulateStringFuncs() {
   AddAction(
       "ascii", Int, Void, String,
       LAMBDA_HEADER {
-        int val = *((int *)left_in);
+        int val = *((int*)left_in);
         if (val < 0 || val >= 256) {
           throw TerebinthError(
               "tried to make ascii string out of value " + std::to_string(val),
@@ -916,8 +913,8 @@ void PopulateStringFuncs() {
   AddAction(
       "at", String, Int, Int,
       LAMBDA_HEADER {
-        int index = *((int *)right_in);
-        int *out = (int *)malloc(sizeof(int));
+        int index = *((int*)right_in);
+        int* out = (int*)malloc(sizeof(int));
         std::string str = TerStr2CppStr(left_in);
         if (index < 0 || index >= int(str.size())) {
           throw TerebinthError("tried to access location " +
@@ -992,8 +989,8 @@ void PopulateStringFuncs() {
 
   AddAction(
       ops_->plus_, String, String, String,
-      [=](void *left_in, void *right_in) -> void * {
-        void *out =
+      [=](void* left_in, void* right_in) -> void* {
+        void* out =
             CppStr2TerStr(TerStr2CppStr(left_in) + TerStr2CppStr(right_in));
         return out;
       },
@@ -1011,7 +1008,7 @@ void PopulateStringFuncs() {
   AddAction(
       ops_->equal_, String, String, Bool,
       LAMBDA_HEADER {
-        bool *out = (bool *)malloc(sizeof(bool));
+        bool* out = (bool*)malloc(sizeof(bool));
         *out = TerStr2CppStr(left_in) == TerStr2CppStr(right_in);
         return out;
       },
@@ -1053,15 +1050,15 @@ void PopulateArrayFuncs() {
             return LambdaActionT(
                 left_type, right_type, array_type,
 
-                [=](void *left_in, void *right_in) -> void * {
-                  void *out = malloc(array_type->GetSize());
+                [=](void* left_in, void* right_in) -> void* {
+                  void* out = malloc(array_type->GetSize());
                   SetValInTuple(out, array_type, "_size", 0);
                   SetValInTuple(out, array_type, "_capacity", 0);
-                  SetValInTuple<void *>(out, array_type, "_data", nullptr);
+                  SetValInTuple<void*>(out, array_type, "_data", nullptr);
                   return out;
                 },
 
-                [=](Action in_left, Action in_right, CppProgram *prog) {
+                [=](Action in_left, Action in_right, CppProgram* prog) {
                   throw TerebinthError("not yet implemented", INTERNAL_ERROR);
                 },
 
@@ -1082,12 +1079,11 @@ void PopulateArrayFuncs() {
         return LambdaActionT(
             left_type, right_type, Void,
 
-            [=](void *left_in, void *right_in) -> void * {
+            [=](void* left_in, void* right_in) -> void* {
               int size = GetValFromTuple<int>(left_in, array_type, "_size");
               int capacity =
                   GetValFromTuple<int>(left_in, array_type, "_capacity");
-              void *data =
-                  GetValFromTuple<void *>(left_in, array_type, "_data");
+              void* data = GetValFromTuple<void*>(left_in, array_type, "_data");
 
               if (size + 1 > capacity) {
                 if (capacity < 1000)
@@ -1096,21 +1092,21 @@ void PopulateArrayFuncs() {
                   capacity *= 2;
 
                 SetValInTuple<int>(left_in, array_type, "_capacity", capacity);
-                void *new_data = malloc(capacity * contentsType->GetSize());
+                void* new_data = malloc(capacity * contentsType->GetSize());
                 memcpy(new_data, data, size * contentsType->GetSize());
                 free(data);
                 data = new_data;
-                SetValInTuple<void *>(left_in, array_type, "_data", data);
+                SetValInTuple<void*>(left_in, array_type, "_data", data);
               }
 
               SetValInTuple<int>(left_in, array_type, "_size", size + 1);
-              memcpy((char *)data + size * contentsType->GetSize(), right_in,
+              memcpy((char*)data + size * contentsType->GetSize(), right_in,
                      contentsType->GetSize());
 
               return nullptr;
             },
 
-            [=](Action in_left, Action in_right, CppProgram *prog) {
+            [=](Action in_left, Action in_right, CppProgram* prog) {
               throw TerebinthError("not yet implemented", INTERNAL_ERROR);
             },
             "append");
@@ -1130,24 +1126,24 @@ void PopulateArrayFuncs() {
         return LambdaActionT(
             left_type, right_type, contentsType,
 
-            [=](void *left_in, void *right_in) -> void * {
+            [=](void* left_in, void* right_in) -> void* {
               int size = GetValFromTuple<int>(left_in, array_type, "_size");
-              if (*(int *)right_in < 0 || *(int *)right_in >= size)
+              if (*(int*)right_in < 0 || *(int*)right_in >= size)
                 throw TerebinthError(
                     "index out of bounds, tried to get element at position " +
-                        std::to_string(*(int *)right_in) + " in array " +
+                        std::to_string(*(int*)right_in) + " in array " +
                         std::to_string(size) + " long",
                     RUNTIME_ERROR);
 
-              void *out = malloc(contentsType->GetSize());
+              void* out = malloc(contentsType->GetSize());
               memcpy(out,
-                     GetValFromTuple<char *>(left_in, array_type, "_data") +
-                         (*(int *)right_in) * elemSize,
+                     GetValFromTuple<char*>(left_in, array_type, "_data") +
+                         (*(int*)right_in) * elemSize,
                      elemSize);
               return out;
             },
 
-            [=](Action in_left, Action in_right, CppProgram *prog) {
+            [=](Action in_left, Action in_right, CppProgram* prog) {
               throw TerebinthError("not yet implemented", INTERNAL_ERROR);
             },
             "get");
@@ -1171,7 +1167,7 @@ void PopulateArrayFuncs() {
         return LambdaActionT(
             left_type, right_type, contentsType,
 
-            [=](void *left_in, void *right_in) -> void * {
+            [=](void* left_in, void* right_in) -> void* {
               int size = GetValFromTuple<int>(left_in, array_type, "_size");
               int index = GetValFromTuple<int>(right_in, inputType, "index");
 
@@ -1182,17 +1178,16 @@ void PopulateArrayFuncs() {
                         std::to_string(size) + " long",
                     RUNTIME_ERROR);
 
-              char *data =
-                  GetValFromTuple<char *>(left_in, array_type, "_data");
+              char* data = GetValFromTuple<char*>(left_in, array_type, "_data");
 
               memcpy(data + index * elemSize,
-                     (char *)right_in + inputType->GetSubType("value").offset,
+                     (char*)right_in + inputType->GetSubType("value").offset,
                      contentsType->GetSize());
 
               return nullptr;
             },
 
-            [=](Action in_left, Action in_right, CppProgram *prog) {
+            [=](Action in_left, Action in_right, CppProgram* prog) {
               throw TerebinthError("not yet implemented", INTERNAL_ERROR);
             },
             "set");
@@ -1211,13 +1206,13 @@ void PopulateArrayFuncs() {
         return LambdaActionT(
             left_type, right_type, Int,
 
-            [=](void *left_in, void *right_in) -> void * {
-              int *out = (int *)malloc(sizeof(int));
+            [=](void* left_in, void* right_in) -> void* {
+              int* out = (int*)malloc(sizeof(int));
               *out = GetValFromTuple<int>(left_in, array_type, "_size");
               return out;
             },
 
-            [=](Action in_left, Action in_right, CppProgram *prog) {
+            [=](Action in_left, Action in_right, CppProgram* prog) {
               throw TerebinthError("not yet implemented", INTERNAL_ERROR);
             },
             "len");
@@ -1237,20 +1232,20 @@ void PopulateArrayFuncs() {
         return LambdaActionT(
             Void, right_type, right_type,
 
-            [=](void *left_in, void *right_in) -> void * {
+            [=](void* left_in, void* right_in) -> void* {
               // error.log("Array destroyer called", JSYK);
               int size = GetValFromTuple<int>(right_in, array_type, "_size");
-              void *new_data = malloc(elemSize * size);
-              void *old_data =
-                  GetValFromTuple<void *>(right_in, array_type, "_data");
+              void* new_data = malloc(elemSize * size);
+              void* old_data =
+                  GetValFromTuple<void*>(right_in, array_type, "_data");
               memcpy(new_data, old_data, elemSize * size);
               SetValInTuple(right_in, array_type, "_data", new_data);
-              void *out = malloc(array_type->GetSize());
+              void* out = malloc(array_type->GetSize());
               memcpy(out, right_in, array_type->GetSize());
               return out;
             },
 
-            [=](Action in_left, Action in_right, CppProgram *prog) {
+            [=](Action in_left, Action in_right, CppProgram* prog) {
               throw TerebinthError("not yet implemented", INTERNAL_ERROR);
             },
             "__copy__");
@@ -1268,12 +1263,12 @@ void PopulateArrayFuncs() {
             return LambdaActionT(
                 Void, right_type, Void,
 
-                [=](void *left_in, void *right_in) -> void * {
-                  free(GetValFromTuple<void *>(right_in, array_type, "_data"));
+                [=](void* left_in, void* right_in) -> void* {
+                  free(GetValFromTuple<void*>(right_in, array_type, "_data"));
                   return nullptr;
                 },
 
-                [=](Action in_left, Action in_right, CppProgram *prog) {
+                [=](Action in_left, Action in_right, CppProgram* prog) {
                   throw TerebinthError("not yet implemented", INTERNAL_ERROR);
                 },
                 "__destroy__");
@@ -1292,11 +1287,11 @@ void PopulateIntArrayAndFuncs() {
   AddAction(
       "IntArray", Void, Int, IntArray,
       LAMBDA_HEADER {
-        char *out = (char *)malloc(IntArray->GetSize());
-        int size_in = *(int *)right_in;
-        int *int_ptr_data = (int *)malloc(Int->GetSize() * size_in);
+        char* out = (char*)malloc(IntArray->GetSize());
+        int size_in = *(int*)right_in;
+        int* int_ptr_data = (int*)malloc(Int->GetSize() * size_in);
         SetValInTuple<int>(out, IntArray, "_size", size_in);
-        SetValInTuple<int *>(out, IntArray, "_data", int_ptr_data);
+        SetValInTuple<int*>(out, IntArray, "_data", int_ptr_data);
         return out;
       },
       ADD_CPP_HEADER {
@@ -1310,7 +1305,7 @@ void PopulateIntArrayAndFuncs() {
   AddAction(
       "len", IntArray, Void, Int,
       LAMBDA_HEADER {
-        int *out = (int *)malloc(sizeof(int));
+        int* out = (int*)malloc(sizeof(int));
         *out = GetValFromTuple<int>(left_in, IntArray, "_size");
         return out;
       },
@@ -1322,16 +1317,16 @@ void PopulateIntArrayAndFuncs() {
   AddAction(
       "get", IntArray, Int, Int,
       LAMBDA_HEADER {
-        int pos = *(int *)right_in;
+        int pos = *(int*)right_in;
         int size = GetValFromTuple<int>(left_in, IntArray, "_size");
         if (pos < 0 || pos >= size)
           throw TerebinthError("tried to acces position " +
                                    std::to_string(pos) + " of array " +
                                    std::to_string(size) + " long",
                                RUNTIME_ERROR);
-        int *array_ptr = GetValFromTuple<int *>(left_in, IntArray, "_data");
+        int* array_ptr = GetValFromTuple<int*>(left_in, IntArray, "_data");
         int val = *(array_ptr + pos);
-        int *out = (int *)malloc(sizeof(int));
+        int* out = (int*)malloc(sizeof(int));
         *out = val;
         return out;
       },
@@ -1357,7 +1352,7 @@ void PopulateIntArrayAndFuncs() {
                                    std::to_string(size) + " long",
                                RUNTIME_ERROR);
         int val = GetValFromTuple<int>(right_in, right_type, "b");
-        int *array_ptr = GetValFromTuple<int *>(left_in, IntArray, "_data");
+        int* array_ptr = GetValFromTuple<int*>(left_in, IntArray, "_data");
         *(array_ptr + pos) = val;
         return nullptr;
       },

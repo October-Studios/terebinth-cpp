@@ -57,8 +57,8 @@ std::shared_ptr<CppNameContainer> CppNameContainer::MakeChild() {
   return out;
 }
 
-void CppNameContainer::AddTb(const std::string &tb,
-                             const std::string &cpp_name_hint) {
+void CppNameContainer::AddTb(const std::string& tb,
+                             const std::string& cpp_name_hint) {
   std::string valid_cpp_hint;
 
   if (cpp_name_hint == "<- the value of that pn string please")
@@ -88,7 +88,7 @@ void CppNameContainer::AddTb(const std::string &tb,
   cpp_set_.insert(cpp);
 }
 
-void CppNameContainer::ReserveCpp(const std::string &cpp,
+void CppNameContainer::ReserveCpp(const std::string& cpp,
                                   bool ignore_collisions) {
   if (!ignore_collisions && HasCpp(cpp)) {
     throw TerebinthError("called CppNameContainer::ReserveCpp with id '" + cpp +
@@ -99,27 +99,27 @@ void CppNameContainer::ReserveCpp(const std::string &cpp,
   cpp_set_.insert(cpp);
 }
 
-bool CppNameContainer::HasTbMe(const std::string &tb) {
+bool CppNameContainer::HasTbMe(const std::string& tb) {
   return tb_to_cpp_map_.find(tb) != tb_to_cpp_map_.end();
 }
 
-bool CppNameContainer::HasTb(const std::string &tb) {
+bool CppNameContainer::HasTb(const std::string& tb) {
   return HasTbMe(tb) || (parent_ && parent_->HasTb(tb));
 }
 
-bool CppNameContainer::HasCpp(const std::string &cpp) {
+bool CppNameContainer::HasCpp(const std::string& cpp) {
   return HasCppMe(cpp) || HasCppUp(cpp) || HasCppDown(cpp);
 }
 
-bool CppNameContainer::HasCppMe(const std::string &cpp) {
+bool CppNameContainer::HasCppMe(const std::string& cpp) {
   return cpp_set_.find(cpp) != cpp_set_.end();
 }
 
-bool CppNameContainer::HasCppUp(const std::string &cpp) {
+bool CppNameContainer::HasCppUp(const std::string& cpp) {
   return parent_ && (parent_->HasCppMe(cpp) || parent_->HasCppUp(cpp));
 }
 
-bool CppNameContainer::HasCppDown(const std::string &cpp) {
+bool CppNameContainer::HasCppDown(const std::string& cpp) {
   for (auto i : children_) {
     if (i->HasCppMe(cpp) || i->HasCppDown(cpp)) {
       return true;
@@ -129,7 +129,7 @@ bool CppNameContainer::HasCppDown(const std::string &cpp) {
   return false;
 }
 
-std::string CppNameContainer::GetCpp(const std::string &tb) {
+std::string CppNameContainer::GetCpp(const std::string& tb) {
   auto result = tb_to_cpp_map_.find(tb);
 
   if (result == tb_to_cpp_map_.end()) {
@@ -157,7 +157,7 @@ CppFuncBase::CppFuncBase(std::string prototype_in,
   returns_val = returns_val_in;
 }
 
-void CppFuncBase::Code(const std::string &in) {
+void CppFuncBase::Code(const std::string& in) {
   if (fresh_line) {
     source += str::IndentString(in, indent);
     fresh_line = (in.back() == '\n');
@@ -171,11 +171,11 @@ void CppFuncBase::Code(const std::string &in) {
   }
 }
 
-void CppFuncBase::Name(const std::string &in) {
+void CppFuncBase::Name(const std::string& in) {
   Code(namespace_stack.back()->GetCpp(in));
 }
 
-void CppFuncBase::Line(const std::string &in) {
+void CppFuncBase::Line(const std::string& in) {
   Code(in);
   Endln();
 }
@@ -199,7 +199,7 @@ void CppFuncBase::Endln() {
   fresh_line = true;
 }
 
-void CppFuncBase::Comment(const std::string &in) {
+void CppFuncBase::Comment(const std::string& in) {
   if (str::SearchInString(in, "\n", 0) >= 0) {
     source += str::IndentString("\n/*\n" + in + "\n*/\n", indent);
     fresh_line = true;
@@ -260,7 +260,7 @@ void CppFuncBase::PopBlock() {
   }
 }
 
-std::string CppFuncBase::TbToCpp(const std::string &in) {
+std::string CppFuncBase::TbToCpp(const std::string& in) {
   return namespace_stack.back()->GetCpp(in);
 }
 
@@ -275,9 +275,9 @@ CppProgram::CppProgram() {
 
 void CppProgram::Setup() {
   global_top_code += "// this C++ code is transpiled from Terebinth\n";
-  global_top_code += "// Terebinth v" + std::to_string(VERSION_MAJOR) + "." +
-                     std::to_string(VERSION_MINOR) + "." +
-                     std::to_string(VERSION_PATCH) + " was used\n";
+  global_top_code += "// Terebinth v" + std::to_string(kVersionMajor) + "." +
+                     std::to_string(kVersionMinor) + "." +
+                     std::to_string(kVersionPatch) + " was used\n";
   global_includes_code += "#include <string.h>\n";
   global_includes_code += "#include <stdlib.h>\n";
   global_includes_code += "#include <stdio.h>\n";
@@ -470,7 +470,7 @@ std::string CppProgram::GetTypeCode(Type in) {
   }
 }
 
-void CppProgram::DeclareVar(const std::string &name_in, Type type_in,
+void CppProgram::DeclareVar(const std::string& name_in, Type type_in,
                             std::string initial_value) {
   if (IsMain()) {
     DeclareGlobal(name_in, type_in, initial_value);
@@ -492,7 +492,7 @@ void CppProgram::DeclareVar(const std::string &name_in, Type type_in,
   active_func->var_declare_source += ";\n";
 }
 
-void CppProgram::DeclareGlobal(const std::string &name_in, Type type_in,
+void CppProgram::DeclareGlobal(const std::string& name_in, Type type_in,
                                std::string initial_value) {
   if (global_names->HasTb(name_in)) {
     return;
@@ -512,15 +512,15 @@ void CppProgram::DeclareGlobal(const std::string &name_in, Type type_in,
   global_var_code += code;
 }
 
-void CppProgram::AddHeadCode(const std::string &code) {
+void CppProgram::AddHeadCode(const std::string& code) {
   global_includes_code += code + "\n";
 }
 
-bool CppProgram::HasFunc(const std::string &name) {
+bool CppProgram::HasFunc(const std::string& name) {
   return funcs.find(name) != funcs.end();
 }
 
-void CppProgram::AddFunc(const std::string &name,
+void CppProgram::AddFunc(const std::string& name,
                          std::vector<std::pair<std::string, std::string>> args,
                          std::string return_type, std::string contents) {
   if (HasFunc(name)) {
@@ -554,8 +554,8 @@ void CppProgram::AddFunc(const std::string &name,
   func->Code(contents);
 }
 
-void CppProgram::PushFunc(const std::string &name,
-                          const std::string &cpp_name_hint, Type left_in,
+void CppProgram::PushFunc(const std::string& name,
+                          const std::string& cpp_name_hint, Type left_in,
                           Type right_in, Type return_type) {
   if (HasFunc(name)) {
     throw TerebinthError("called CppProgram::PushFunc with function name '" +

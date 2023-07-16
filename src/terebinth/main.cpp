@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+
 #include "error_handler.h"
 #include "terebinth_program.h"
 #include "util/file_utils.h"
@@ -23,9 +24,9 @@ struct Flags {
   bool flag_error = false;
 };
 
-auto GetFlags(int argc, char **argv) -> Flags;
+auto GetFlags(int argc, char** argv) -> Flags;
 
-auto main(int argc, char **argv) -> int {
+auto main(int argc, char** argv) -> int {
   Flags flags = GetFlags(argc, argv);
 
   if (flags.flag_error) {
@@ -33,8 +34,8 @@ auto main(int argc, char **argv) -> int {
     return 0;
   }
   if (flags.help) {
-    std::cout << "terebinth v" << VERSION_MAJOR << "." << VERSION_MINOR << "."
-              << VERSION_PATCH << std::endl;
+    std::cout << "terebinth v" << kVersionMajor << "." << kVersionMinor << "."
+              << kVersionPatch << std::endl;
     std::cout << "usage: terebinth [options] [source] [options]" << std::endl;
     std::cout << "options: " << std::endl;
     std::cout << "-v, -version      display the version of terebinth"
@@ -68,8 +69,8 @@ auto main(int argc, char **argv) -> int {
     return 0;
   }
   if (flags.version) {
-    std::cout << "terebinth version: v" << VERSION_MAJOR << "." << VERSION_MINOR
-              << "." << VERSION_PATCH << std::endl;
+    std::cout << "terebinth version: v" << kVersionMajor << "." << kVersionMinor
+              << "." << kVersionPatch << std::endl;
     return 0;
   }
 
@@ -79,7 +80,8 @@ auto main(int argc, char **argv) -> int {
     std::cout << "No source files specified" << std::endl;
     std::cout << "Try 'terebinth -h' for help" << std::endl;
     return 0;
-  } else if (flags.in_files.size() > 1) {
+  }
+  if (flags.in_files.size() > 1) {
     std::cout << "Multiple source files specified, terebinth does not "
                  "currently support this"
               << std::endl;
@@ -162,7 +164,7 @@ auto main(int argc, char **argv) -> int {
   }
 }
 
-auto GetFlags(int argc, char **argv) -> Flags {
+auto GetFlags(int argc, char** argv) -> Flags {
   bool after = false;
   Flags flags;
 
