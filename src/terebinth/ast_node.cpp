@@ -11,7 +11,7 @@ extern Namespace global_namespace_;
 
 auto ResolveLiteral(Token token) -> Action;
 
-void AstNodeBase::CopyToNode(AstNodeBase *other, bool copy_cache) {
+void AstNodeBase::CopyToNode(AstNodeBase* other, bool copy_cache) {
   other->in_left_type = in_left_type;
   other->in_right_type = in_right_type;
   other->name_hint_ = name_hint_;
