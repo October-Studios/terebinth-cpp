@@ -1,0 +1,12 @@
+set(actions_srcs
+  action.cpp
+  bool_op_action.cpp
+  branch_action.cpp
+  function_action.cpp
+  if_action.cpp
+  list_action.cpp
+  loop_action.cpp
+  make_tuple_action.cpp
+  type_action.cpp
+  var_action.cpp
+)
