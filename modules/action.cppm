@@ -1,17 +1,18 @@
-#pragma once
-
+module;
 #include <stdlib.h>
 
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
+export module Action;
 
 #include "cpp_program.h"
 #include "stack_frame.h"
 #include "type.h"
 #include "util/string_drawing.h"
 
+export {
 class ActionData;
 
 extern std::shared_ptr<ActionData> void_action_;
@@ -102,3 +103,4 @@ Action ConstGetActionT(const void *in, Type type_in, std::string text_in,
                        std::shared_ptr<NamespaceData> ns);
 
 Action TypeGetActionT(Type type_in);
+}  // export

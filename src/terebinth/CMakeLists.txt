@@ -19,6 +19,6 @@ set(terebinth_src
     ${CMAKE_CURRENT_SOURCE_DIR}/type.cpp
 )
 
-add_executable(terebinth ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+add_library(terebinth_lib terebinth_src)
 
 install(TARGETS terebinth DESTINATION ${INSTALL_BIN_DIR})

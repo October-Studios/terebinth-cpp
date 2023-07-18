@@ -1,5 +1,7 @@
-// terebinth's version format is vMAJOR.MINOR.PATCH
+module;
+export module Version;
 
+export {
 #define TEREBINTH_VERSION_MAJOR "@TEREBINTH_VERSION_MAJOR@";
 #define TEREBINTH_VERSION_MINOR "@TEREBINTH_VERSION_MINOR@";
 #define TEREBINTH_VERSION_PATCH "@TEREBINTH_VERSION_PATCH@";
@@ -16,3 +18,5 @@ class Version {
     return std::stoi(TEREBINTH_VERSION_PATCH);
   }
 };
+
+}  // export
