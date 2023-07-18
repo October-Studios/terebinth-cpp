@@ -1,7 +1,9 @@
-#pragma once
+module;
+export module Util.StringArray;
 
-#include "string_utils.h"
+import Util.StringUtils;
 
+export {
 namespace str {
 void SplitBy(std::vector<std::string> &out, const std::string &in,
              const std::string &splitter, bool keep_splitter = false);
@@ -22,3 +24,5 @@ inline void SplitByLine(std::vector<std::string> &out, const std::string &in) {
   SplitBy(out, in, "\n");
 }
 }  // namespace str
+
+}  // export

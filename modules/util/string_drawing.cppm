@@ -1,6 +1,9 @@
-#pragma once
+module;
+export module Util.StringDrawing;
 
-#include "string_utils.h"
+import Util.StringUtils;
+
+export {
 
 namespace str {
 std::string GetBoxedString(const std::string &in, std::string box_name = "",
@@ -20,3 +23,5 @@ std::string MakeRootUpBinaryTree(const std::string &root,
                                  const std::string &right_leaf);
 
 }  // namespace str
+
+}  // export

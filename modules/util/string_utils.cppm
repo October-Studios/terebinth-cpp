@@ -1,5 +1,4 @@
-#pragma once
-
+module;
 #include <math.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -9,8 +8,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
+export module Util.StringUtils;
 
-#include "error_handler.h"
+import ErrorHandler;
+
+export {
 
 namespace str {
 inline void NextGlyph(int &out, const std::string &in);
@@ -488,3 +490,5 @@ inline std::string PutStringInBox(const std::string &in,
 
 #include "string_array.h"
 #include "string_drawing.h"
+
+}  // export

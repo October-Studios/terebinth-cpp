@@ -1,12 +1,15 @@
-#pragma once
+module;
 
 class TokenData;
 
 #include <memory>
 #include <string>
+export module Operator;
 
+export
 class AllOperators;
 
+export
 class OperatorData {
  public:
   enum InputTaken { LEFT, RIGHT, BOTH };

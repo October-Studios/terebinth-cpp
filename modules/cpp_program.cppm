@@ -1,11 +1,12 @@
-#pragma once
-
+module;
 #include <map>
 #include <memory>
 #include <unordered_set>
+export module CppProgram;
 
-#include "type.h"
+import Type;
 
+export
 class CppNameContainer {
  public:
   static std::shared_ptr<CppNameContainer> MakeRoot();
@@ -31,6 +32,7 @@ class CppNameContainer {
   std::vector<std::shared_ptr<CppNameContainer>> children_;
 };
 
+export
 class CppFuncBase {
  public:
   CppFuncBase(std::string prototype_in,
@@ -73,6 +75,7 @@ class CppFuncBase {
 
 typedef std::shared_ptr<CppFuncBase> CppFunc;
 
+export
 class CppProgram {
  public:
   CppProgram();

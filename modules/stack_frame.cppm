@@ -1,11 +1,12 @@
-#pragma once
-
+module;
 #include <vector>
+export module StackFrame;
 
-#include "type.h"
+import Type;
 extern void *global_frame_ptr_;
 extern void *stack_ptr_;
 
+export
 class StackFrame {
  public:
   void AddMember(Type in);

@@ -1,14 +1,15 @@
-#pragma once
-
+module;
 #include <memory>
 #include <string>
 #include <vector>
+export module Token;
 
-#include "operator.h"
-#include "source_file.h"
+import Operator;
+import SourceFile;
 
 class SourceFile;
 
+export
 class TokenData {
  public:
   enum Type {

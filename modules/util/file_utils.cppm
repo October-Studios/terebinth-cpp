@@ -1,6 +1,6 @@
 module;
 export module Util.FileUtils;
-#include "string_utils.h"
+import Util.StringUtils;
 
 export {
 void LoadFile(std::string filepath, std::string &contents);

@@ -7,10 +7,10 @@ module;
 #include <vector>
 export module Action;
 
-#include "cpp_program.h"
-#include "stack_frame.h"
-#include "type.h"
-#include "util/string_drawing.h"
+import CppProgram;
+import StackFrame;
+import Type;
+import Util.StringDrawing;
 
 export {
 class ActionData;

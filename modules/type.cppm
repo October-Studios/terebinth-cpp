@@ -1,10 +1,11 @@
-#pragma once
-
+module;
 #include <cstring>
 #include <memory>
 #include <string>
 #include <vector>
+export module Type;
 
+export
 class TypeBase;
 
 typedef std::shared_ptr<TypeBase> Type;
@@ -31,6 +32,7 @@ struct OffsetAndType {
   Type type;
 };
 
+export
 class TypeBase : public std::enable_shared_from_this<TypeBase> {
  public:
   virtual ~TypeBase() = default;

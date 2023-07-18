@@ -48,7 +48,8 @@
 ## Requirements
 
 To build the *terebinth* interpreter from source, the following software packages are required:
-- GCC/G++
+- GCC/G++ 12+
+- CMake 3.26+
 
 <p align="center">
   Copyright &copy; 2022-present

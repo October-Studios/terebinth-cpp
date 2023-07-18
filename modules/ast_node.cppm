@@ -1,22 +1,24 @@
-#pragma once
-
+module;
 #include <memory>
+export module AstNode;
 
-#include "action.h"
-#include "error_handler.h"
-#include "token.h"
+import Action;
+import ErrorHandler;
+import Token;
 
+export
 class NamespaceData;
 typedef std::shared_ptr<NamespaceData> Namespace;
 
 #include <vector>
-
+export
 class AstNodeBase;
 typedef std::unique_ptr<AstNodeBase> AstNode;
 
 AstNode AstNodeFromTokens(const std::vector<Token> &tokens, int left,
                           int right);
 
+export
 class AstNodeBase {
  public:
   virtual ~AstNodeBase() = default;

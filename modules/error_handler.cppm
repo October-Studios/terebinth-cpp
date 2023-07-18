@@ -1,9 +1,11 @@
-#pragma once
-
+module;
 #include <string>
 
 #include "token.h"
 
+export module ErrorHandler;
+
+export {
 #define FUNC std::string(__FUNCTION__)
 
 enum ErrorPriority {
@@ -42,3 +44,5 @@ class TerebinthError {
   ErrorPriority priority_;
   Token token_;
 };
+
+}  // export

@@ -1,15 +1,15 @@
-#pragma once
-
+module;
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
+export module Namespace;
 
-#include "action.h"
-#include "ast_node.h"
-#include "operator.h"
-#include "token.h"
-#include "type.h"
+import Action;
+import AstNode;
+import Operator;
+import Token;
+import Type;
 
 class StackFrame;
 
