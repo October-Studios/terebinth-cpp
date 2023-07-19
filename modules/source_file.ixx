@@ -1,7 +1,6 @@
 module;
-#include <string>
-export module SourceFile;
-
+export module source_file;
+import <string>;
 export
 class SourceFile {
  public:

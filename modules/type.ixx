@@ -1,13 +1,14 @@
-module;
-#include <cstring>
-#include <memory>
-#include <string>
-#include <vector>
-export module Type;
+export module type;
+
+import <cstring>;
+import <memory>;
+import <string>;
+import <vector>;
 
 export
 class TypeBase;
 
+export
 typedef std::shared_ptr<TypeBase> Type;
 
 const extern Type Unknown;

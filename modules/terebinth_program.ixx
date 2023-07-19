@@ -1,18 +1,17 @@
 module;
-#include <math.h>
+import <math.h>;
+import <iostream>;
+import <list>;
+import <string>;
+import <vector>;
+export module terebinth_program;
 
-#include <iostream>
-#include <list>
-#include <string>
-#include <vector>
-export module TerebinthProgram;
-
-import Version;
-import AstNode;
+import version;
+import ast_node;
 import Namespace;
-import SourceFile;
-import StackFrame;
-import Token;
+import source_file;
+import stack_frame;
+import token;
 
 extern std::vector<std::string> cmd_line_args;
 

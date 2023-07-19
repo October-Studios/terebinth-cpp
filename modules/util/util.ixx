@@ -1,8 +1,8 @@
 module;
-export module Util;
+export module util;
 
-export import Util.FileUtils;
-export import Util.StringDrawing;
-export import Util.StringArray;
-export import Util.StringNumConversion;
-export import Util.StringUtils;
+export import util.file_utils;
+export import util.string_drawing;
+export import util.string_array;
+export import util.string_num_conversion;
+export import util.string_utils;

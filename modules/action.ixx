@@ -5,10 +5,10 @@ import <memory>;
 import <string>;
 import <vector>;
 
-import CppProgram;
-import StackFrame;
-import Type;
-import Util.StringDrawing;
+import cpp_program;
+import stack_frame;
+import type;
+import util.string_drawing;
 
 export {
 class ActionData;

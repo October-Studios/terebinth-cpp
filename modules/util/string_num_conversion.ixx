@@ -1,7 +1,7 @@
 module;
-export module Util.StringNumConversion;
+export module util.string_num_conversion;
 
-import Util.StringUtils;
+import util.string_utils;
 
 export {
 namespace str {

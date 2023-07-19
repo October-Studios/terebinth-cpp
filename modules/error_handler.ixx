@@ -1,9 +1,8 @@
-module;
-#include <string>
+export module error_handler;
 
-#include "token.h"
+import <string>;
 
-export module ErrorHandler;
+import token;
 
 export {
 #define FUNC std::string(__FUNCTION__)

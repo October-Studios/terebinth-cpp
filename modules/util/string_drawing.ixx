@@ -1,7 +1,7 @@
 module;
-export module Util.StringDrawing;
+export module util.string_drawing;
 
-import Util.StringUtils;
+import util.string_utils;
 
 export {
 

@@ -1,8 +1,8 @@
 module;
 #include <vector>
-export module StackFrame;
+export module stack_frame;
 
-import Type;
+import type;
 extern void *global_frame_ptr_;
 extern void *stack_ptr_;
 

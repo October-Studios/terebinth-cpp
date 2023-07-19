@@ -1,10 +1,10 @@
-module;
-#include <map>
-#include <memory>
-#include <unordered_set>
-export module CppProgram;
+export module cpp_program;
 
-import Type;
+import <map>;
+import <memory>;
+import <unordered_set>;
+
+import type;
 
 export
 class CppNameContainer {
@@ -34,6 +34,7 @@ class CppNameContainer {
 
 export
 class CppFuncBase {
+  friend class CppProgram;
  public:
   CppFuncBase(std::string prototype_in,
               std::shared_ptr<CppNameContainer> my_names, bool returns_val_in);
@@ -69,8 +70,6 @@ class CppFuncBase {
   bool fake_start_block = false;
 
   std::vector<std::shared_ptr<CppNameContainer>> namespace_stack;
-
-  friend CppProgram;
 };
 
 typedef std::shared_ptr<CppFuncBase> CppFunc;

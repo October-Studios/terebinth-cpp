@@ -1,15 +1,15 @@
 module;
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
+import <memory>;
+import <string>;
+import <unordered_map>;
+import <vector>;
 export module Namespace;
 
-import Action;
-import AstNode;
-import Operator;
-import Token;
-import Type;
+import action;
+import ast_node;
+import operator;
+import token;
+import type;
 
 class StackFrame;
 

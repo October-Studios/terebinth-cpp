@@ -1,5 +1,5 @@
 module;
-export module Version;
+export module version;
 
 export {
 #define TEREBINTH_VERSION_MAJOR "@TEREBINTH_VERSION_MAJOR@";

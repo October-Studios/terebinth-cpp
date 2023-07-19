@@ -1,11 +1,9 @@
-module;
-
-class TokenData;
-
-#include <memory>
-#include <string>
 export module Operator;
 
+import <memory>;
+import <string>;
+
+class TokenData;
 export
 class AllOperators;
 
@@ -40,4 +38,5 @@ class OperatorData {
   InputTaken input_;
 };
 
+export
 typedef std::shared_ptr<OperatorData> Operator;

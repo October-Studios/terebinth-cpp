@@ -1,8 +1,6 @@
-module;
-#include <unordered_map>
-#include <vector>
-export module AllOperators;
-
+export module all_operators;
+import <unordered_map>;
+import <vector>;
 import Operator;
 
 export

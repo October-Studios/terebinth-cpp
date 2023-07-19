@@ -1,11 +1,11 @@
-module;
-#include <memory>
-#include <string>
-#include <vector>
-export module Token;
+export module token;
+
+import <memory>;
+import <string>;
+import <vector>;
 
 import Operator;
-import SourceFile;
+import source_file;
 
 class SourceFile;
 
@@ -67,16 +67,21 @@ class TokenData {
   Operator op_;
 };
 
+export
 typedef std::shared_ptr<TokenData> Token;
 
+export
 Token MakeToken(std::string text_in, std::shared_ptr<SourceFile> file_in,
                 int line_in, int char_pos_in, TokenData::Type token_type_in,
                 Operator op_in = Operator(nullptr));
 
+export
 Token MakeToken(std::string text_in);
 
+export
 std::string StringFromTokens(const std::vector<Token> &tokens, int left,
                              int right);
 
+export
 std::string TableStringFromTokens(const std::vector<Token> &tokens,
                                   std::string table_name);

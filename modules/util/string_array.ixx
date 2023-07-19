@@ -1,7 +1,8 @@
 module;
-export module Util.StringArray;
+export module util.string_array;
 
-import Util.StringUtils;
+import util.string_utils;
+import <vector>;
 
 export {
 namespace str {

@@ -1,16 +1,17 @@
 module;
-#include <memory>
-export module AstNode;
+import <memory>;
+import <vector>;
+export module ast_node;
 
-import Action;
-import ErrorHandler;
-import Token;
+import action;
+import error_handler;
+import token;
 
 export
 class NamespaceData;
 typedef std::shared_ptr<NamespaceData> Namespace;
 
-#include <vector>
+
 export
 class AstNodeBase;
 typedef std::unique_ptr<AstNodeBase> AstNode;
