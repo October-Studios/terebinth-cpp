@@ -10,6 +10,14 @@
             "cStandard": "gnu17",
             "cppStandard": "gnu++20",
             "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "Windows",
+            "includePath": [
+                "${workspaceFolder}"
+            ],
+            "defines": [],
+            "cppStandard": "c++20"
         }
     ],
     "version": 4

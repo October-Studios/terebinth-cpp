@@ -27,10 +27,10 @@ file(GLOB_RECURSE SRC_FILES
 )
 target_sources(terebinth_lib PUBLIC ${SRC_FILES})
 
-configure_file(modules/Version.cppm.in modules/Version.cppm @ONLY)
+configure_file(modules/Version.ixx.in modules/Version.ixx @ONLY)
 file(GLOB_RECURSE MODULE_FILES
-  modules/*.cppm
-  modules/util/*.cppm
+  modules/*.ixx
+  modules/util/*.ixx
 )
 target_sources(terebinth_lib PUBLIC FILE_SET terebinth_modules TYPE CXX_MODULES FILES ${MODULE_FILES})
 
