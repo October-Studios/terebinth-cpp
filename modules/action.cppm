@@ -1,11 +1,9 @@
-module;
-#include <stdlib.h>
-
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
-export module Action;
+export module action;
+import <stdlib.h>;
+import <functional>;
+import <memory>;
+import <string>;
+import <vector>;
 
 import CppProgram;
 import StackFrame;

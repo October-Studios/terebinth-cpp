@@ -1,5 +1,5 @@
-#include "action.h"
-#include "error_handler.h"
+module;
+module Actions.IfAction;
 
 class IfAction : public ActionData {
  public:
@@ -37,16 +37,16 @@ class IfAction : public ActionData {
         condition_->GetDescription(), if_action_->GetDescription());
   }
 
-  auto Execute(void *in_left, void *in_right) -> void * {
-    void *condition_out = condition_->Execute(nullptr, nullptr);
-    if (*(static_cast<bool *>(condition_out))) {
+  auto Execute(void* in_left, void* in_right) -> void* {
+    void* condition_out = condition_->Execute(nullptr, nullptr);
+    if (*(static_cast<bool*>(condition_out))) {
       free(if_action_->Execute(nullptr, nullptr));
     }
     free(condition_out);
     return nullptr;
   }
 
-  void AddToProg(Action in_left, Action in_right, CppProgram *prog) {
+  void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
     prog->Code("if ");
     prog->PushExpr();
     condition_->AddToProg(void_action_, void_action_, prog);
@@ -111,10 +111,10 @@ class IfElseAction : public ActionData {
                                      condition_->GetDescription(), branch);
   }
 
-  auto Execute(void *in_left, void *in_right) -> void * {
-    void *out;
-    void *condition_out = condition_->Execute(nullptr, nullptr);
-    if (*(static_cast<bool *>(condition_out))) {
+  auto Execute(void* in_left, void* in_right) -> void* {
+    void* out;
+    void* condition_out = condition_->Execute(nullptr, nullptr);
+    if (*(static_cast<bool*>(condition_out))) {
       out = if_action_->Execute(nullptr, nullptr);
     } else {
       out = else_action_->Execute(nullptr, nullptr);
@@ -128,7 +128,7 @@ class IfElseAction : public ActionData {
     }
   }
 
-  void AddToProg(Action in_left, Action in_right, CppProgram *prog) {
+  void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
     if (return_val_ && prog->GetExprLevel() > 0) {
       prog->PushExpr();
       condition_->AddToProg(void_action_, void_action_, prog);

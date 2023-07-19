@@ -1,7 +1,4 @@
-module;
-
-module Action;
-import Action;
+module action;
 
 import ErrorHandler;
 import Util.StringUtils;

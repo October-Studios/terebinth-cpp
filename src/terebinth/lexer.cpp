@@ -1,11 +1,13 @@
+module;
 #include <unordered_map>
 #include <vector>
+module Lexer;
 
-#include "all_operators.h"
-#include "error_handler.h"
-#include "operator.h"
-#include "source_file.h"
-#include "token.h"
+import AllOperators;
+import ErrorHandler;
+import Operator;
+import SourceFile;
+import Token;
 
 /**
  * @brief
@@ -69,7 +71,7 @@ void CharacterClassifier::SetUp() {
 
   hm_['"'] = STRING_QUOTE;
 
-  std::unordered_map<std::string, Operator> &ops_map = ops_->GetOpsMap();
+  std::unordered_map<std::string, Operator>& ops_map = ops_->GetOpsMap();
 
   for (auto i = ops_map.begin(); i != ops_map.end(); ++i) {
     std::string str = (*i).first;
@@ -178,7 +180,7 @@ inline TokenData::Type CharacterClassifier::GetTokenType(
   }
 }
 
-void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens) {
+void LexString(std::shared_ptr<SourceFile> file, std::vector<Token>& tokens) {
   std::string token_txt;
   int line = 1;
   int char_pos = 1;

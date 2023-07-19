@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Request a feature for lualine
+about: Request a feature for terebinth
 title: "Feat: "
 labels: new feature
 ---
@@ -16,4 +16,4 @@ labels: new feature
 
 ### Motivation
 
-<!-- Explain why you think it should be included in lualine.-->
+<!-- Explain why you think it should be included in terebinth.-->
