@@ -1,10 +1,10 @@
-module;
+export module terebinth_program;
+
 import <math.h>;
 import <iostream>;
 import <list>;
 import <string>;
 import <vector>;
-export module terebinth_program;
 
 import version;
 import ast_node;

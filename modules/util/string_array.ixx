@@ -1,11 +1,17 @@
-module;
 export module util.string_array;
 
-import util.string_utils;
+import <string>;
 import <vector>;
 
 export {
 namespace str {
+
+enum StringPadAlignment {
+  ALIGNMENT_LEFT = 1,
+  ALIGNMENT_CENTER = 0,
+  ALIGNMENT_RIGHT = -1
+};
+
 void SplitBy(std::vector<std::string> &out, const std::string &in,
              const std::string &splitter, bool keep_splitter = false);
 

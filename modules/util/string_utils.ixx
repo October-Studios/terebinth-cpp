@@ -5,6 +5,8 @@ module;
 #include <unistd.h>
 #else
 #include <io.h>
+#define popen _popen
+#define pclose _pclose
 #endif
 
 #include <exception>
@@ -14,7 +16,7 @@ module;
 #include <vector>
 export module util.string_utils;
 
-import ErrorHandler;
+import error_handler;
 
 export {
 

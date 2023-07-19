@@ -40,7 +40,11 @@ file(GLOB_RECURSE MODULE_FILES
   modules/*.ixx
   modules/util/*.ixx
 )
-target_sources(terebinth_lib PUBLIC FILE_SET terebinth_modules TYPE CXX_MODULES FILES ${MODULE_FILES})
+target_sources(terebinth_lib 
+  PUBLIC 
+  FILE_SET terebinth_modules 
+  TYPE CXX_MODULES 
+  FILES ${MODULE_FILES} build/modules/Version.ixx)
 
 add_executable(terebinth apps/main.cpp)
 target_link_libraries(terebinth PRIVATE terebinth_lib)

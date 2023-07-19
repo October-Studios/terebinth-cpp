@@ -1,13 +1,13 @@
-module;
+export module Namespace;
+
 import <memory>;
 import <string>;
 import <unordered_map>;
 import <vector>;
-export module Namespace;
 
 import action;
 import ast_node;
-import operator;
+import Operator;
 import token;
 import type;
 

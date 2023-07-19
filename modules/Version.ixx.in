@@ -1,15 +1,16 @@
-module;
 export module version;
 
-export {
-#define TEREBINTH_VERSION_MAJOR "@TEREBINTH_VERSION_MAJOR@";
-#define TEREBINTH_VERSION_MINOR "@TEREBINTH_VERSION_MINOR@";
-#define TEREBINTH_VERSION_PATCH "@TEREBINTH_VERSION_PATCH@";
+import <string>;
 
+constexpr TEREBINTH_VERSION_MAJOR = "@TEREBINTH_VERSION_MAJOR@";
+constexpr TEREBINTH_VERSION_MINOR = "@TEREBINTH_VERSION_MINOR@";
+constexpr TEREBINTH_VERSION_PATCH = "@TEREBINTH_VERSION_PATCH@";
+
+export
 class Version {
  public:
   static int Major() {
-    return std::stoi(TEREBINTH_VERSION_MAJOR);
+    return std::stoi(std::string(TEREBINTH_VERSION_MAJOR));
   }
   static int Minor() {
     return std::stoi(TEREBINTH_VERSION_MINOR);
@@ -19,4 +20,3 @@ class Version {
   }
 };
 
-}  // export

@@ -1,8 +1,7 @@
-module;
 export module util.string_drawing;
 
-import util.string_utils;
-
+import <string>;
+import <vector>;
 export {
 
 namespace str {

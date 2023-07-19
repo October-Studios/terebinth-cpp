@@ -3,6 +3,8 @@ export module util.string_num_conversion;
 
 import util.string_utils;
 
+import <string>;
+
 export {
 namespace str {
 std::string CharToCppStringLiteralEscaped(unsigned char c);
