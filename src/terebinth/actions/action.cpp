@@ -1,7 +1,7 @@
 module action;
 
-import ErrorHandler;
-import Util.StringUtils;
+import error_handler;
+import util.string_utils;
 
 ActionData::ActionData(Type return_type_in, Type in_left_type_in,
                        Type in_right_type_in) {

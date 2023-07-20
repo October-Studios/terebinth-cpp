@@ -1,10 +1,4 @@
-#include "ast_node.h"
-
-#include "all_operators.h"
-#include "error_handler.h"
-#include "namespace.h"
-#include "util/string_drawing.h"
-#include "util/string_utils.h"
+module ast_node;
 
 extern StackFrame std_lib_stack_frame_;
 extern Namespace global_namespace_;
