@@ -1,13 +1,14 @@
-#include <iostream>
-#include <vector>
+module;
+import <iostream>;
+import <vector>;
 
-#include "error_handler.h"
-#include "terebinth_program.h"
-#include "util/file_utils.h"
-#include "util/string_array.h"
-#include "util/string_drawing.h"
-#include "util/string_num_conversion.h"
-#include "util/string_utils.h"
+import error_handler;
+import terebinth_program;
+import util.file_utils;
+import util.string_array;
+import util.string_drawing;
+import util.string_num_conversion;
+import util.string_utils;
 
 std::vector<std::string> cmd_line_args;
 

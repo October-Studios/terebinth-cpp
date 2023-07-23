@@ -1,11 +1,12 @@
-#include <cstring>
+module;
+import <cstring>;
 
-#include "action.h"
-#include "ast_node.h"
-#include "error_handler.h"
-#include "stack_frame.h"
-#include "util/string_num_conversion.h"
-#include "util/string_utils.h"
+import action;
+import ast_node;
+import error_handler;
+import stack_frame;
+import util.string_num_conversion;
+import util.string_utils;
 
 class FunctionAction : public ActionData {
  public:

@@ -1,10 +1,11 @@
-#include "action.h"
-#include "cpp_program.h"
-#include "error_handler.h"
-#include "namespace.h"
-#include "stack_frame.h"
-#include "util/string_drawing.h"
-#include "util/string_num_conversion.h"
+module;
+import action;
+import cpp_program;
+import error_handler;
+import Namespace;
+import stack_frame;
+import util.string_drawing;
+import util.string_num_conversion;
 
 class VarGetAction : public ActionData {
  public:

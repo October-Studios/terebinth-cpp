@@ -1,5 +1,6 @@
 module;
-module Actions.IfAction;
+import action;
+import error_handler;
 
 class IfAction : public ActionData {
  public:

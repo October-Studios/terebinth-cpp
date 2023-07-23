@@ -1,5 +1,6 @@
-#include "action.h"
-#include "error_handler.h"
+module;
+import action;
+import error_handler;
 
 class LoopAction : public ActionData {
  public:
