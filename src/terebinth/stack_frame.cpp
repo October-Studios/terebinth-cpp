@@ -1,7 +1,7 @@
-#include "stack_frame.h"
+module stack_frame;
 
-#include "error_handler.h"
-#include "util/string_utils.h"
+import error_handler;
+import util.string_utils;
 
 void *global_frame_ptr_ = nullptr;
 void *stack_ptr_ = nullptr;

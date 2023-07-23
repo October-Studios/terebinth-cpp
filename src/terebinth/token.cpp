@@ -1,7 +1,6 @@
-module;
-module Token;
+module token;
 
-import Util.StringUtils;
+import util.string_utils;
 
 Token MakeToken(std::string text_in, std::shared_ptr<SourceFile> file_in,
                 int line_in, int char_pos_in, TokenData::Type token_type_in,

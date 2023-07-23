@@ -10,7 +10,7 @@ export
 class Version {
  public:
   static int Major() {
-    return std::stoi(std::string(TEREBINTH_VERSION_MAJOR));
+    return std::stoi(TEREBINTH_VERSION_MAJOR);
   }
   static int Minor() {
     return std::stoi(TEREBINTH_VERSION_MINOR);

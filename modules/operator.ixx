@@ -3,6 +3,7 @@ export module Operator;
 import <memory>;
 import <string>;
 
+export
 class TokenData;
 export
 class AllOperators;

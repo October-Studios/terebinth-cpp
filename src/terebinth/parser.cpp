@@ -1,16 +1,16 @@
-#include <cstdlib>
-module;
-#include <iostream>
-#include <vector>
-module Parser;
+module parser;
 
-import AllOperators;
-import AstNode;
-import ErrorHandler;
+import <cstdlib>;
+import <iostream>;
+import <vector>;
+
+import all_operators;
+import ast_node;
+import error_handler;
 import Namespace;
-import StackFrame;
-import Token;
-import Util.StringUtils;
+import stack_frame;
+import token;
+import util.string_utils;
 
 void LexString(std::shared_ptr<SourceFile> file, std::vector<Token>& tokens);
 

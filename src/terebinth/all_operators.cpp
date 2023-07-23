@@ -1,6 +1,6 @@
-#include "all_operators.h"
+module all_operators;
 
-#include "error_handler.h"
+import error_handler;
 
 AllOperators* ops_ = nullptr;
 

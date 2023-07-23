@@ -1,13 +1,13 @@
-module;
-#include <unordered_map>
-#include <vector>
-module Lexer;
+module lexer;
 
-import AllOperators;
-import ErrorHandler;
+import <unordered_map>; 
+import <vector>;
+
+    import all_operators;
+import error_handler;
 import Operator;
-import SourceFile;
-import Token;
+import source_file;
+import token;
 
 /**
  * @brief

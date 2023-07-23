@@ -11,8 +11,10 @@ import Operator;
 import token;
 import type;
 
+export
 class StackFrame;
 
+export
 class NamespaceData;
 typedef std::shared_ptr<NamespaceData> Namespace;
 
@@ -20,6 +22,7 @@ typedef std::shared_ptr<NamespaceData> Namespace;
  * @brief
  *
  */
+export
 class NamespaceData : public std::enable_shared_from_this<NamespaceData> {
  public:
   /**

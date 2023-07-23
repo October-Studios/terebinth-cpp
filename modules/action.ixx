@@ -10,6 +10,8 @@ import stack_frame;
 import type;
 import util.string_drawing;
 
+class AstNodeBase;
+
 export {
 class ActionData;
 
@@ -53,8 +55,6 @@ class ActionData {
 };
 
 using Action = std::shared_ptr<ActionData>;
-
-class AstNodeBase;
 
 Action LambdaActionT(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,

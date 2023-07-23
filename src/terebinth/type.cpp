@@ -1,10 +1,10 @@
-#include "type.h"
+module type;
 
-#include <sstream>
+import <sstream>;
 
-#include "cpp_program.h"
-#include "error_handler.h"
-#include "util/string_utils.h"
+import cpp_program;
+import error_handler;
+import util.string_utils;
 
 class VoidType : public TypeBase {
  public:

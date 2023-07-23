@@ -11,24 +11,35 @@ class TypeBase;
 export
 typedef std::shared_ptr<TypeBase> Type;
 
+export
 const extern Type Unknown;
+export
 const extern Type Whatev;
 export
 const Type Void;
+export
 const extern Type Bool;
+export
 const extern Type Byte;
+export
 const extern Type Int;
+export
 const extern Type Double;
+export
 extern Type String;
 
+export
 class CppProgram;
+export
 class ActionData;
 
+export
 struct NamedType {
   std::string name;
   Type type;
 };
 
+export
 struct OffsetAndType {
   size_t offset;
   Type type;
@@ -102,8 +113,10 @@ class TypeBase : public std::enable_shared_from_this<TypeBase> {
   Type PtrToMe = nullptr;
 };
 
+export
 Type MakeTuple(const std::vector<NamedType> &in, bool is_anonymous);
 
+export
 class TupleTypeMaker {
  public:
   TupleTypeMaker();

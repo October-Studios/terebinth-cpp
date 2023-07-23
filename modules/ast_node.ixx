@@ -14,7 +14,7 @@ class NamespaceData;
 export
 typedef std::shared_ptr<NamespaceData> Namespace;
 
-
+export
 class AstNodeBase;
 export
 typedef std::unique_ptr<AstNodeBase> AstNode;

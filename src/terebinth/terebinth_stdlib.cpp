@@ -1,15 +1,16 @@
-#include <ios>
+module;
+import <ios>;
 
-#include "action.h"
-#include "all_operators.h"
-#include "ast_node.h"
-#include "cpp_program.h"
-#include "error_handler.h"
-#include "namespace.h"
-#include "stack_frame.h"
-#include "terebinth_program.h"
-#include "type.h"
-#include "util/string_utils.h"
+import action;
+import all_operators;
+import ast_node;
+import cpp_program;
+import error_handler;
+import Namespace;
+import stack_frame;
+import terebinth_program;
+import type;
+import util.string_utils;
 
 #define CONCAT(a, b) a##_##b
 #define GET_TYPES_Tuple(t0, t1) t0, t1
@@ -328,11 +329,11 @@ void PopulateConstants() {
     void* version_tuple_data = malloc(version_tuple_type->GetSize());
 
     SetValInTuple(version_tuple_data, version_tuple_type, "major",
-                  kVersionMajor);
+                  Version::Major());
     SetValInTuple(version_tuple_data, version_tuple_type, "minor",
-                  kVersionMinor);
+                  Version::Minor());
     SetValInTuple(version_tuple_data, version_tuple_type, "patch",
-                  kVersionPatch);
+                  Version::Patch());
 
     AddConst(version_tuple_data, version_tuple_type, "VERSION");
   }

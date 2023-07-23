@@ -72,6 +72,7 @@ class CppFuncBase {
   std::vector<std::shared_ptr<CppNameContainer>> namespace_stack;
 };
 
+export
 typedef std::shared_ptr<CppFuncBase> CppFunc;
 
 export
@@ -131,4 +132,5 @@ class CppProgram {
   std::shared_ptr<CppNameContainer> global_names;
 };
 
+export
 void AddToProgTbStr(CppProgram *prog);

@@ -1,6 +1,7 @@
-#include "action.h"
-#include "error_handler.h"
-#include "util/string_drawing.h"
+module;
+import action;
+import error_handler;
+import string_drawing;
 
 class AndAction : public ActionData {
  public:

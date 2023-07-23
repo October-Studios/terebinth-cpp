@@ -7,6 +7,7 @@ import <vector>;
 import Operator;
 import source_file;
 
+export
 class SourceFile;
 
 export

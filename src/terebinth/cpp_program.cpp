@@ -1,11 +1,11 @@
-#include "cpp_program.h"
+module cpp_program;
 
-#include <map>
-#include <unordered_set>
+import <map>;
+import <unordered_set>;
 
-#include "VERSION.h"
-#include "error_handler.h"
-#include "util/string_utils.h"
+import version;
+import error_handler;
+import util.string_utils;
 
 std::string GetValidCppId(std::string in) {
   std::string cpp;

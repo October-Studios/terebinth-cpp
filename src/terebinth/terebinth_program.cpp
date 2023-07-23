@@ -1,11 +1,8 @@
-#include "terebinth_program.h"
-
-#include <memory>
-
-#include "all_operators.h"
-#include "cpp_program.h"
-#include "error_handler.h"
-#include "operator.h"
+module terebinth_program;
+import <memory>;
+import all_operators;
+import cpp_program;
+import Operator;
 
 void PopulateTerebinthStdLib();
 void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens);

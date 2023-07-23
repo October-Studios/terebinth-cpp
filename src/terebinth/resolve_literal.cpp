@@ -1,7 +1,8 @@
-#include "action.h"
-#include "error_handler.h"
-#include "namespace.h"
-#include "token.h"
+module;
+import action;
+import error_handler;
+import Namespace;
+import token;
 
 extern Namespace global_namespace_;
 

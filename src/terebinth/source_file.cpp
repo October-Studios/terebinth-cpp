@@ -1,8 +1,8 @@
-#include "source_file.h"
+module source_file;
 
-#include "error_handler.h"
-#include "util/file_utils.h"
-#include "util/string_utils.h"
+import error_handler;
+import util.file_utils;
+import util.string_utils;
 
 SourceFile::SourceFile(std::string filename_in, bool print_output) {
   filename_ = filename_in;
