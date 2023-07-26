@@ -28,9 +28,7 @@ const extern Type Double;
 export
 extern Type String;
 
-export
 class CppProgram;
-export
 class ActionData;
 
 export

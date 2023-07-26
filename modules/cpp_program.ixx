@@ -6,8 +6,7 @@ import <unordered_set>;
 
 import type;
 
-export
-class CppNameContainer {
+export class CppNameContainer {
  public:
   static std::shared_ptr<CppNameContainer> MakeRoot();
   std::shared_ptr<CppNameContainer> MakeChild();
@@ -32,7 +31,6 @@ class CppNameContainer {
   std::vector<std::shared_ptr<CppNameContainer>> children_;
 };
 
-export
 class CppFuncBase {
   friend class CppProgram;
  public:

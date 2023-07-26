@@ -1,4 +1,3 @@
-module;
 import <typeinfo>;
 import <vector>;
 

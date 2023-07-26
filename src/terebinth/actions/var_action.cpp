@@ -1,4 +1,3 @@
-module;
 import action;
 import cpp_program;
 import error_handler;

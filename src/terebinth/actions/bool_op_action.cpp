@@ -1,7 +1,6 @@
-module;
 import action;
 import error_handler;
-import string_drawing;
+import util.string_drawing;
 
 class AndAction : public ActionData {
  public:
