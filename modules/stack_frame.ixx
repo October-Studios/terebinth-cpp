@@ -3,11 +3,10 @@ import <vector>;
 export module stack_frame;
 
 import type;
-extern void *global_frame_ptr_;
-extern void *stack_ptr_;
+export extern void *global_frame_ptr_;
+export extern void *stack_ptr_;
 
-export
-class StackFrame {
+export class StackFrame {
  public:
   void AddMember(Type in);
   void SetInput(Type left, Type right);

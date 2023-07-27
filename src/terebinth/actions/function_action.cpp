@@ -5,6 +5,7 @@ import ast_node;
 import error_handler;
 import stack_frame;
 import util.string_num_conversion;
+import util.string_drawing;
 import util.string_utils;
 
 class FunctionAction : public ActionData {
