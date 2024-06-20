@@ -32,7 +32,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/terebinth-config.cmake
 )
 
 install(EXPORT terebinth-targets
-  FILES terebinth-targets.cmake
+  FILE terebinth-targets.cmake
   NAMESPACE terebinth::
   DESTINATION ${TEREBINTH_PACKAGE_DIR}
   COMPONENT devel
