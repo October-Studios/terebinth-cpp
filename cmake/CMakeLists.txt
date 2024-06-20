@@ -19,7 +19,7 @@ write_basic_package_version_file(
   COMPATIBILITY SameMinorVersion
 )
 
-export(EXPORT sdk-targets
+export(EXPORT terebinth-targets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/terebinth-targets.cmake"
   NAMESPACE terebinth::
 )
