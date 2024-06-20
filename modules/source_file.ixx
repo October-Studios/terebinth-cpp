@@ -1,7 +1,7 @@
-#pragma once
-
-#include <string>
-
+module;
+export module source_file;
+import <string>;
+export
 class SourceFile {
  public:
   SourceFile() {

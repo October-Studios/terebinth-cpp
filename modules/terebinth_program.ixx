@@ -1,23 +1,23 @@
-#pragma once
+export module terebinth_program;
 
-#include <math.h>
+import <math.h>;
+import <iostream>;
+import <list>;
+import <string>;
+import <vector>;
 
-#include <iostream>
-#include <list>
-#include <string>
-#include <vector>
-
-#include "VERSION.h"
-#include "ast_node.h"
-#include "namespace.h"
-#include "source_file.h"
-#include "stack_frame.h"
-#include "token.h"
+import version;
+import ast_node;
+import Namespace;
+import source_file;
+import stack_frame;
+import token;
 
 extern std::vector<std::string> cmd_line_args;
 
 class Element;
 
+export
 class TerebinthProgram {
  public:
   TerebinthProgram();

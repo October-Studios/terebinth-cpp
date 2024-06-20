@@ -1,36 +1,49 @@
-#pragma once
+export module type;
 
-#include <cstring>
-#include <memory>
-#include <string>
-#include <vector>
+import <cstring>;
+import <memory>;
+import <string>;
+import <vector>;
 
+export
 class TypeBase;
 
+export
 typedef std::shared_ptr<TypeBase> Type;
 
+export
 const extern Type Unknown;
+export
 const extern Type Whatev;
-const extern Type Void;
+export
+const Type Void;
+export
 const extern Type Bool;
+export
 const extern Type Byte;
+export
 const extern Type Int;
+export
 const extern Type Double;
+export
 extern Type String;
 
 class CppProgram;
 class ActionData;
 
+export
 struct NamedType {
   std::string name;
   Type type;
 };
 
+export
 struct OffsetAndType {
   size_t offset;
   Type type;
 };
 
+export
 class TypeBase : public std::enable_shared_from_this<TypeBase> {
  public:
   virtual ~TypeBase() = default;
@@ -98,8 +111,10 @@ class TypeBase : public std::enable_shared_from_this<TypeBase> {
   Type PtrToMe = nullptr;
 };
 
+export
 Type MakeTuple(const std::vector<NamedType> &in, bool is_anonymous);
 
+export
 class TupleTypeMaker {
  public:
   TupleTypeMaker();

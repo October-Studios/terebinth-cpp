@@ -33,3 +33,4 @@
 
 # Build Directories
 build/
+.cache/

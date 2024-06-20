@@ -1,17 +1,11 @@
-#include "ast_node.h"
-
-#include "all_operators.h"
-#include "error_handler.h"
-#include "namespace.h"
-#include "util/string_drawing.h"
-#include "util/string_utils.h"
+module ast_node;
 
 extern StackFrame std_lib_stack_frame_;
 extern Namespace global_namespace_;
 
 auto ResolveLiteral(Token token) -> Action;
 
-void AstNodeBase::CopyToNode(AstNodeBase *other, bool copy_cache) {
+void AstNodeBase::CopyToNode(AstNodeBase* other, bool copy_cache) {
   other->in_left_type = in_left_type;
   other->in_right_type = in_right_type;
   other->name_hint_ = name_hint_;

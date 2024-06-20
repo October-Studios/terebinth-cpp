@@ -1,8 +1,8 @@
-#include "all_operators.h"
+module all_operators;
 
-#include "error_handler.h"
+import error_handler;
 
-AllOperators *ops_ = nullptr;
+AllOperators* ops_ = nullptr;
 
 auto OpCreate(std::string text_in, int left_precedence_in,
               int right_precedence_in, bool overloadable_in) -> Operator;
@@ -19,7 +19,7 @@ AllOperators::AllOperators() {
 
 void AllOperators::PutOpInMap(Operator op) { ops_map_[op->GetText()] = op; }
 
-void AllOperators::Get(std::string text, std::vector<Operator> &out) {
+void AllOperators::Get(std::string text, std::vector<Operator>& out) {
   int start = 0;
   int end = text.size();
 

@@ -1,9 +1,8 @@
-#include "error_handler.h"
+module error_handler;
 
-#include <iostream>
-
-#include "source_file.h"
-#include "util/string_utils.h"
+import <iostream>;
+import source_file;
+import util.string_utils;
 
 ErrorHandler error_;
 

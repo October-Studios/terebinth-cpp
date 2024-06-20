@@ -1,38 +1,41 @@
-#include <iostream>
-#include <vector>
+module parser;
 
-#include "all_operators.h"
-#include "ast_node.h"
-#include "error_handler.h"
-#include "namespace.h"
-#include "stack_frame.h"
-#include "token.h"
-#include "util/string_utils.h"
+import <cstdlib>;
+import <iostream>;
+import <vector>;
 
-void LexString(std::shared_ptr<SourceFile> file, std::vector<Token> &tokens);
+import all_operators;
+import ast_node;
+import error_handler;
+import Namespace;
+import stack_frame;
+import token;
+import util.string_utils;
 
-void ParseTokenList(const std::vector<Token> &tokens, int left, int right,
-                    std::vector<AstNode> &nodes);
+void LexString(std::shared_ptr<SourceFile> file, std::vector<Token>& tokens);
 
-auto FindExpressionSplit(const std::vector<Token> &tokens, int left, int right)
+void ParseTokenList(const std::vector<Token>& tokens, int left, int right,
+                    std::vector<AstNode>& nodes);
+
+auto FindExpressionSplit(const std::vector<Token>& tokens, int left, int right)
     -> int;
 
-auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
+auto ParseExpression(const std::vector<Token>& tokens, int left, int right)
     -> AstNode;
 
-auto SkipBrace(const std::vector<Token> &tokens, int start) -> int;
+auto SkipBrace(const std::vector<Token>& tokens, int start) -> int;
 
-void ParseSequence(const std::vector<Token> &tokens, int left, int right,
-                   Operator splitter, std::vector<AstNode> &out);
+void ParseSequence(const std::vector<Token>& tokens, int left, int right,
+                   Operator splitter, std::vector<AstNode>& out);
 
-auto ParseOperator(const std::vector<Token> &tokens, int left, int right,
+auto ParseOperator(const std::vector<Token>& tokens, int left, int right,
                    int index) -> AstNode;
 
-auto ParseType(const std::vector<Token> &tokens, int left, int right)
+auto ParseType(const std::vector<Token>& tokens, int left, int right)
     -> std::unique_ptr<AstType>;
-void ImportFile(std::vector<AstNode> &nodes, std::string path);
+void ImportFile(std::vector<AstNode>& nodes, std::string path);
 
-auto AstNodeFromTokens(const std::vector<Token> &tokens, int left, int right)
+auto AstNodeFromTokens(const std::vector<Token>& tokens, int left, int right)
     -> AstNode {
   std::vector<AstNode> nodes;
 
@@ -47,7 +50,7 @@ auto AstNodeFromTokens(const std::vector<Token> &tokens, int left, int right)
   }
 }
 
-auto SkipBrace(const std::vector<Token> &tokens, int start) -> int {
+auto SkipBrace(const std::vector<Token>& tokens, int start) -> int {
   Operator open, close;
   int step;
 
@@ -104,7 +107,7 @@ auto SkipBrace(const std::vector<Token> &tokens, int start) -> int {
   }
 }
 
-auto FindExpressionSplit(const std::vector<Token> &tokens, int left, int right)
+auto FindExpressionSplit(const std::vector<Token>& tokens, int left, int right)
     -> int {
   int min_prece = -1;
   int index_of_min = -1;
@@ -134,7 +137,7 @@ auto FindExpressionSplit(const std::vector<Token> &tokens, int left, int right)
   return index_of_min;
 }
 
-auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
+auto ParseExpression(const std::vector<Token>& tokens, int left, int right)
     -> AstNode {
   if (left > right) {
     throw TerebinthError(FUNC + " sent left higher then right", INTERNAL_ERROR,
@@ -241,7 +244,7 @@ auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
         i < right ? ParseExpression(tokens, i + 1, right) : AstVoid::Make();
 
     if (typeid(*center_node) == typeid(AstExpression)) {
-      AstExpression *expr_node = (AstExpression *)&*center_node;
+      AstExpression* expr_node = (AstExpression*)&*center_node;
 
       if (!expr_node->left_in->IsVoid() && !expr_node->center->IsVoid() &&
           expr_node->right_in->IsVoid()) {
@@ -261,9 +264,9 @@ auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
 
       if (center_node->IsFunctionWithOutput()) {
         func_right_in =
-            std::move(((AstOpWithInput *)&*(center_node))->left_in[0]);
+            std::move(((AstOpWithInput*)&*(center_node))->left_in[0]);
         func_return =
-            std::move(((AstOpWithInput *)&*(center_node))->right_in[0]);
+            std::move(((AstOpWithInput*)&*(center_node))->right_in[0]);
       } else {
         func_right_in = std::move(center_node);
         func_return = AstVoidType::Make();
@@ -283,8 +286,8 @@ auto ParseExpression(const std::vector<Token> &tokens, int left, int right)
   }
 }
 
-void ParseTokenList(const std::vector<Token> &tokens, int left, int right,
-                    std::vector<AstNode> &nodes) {
+void ParseTokenList(const std::vector<Token>& tokens, int left, int right,
+                    std::vector<AstNode>& nodes) {
   int start = left;
 
   for (int i = left; i <= right; i++) {
@@ -342,8 +345,8 @@ void ParseTokenList(const std::vector<Token> &tokens, int left, int right,
   }
 }
 
-void ParseSequence(const std::vector<Token> &tokens, int left, int right,
-                   Operator splitter, std::vector<AstNode> &out) {
+void ParseSequence(const std::vector<Token>& tokens, int left, int right,
+                   Operator splitter, std::vector<AstNode>& out) {
   int start = left;
 
   for (int i = left; i <= right; i++) {
@@ -366,7 +369,7 @@ void ParseSequence(const std::vector<Token> &tokens, int left, int right,
   if (start <= right) out.push_back(ParseExpression(tokens, start, right));
 }
 
-auto ParseType(const std::vector<Token> &tokens, int left, int right)
+auto ParseType(const std::vector<Token>& tokens, int left, int right)
     -> std::unique_ptr<AstType> {
   std::vector<AstTupleType::NamedType> types;
 
@@ -419,7 +422,7 @@ auto ParseType(const std::vector<Token> &tokens, int left, int right)
     return AstTupleType::Make(types);
 }
 
-void ImportFile(std::vector<AstNode> &nodes, std::string path) {
+void ImportFile(std::vector<AstNode>& nodes, std::string path) {
   auto file = std::shared_ptr<SourceFile>(new SourceFile(path, false));
 
   if (file->GetContents().empty()) {

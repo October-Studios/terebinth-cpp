@@ -1,17 +1,18 @@
-#pragma once
+export module action;
+import <stdlib.h>;
+import <functional>;
+import <memory>;
+import <string>;
+import <vector>;
 
-#include <stdlib.h>
+import cpp_program;
+import stack_frame;
+import type;
+import util.string_drawing;
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
+class AstNodeBase;
 
-#include "cpp_program.h"
-#include "stack_frame.h"
-#include "type.h"
-#include "util/string_drawing.h"
-
+export {
 class ActionData;
 
 extern std::shared_ptr<ActionData> void_action_;
@@ -54,8 +55,6 @@ class ActionData {
 };
 
 using Action = std::shared_ptr<ActionData>;
-
-class AstNodeBase;
 
 Action LambdaActionT(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,
@@ -102,3 +101,4 @@ Action ConstGetActionT(const void *in, Type type_in, std::string text_in,
                        std::shared_ptr<NamespaceData> ns);
 
 Action TypeGetActionT(Type type_in);
+}  // export

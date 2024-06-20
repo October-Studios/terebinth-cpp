@@ -1,6 +1,6 @@
-#include "token.h"
+module token;
 
-#include "util/string_utils.h"
+import util.string_utils;
 
 Token MakeToken(std::string text_in, std::shared_ptr<SourceFile> file_in,
                 int line_in, int char_pos_in, TokenData::Type token_type_in,
@@ -66,7 +66,7 @@ std::string TokenData::GetTypeDescription() {
   return out;
 }
 
-std::string TableStringFromTokens(const std::vector<Token> &tokens,
+std::string TableStringFromTokens(const std::vector<Token>& tokens,
                                   std::string table_name) {
   std::vector<std::string> lines;
   std::string abv = "", blw = "";
@@ -114,7 +114,7 @@ std::string TableStringFromTokens(const std::vector<Token> &tokens,
                                     max_width + 4);
 }
 
-std::string StringFromTokens(const std::vector<Token> &tokens, int left,
+std::string StringFromTokens(const std::vector<Token>& tokens, int left,
                              int right) {
   std::string out;
 

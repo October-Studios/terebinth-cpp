@@ -1,7 +1,7 @@
-#include "action.h"
-#include "cpp_program.h"
-#include "error_handler.h"
-#include "util/string_drawing.h"
+import action;
+import cpp_program;
+import error_handler;
+import util.string_drawing;
 
 class BranchAction : public ActionData {
  public:

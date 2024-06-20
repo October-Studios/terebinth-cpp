@@ -1,22 +1,28 @@
-#pragma once
+export module ast_node;
 
-#include <memory>
+import <memory>;
+import <string>;
+import <vector>;
 
-#include "action.h"
-#include "error_handler.h"
-#include "token.h"
+import type;
+import action;
+import error_handler;
+import token;
 
+export
 class NamespaceData;
+export
 typedef std::shared_ptr<NamespaceData> Namespace;
 
-#include <vector>
-
+export
 class AstNodeBase;
+export
 typedef std::unique_ptr<AstNodeBase> AstNode;
 
 AstNode AstNodeFromTokens(const std::vector<Token> &tokens, int left,
                           int right);
 
+export
 class AstNodeBase {
  public:
   virtual ~AstNodeBase() = default;
@@ -120,6 +126,7 @@ class AstNodeBase {
   bool input_has_been_set_ = false;
 };
 
+export
 class AstVoid : public AstNodeBase {
  public:
   static std::unique_ptr<AstVoid> Make() {
@@ -151,6 +158,7 @@ class AstVoid : public AstNodeBase {
 };
 // extern AstNode astVoid;
 
+export
 class AstList : public AstNodeBase {
  public:
   //	Make a new instance of this type of node
@@ -180,8 +188,10 @@ class AstList : public AstNodeBase {
   std::vector<AstNode> nodes;
 };
 
+export
 class AstConstExpression;
 
+export
 class AstToken : public AstNodeBase {
  public:
   static std::unique_ptr<AstToken> Make(Token token_in) {
@@ -209,6 +219,7 @@ class AstToken : public AstNodeBase {
   Token token = nullptr;
 };
 
+export
 class AstFuncBody : public AstNodeBase {
  public:
   static AstNode Make(AstNode left_type_in, AstNode right_type_in,
@@ -270,6 +281,7 @@ class AstFuncBody : public AstNodeBase {
   bool types_input_set = false;
 };
 
+export
 class AstExpression : public AstNodeBase {
  public:
   static std::unique_ptr<AstExpression> Make(AstNode left_in_in,
@@ -302,6 +314,7 @@ class AstExpression : public AstNodeBase {
   AstNode left_in = nullptr, center = nullptr, right_in = nullptr;
 };
 
+export
 class AstConstExpression : public AstNodeBase {
  public:
   static std::unique_ptr<AstConstExpression> Make(
@@ -335,6 +348,7 @@ class AstConstExpression : public AstNodeBase {
   AstNode right_in = nullptr;
 };
 
+export
 class AstOpWithInput : public AstNodeBase {
  public:
   static std::unique_ptr<AstOpWithInput> Make(
@@ -374,6 +388,7 @@ class AstOpWithInput : public AstNodeBase {
   std::vector<AstNode> left_in, right_in;
 };
 
+export
 class AstTuple : public AstNodeBase {
  public:
   //	Make a new instance of this type of node
@@ -402,6 +417,7 @@ class AstTuple : public AstNodeBase {
   std::vector<AstNode> nodes;
 };
 
+export
 class AstType : public AstNodeBase {
  public:
   bool IsType() { return true; }
@@ -413,6 +429,7 @@ class AstType : public AstNodeBase {
   }
 };
 
+export
 class AstTypeType : public AstType {
  public:
   static std::unique_ptr<AstTypeType> Make(Type typeIn) {
@@ -443,6 +460,7 @@ class AstTypeType : public AstType {
   Type return_type_not_meta;
 };
 
+export
 class AstVoidType : public AstType {
  public:
   static std::unique_ptr<AstVoidType> Make() {
@@ -465,6 +483,7 @@ class AstVoidType : public AstType {
  private:
 };
 
+export
 class AstTokenType : public AstType {
  public:
   static std::unique_ptr<AstTokenType> Make(Token tokenIn) {
@@ -490,6 +509,7 @@ class AstTokenType : public AstType {
   Token token = nullptr;
 };
 
+export
 class AstTupleType : public AstType {
  public:
   struct NamedType {
@@ -525,6 +545,7 @@ class AstTupleType : public AstType {
   std::vector<NamedType> subTypes;
 };
 
+export
 class AstActionWrapper : public AstNodeBase {
  public:
   static std::unique_ptr<AstActionWrapper> Make(Action actionIn) {
@@ -556,6 +577,7 @@ class AstActionWrapper : public AstNodeBase {
   Token GetToken() { return nullptr; }
 };
 
+export
 class AstWhatevToActionFactory : public AstNodeBase {
  public:
   static AstNode Make(std::function<Action(Type left, Type right)> lambda) {

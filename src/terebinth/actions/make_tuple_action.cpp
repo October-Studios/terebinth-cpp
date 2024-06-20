@@ -1,8 +1,9 @@
-#include <typeinfo>
-#include <vector>
+import <typeinfo>;
+import <vector>;
 
-#include "action.h"
-#include "error_handler.h"
+import action;
+import error_handler;
+import util.string_drawing;
 
 class GetElemFromTupleAction;
 class CppTupleCastAction;

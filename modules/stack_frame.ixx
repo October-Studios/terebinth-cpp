@@ -1,12 +1,12 @@
-#pragma once
+module;
+import <vector>;
+export module stack_frame;
 
-#include <vector>
+import type;
+export extern void *global_frame_ptr_;
+export extern void *stack_ptr_;
 
-#include "type.h"
-extern void *global_frame_ptr_;
-extern void *stack_ptr_;
-
-class StackFrame {
+export class StackFrame {
  public:
   void AddMember(Type in);
   void SetInput(Type left, Type right);

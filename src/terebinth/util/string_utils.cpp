@@ -1,5 +1,6 @@
-#include "util/string_utils.h"
-#include <math.h>
+module util.string_utils;
+
+import <math.h>;
 
 namespace str {
 

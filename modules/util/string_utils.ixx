@@ -1,16 +1,24 @@
-#pragma once
-
+module;
 #include <math.h>
-#include <unistd.h>
+#ifdef __linux__
 #include <sys/ioctl.h>
+#include <unistd.h>
+#else
+#include <io.h>
+#define popen _popen
+#define pclose _pclose
+#endif
 
 #include <exception>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
+export module util.string_utils;
 
-#include "error_handler.h"
+import error_handler;
+
+export {
 
 namespace str {
 inline void NextGlyph(int &out, const std::string &in);
@@ -486,5 +494,7 @@ inline std::string PutStringInBox(const std::string &in,
 
 }  // namespace str
 
-#include "string_array.h"
-#include "string_drawing.h"
+}  // export
+
+import util.string_array;
+import util.string_drawing;

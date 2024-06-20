@@ -1,14 +1,14 @@
-#include "namespace.h"
+module Namespace;
 
-#include <tuple>
+import action;
+import ast_node;
+import error_handler;
+import stack_frame;
+import type;
+import util.string_num_conversion;
+import util.string_utils;
 
-#include "action.h"
-#include "ast_node.h"
-#include "error_handler.h"
-#include "stack_frame.h"
-#include "type.h"
-#include "util/string_num_conversion.h"
-#include "util/string_utils.h"
+import <tuple>;
 
 void NamespaceData::IdMap::Add(std::string key, AstNode node) {
   auto i = nodes_.find(key);

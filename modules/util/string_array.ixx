@@ -1,8 +1,17 @@
-#pragma once
+export module util.string_array;
 
-#include "string_utils.h"
+import <string>;
+import <vector>;
 
+export {
 namespace str {
+
+enum StringPadAlignment {
+  ALIGNMENT_LEFT = 1,
+  ALIGNMENT_CENTER = 0,
+  ALIGNMENT_RIGHT = -1
+};
+
 void SplitBy(std::vector<std::string> &out, const std::string &in,
              const std::string &splitter, bool keep_splitter = false);
 
@@ -22,3 +31,5 @@ inline void SplitByLine(std::vector<std::string> &out, const std::string &in) {
   SplitBy(out, in, "\n");
 }
 }  // namespace str
+
+}  // export

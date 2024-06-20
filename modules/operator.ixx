@@ -1,12 +1,14 @@
-#pragma once
+export module Operator;
 
+import <memory>;
+import <string>;
+
+export
 class TokenData;
-
-#include <memory>
-#include <string>
-
+export
 class AllOperators;
 
+export
 class OperatorData {
  public:
   enum InputTaken { LEFT, RIGHT, BOTH };
@@ -37,4 +39,5 @@ class OperatorData {
   InputTaken input_;
 };
 
+export
 typedef std::shared_ptr<OperatorData> Operator;

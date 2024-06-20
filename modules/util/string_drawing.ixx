@@ -1,8 +1,9 @@
-#pragma once
+export module util.string_drawing;
 
-#include "string_utils.h"
+import <string>;
+import <vector>;
 
-namespace str {
+export namespace str {
 std::string GetBoxedString(const std::string &in, std::string box_name = "",
                            bool show_line_nums = false,
                            bool always_width_max = false, int max_width = -1);

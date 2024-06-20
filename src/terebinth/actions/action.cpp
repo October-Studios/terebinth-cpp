@@ -1,7 +1,7 @@
-#include "action.h"
+module action;
 
-#include "error_handler.h"
-#include "util/string_utils.h"
+import error_handler;
+import util.string_utils;
 
 ActionData::ActionData(Type return_type_in, Type in_left_type_in,
                        Type in_right_type_in) {
@@ -25,9 +25,9 @@ class VoidAction : public ActionData {
  public:
   VoidAction() : ActionData(Void, Void, Void) { SetDescription("Void Action"); }
 
-  auto Execute(void *in_left, void *in_right) -> void * { return nullptr; }
+  auto Execute(void* in_left, void* in_right) -> void* { return nullptr; }
 
-  void AddToProg(Action in_left, Action in_right, CppProgram *prog) {
+  void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
     if (prog->GetExprLevel() > 0) {
       prog->Comment("void");
     }
@@ -42,13 +42,13 @@ class LambdaAction : public ActionData {
  public:
   LambdaAction(
       Type in_left_type_in, Type in_right_type_in, Type return_type_in,
-      std::function<void *(void *, void *)> lambda_in,
-      std::function<void(Action in_left, Action in_right, CppProgram *prog)>
+      std::function<void*(void*, void*)> lambda_in,
+      std::function<void(Action in_left, Action in_right, CppProgram* prog)>
           cpp_writer_in,
       std::string text_in)
       : ActionData(return_type_in, in_left_type_in, in_right_type_in) {
     if (cpp_writer_in == nullptr) {
-      cpp_writer_ = [=](Action in_left, Action in_right, CppProgram *prog) {
+      cpp_writer_ = [=](Action in_left, Action in_right, CppProgram* prog) {
         prog->Comment("lambda action '" + text_in +
                       "' has not yet been implemented for C++");
       };
@@ -57,7 +57,7 @@ class LambdaAction : public ActionData {
     }
 
     if (lambda_in == nullptr) {
-      lambda_ = [=](void *in_left, void *in_right) -> void * {
+      lambda_ = [=](void* in_left, void* in_right) -> void* {
         throw TerebinthError(
             "action '" + text_in +
                 "' has not yet been implemented for the interpreter",
@@ -70,11 +70,11 @@ class LambdaAction : public ActionData {
     SetDescription(text_in);
   }
 
-  auto Execute(void *in_left, void *in_right) -> void * {
+  auto Execute(void* in_left, void* in_right) -> void* {
     return lambda_(in_left, in_right);
   }
 
-  void AddToProg(Action in_left, Action in_right, CppProgram *prog) {
+  void AddToProg(Action in_left, Action in_right, CppProgram* prog) {
     cpp_writer_(in_left, in_right, prog);
   }
 
@@ -83,16 +83,16 @@ class LambdaAction : public ActionData {
   }
 
  private:
-  std::function<void *(void *, void *)> lambda_;
-  std::function<void(Action in_left, Action in_right, CppProgram *prog)>
+  std::function<void*(void*, void*)> lambda_;
+  std::function<void(Action in_left, Action in_right, CppProgram* prog)>
       cpp_writer_;
   std::string cpp_code_;
 };
 
 auto LambdaActionT(
     Type in_left_type_in, Type in_right_type_in, Type return_type_in,
-    std::function<void *(void *, void *)> lambda_in,
-    std::function<void(Action in_left, Action in_right, CppProgram *prog)>
+    std::function<void*(void*, void*)> lambda_in,
+    std::function<void(Action in_left, Action in_right, CppProgram* prog)>
         cpp_writer_in,
     std::string text_in) -> Action {
   return Action(new LambdaAction(in_left_type_in, in_right_type_in,

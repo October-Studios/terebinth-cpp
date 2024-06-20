@@ -1,18 +1,20 @@
-#pragma once
+export module Namespace;
 
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
+import <memory>;
+import <string>;
+import <unordered_map>;
+import <vector>;
 
-#include "action.h"
-#include "ast_node.h"
-#include "operator.h"
-#include "token.h"
-#include "type.h"
+import action;
+import ast_node;
+import Operator;
+import token;
+import type;
 
+export
 class StackFrame;
 
+export
 class NamespaceData;
 typedef std::shared_ptr<NamespaceData> Namespace;
 
@@ -20,6 +22,7 @@ typedef std::shared_ptr<NamespaceData> Namespace;
  * @brief
  *
  */
+export
 class NamespaceData : public std::enable_shared_from_this<NamespaceData> {
  public:
   /**

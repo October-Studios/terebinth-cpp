@@ -1,10 +1,9 @@
-#pragma once
+export module all_operators;
+import <unordered_map>;
+import <vector>;
+import Operator;
 
-#include <unordered_map>
-#include <vector>
-
-#include "operator.h"
-
+export
 class AllOperators {
  public:
   static void Init();

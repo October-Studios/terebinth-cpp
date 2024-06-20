@@ -1,9 +1,9 @@
-#include "util/file_utils.h"
-
+module;
 #include <fstream>
 #include <sstream>
+module Util.FileUtils;
 
-void LoadFile(std::string filepath, std::string &contents) {
+void LoadFile(std::string filepath, std::string& contents) {
   std::fstream in_file;
 
   in_file.open(filepath);
@@ -18,7 +18,7 @@ void LoadFile(std::string filepath, std::string &contents) {
   }
 }
 
-void WriteFile(std::string filepath, const std::string &contents) {
+void WriteFile(std::string filepath, const std::string& contents) {
   std::ofstream out_file;
 
   out_file.open(filepath);

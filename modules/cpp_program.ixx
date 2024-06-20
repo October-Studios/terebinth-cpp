@@ -1,12 +1,12 @@
-#pragma once
+export module cpp_program;
 
-#include <map>
-#include <memory>
-#include <unordered_set>
+import <map>;
+import <memory>;
+import <unordered_set>;
 
-#include "type.h"
+import type;
 
-class CppNameContainer {
+export class CppNameContainer {
  public:
   static std::shared_ptr<CppNameContainer> MakeRoot();
   std::shared_ptr<CppNameContainer> MakeChild();
@@ -32,6 +32,7 @@ class CppNameContainer {
 };
 
 class CppFuncBase {
+  friend class CppProgram;
  public:
   CppFuncBase(std::string prototype_in,
               std::shared_ptr<CppNameContainer> my_names, bool returns_val_in);
@@ -67,12 +68,12 @@ class CppFuncBase {
   bool fake_start_block = false;
 
   std::vector<std::shared_ptr<CppNameContainer>> namespace_stack;
-
-  friend CppProgram;
 };
 
+export
 typedef std::shared_ptr<CppFuncBase> CppFunc;
 
+export
 class CppProgram {
  public:
   CppProgram();
@@ -129,4 +130,5 @@ class CppProgram {
   std::shared_ptr<CppNameContainer> global_names;
 };
 
+export
 void AddToProgTbStr(CppProgram *prog);
