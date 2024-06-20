@@ -35,6 +35,14 @@ target_sources(terebinth_lib
 add_executable(terebinth apps/main.cpp)
 target_link_libraries(terebinth PRIVATE terebinth_lib)
 
+install(TARGETS terebinth EXPORT terebinth-targets
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(TARGETS terebinth EXPORT terebinth-targets
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
 install(FILES README.md CHANGELOG.md
         DESTINATION ${CMAKE_INSTALL_DOCDIR}
         COMPONENT doc
