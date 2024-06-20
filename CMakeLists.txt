@@ -10,8 +10,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/terebinth-api.cmake)
 
 terebinth_project_defaults()
 
-add_subdirectory(cmake)
-
 add_library(terebinth_lib)
 
 file(GLOB_RECURSE SRC_FILES
@@ -34,6 +32,8 @@ target_sources(terebinth_lib
 
 add_executable(terebinth apps/main.cpp)
 target_link_libraries(terebinth PRIVATE terebinth_lib)
+
+add_subdirectory(cmake)
 
 install(TARGETS terebinth EXPORT terebinth-targets
   DESTINATION ${CMAKE_INSTALL_LIBDIR}
