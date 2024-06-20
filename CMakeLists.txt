@@ -1,30 +1,16 @@
 cmake_minimum_required(VERSION 3.27)
 
-set(TEREBINTH_VERSION_MAJOR 0)
-set(TEREBINTH_VERSION_MINOR 1)
-set(TEREBINTH_VERSION_PATCH 0)
-set(TEREBINTH_VERSION "${TEREBINTH_VERSION_MAJOR}.${TEREBINTH_VERSION_MINOR}.${TEREBINTH_VERSION_PATCH}")
-
 project(terebinth
-  VERSION ${TEREBINTH_VERSION}
+  VERSION 0.1.0
   DESCRIPTION "Interpreted programming language built on C++20"
   LANGUAGES CXX
 )
 
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "aa1f7df0-828a-4fcd-9afc-2dc80491aca7")
-string(CONCAT CMAKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
-  "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> <SOURCE>"
-  " -MT <DYNDEP_FILE> -MD -MF <DEP_FILE>"
-  " ${flags_to_scan_deps} -fdep-file=<DYNDEP_FILE> -fdep-output=<OBJECT>"
-  )
+include(${CMAKE_SOURCE_DIR}/cmake/terebinth-api.cmake)
 
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FORMAT "gcc")
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FLAG
-  "${compiler_flags_for_module_map} -fmodule-mapper=<MODULE_MAP_FILE>")
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+terebinth_project_defaults()
+
+add_subdirectory(cmake)
 
 add_library(terebinth_lib)
 
@@ -48,5 +34,8 @@ target_sources(terebinth_lib
 
 add_executable(terebinth apps/main.cpp)
 target_link_libraries(terebinth PRIVATE terebinth_lib)
-# Allow tests to be run on this project
-enable_testing()
+
+install(FILES README.md CHANGELOG.md
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}
+        COMPONENT doc
+)
